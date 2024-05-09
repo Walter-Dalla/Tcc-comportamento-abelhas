@@ -3,6 +3,7 @@ import numpy as np
 
 from imageAnalizer.perspective import find_perspective, fix_perspective
 from imageAnalizer.imageAnalizer import OpenVideo
+from imageAnalizer.contoursAnalizer import contoursAnalizer, contoursAnalizerHsv
 
 def get_frame_params(video_path, isDebugMode):
     
@@ -26,30 +27,22 @@ def get_frame_params(video_path, isDebugMode):
         
         cv2.waitKey(10)
 
+    analizedContours = False
+
     while True:
-        
-        image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        
-        # Definições para detecção de cores (vermelho e azul em RGB)
-        red_lower = np.array([100, 0, 0])
-        red_upper = np.array([255, 100, 100])
+        if not analizedContours:
+            contours, image_contours = contoursAnalizerHsv(frame)
+            analizedContours = True
 
-        mask_red = cv2.inRange(image_rgb, red_lower, red_upper)
+        cv2.waitKey(0)
         
-        kernel = np.ones((5, 5), np.uint8)
-        mask_red_cleaned = cv2.morphologyEx(mask_red, cv2.MORPH_OPEN, kernel)
-        mask_red_cleaned = cv2.morphologyEx(mask_red_cleaned, cv2.MORPH_CLOSE, kernel)
-
-        contours, _ = cv2.findContours(mask_red_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        print(contours)
-        image_contours = image_rgb.copy()
-        cv2.drawContours(image_contours, contours, -1, (0, 255, 0), 1)
-
         contour_info = []
         contour_dimensions = []
         
+
         if not isDebugMode or cv2.waitKey(10) == 27: #esc
             success, frame = video.read()
+            analizedContours = False
             _, frame = fix_perspective(frame)
             
             ## Frame analise

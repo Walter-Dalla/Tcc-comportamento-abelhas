@@ -21,6 +21,7 @@ def find_perspective(frame):
     return fix_perspective(frame)
 
 def fix_perspective(frame):
+    framePoints = [(10, 99), (452, 99), (15, 751), (477, 728)]
     
     if len(framePoints) == 4:
         return True, perspective(framePoints, frame)
