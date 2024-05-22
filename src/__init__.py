@@ -1,8 +1,10 @@
 from imageAnalizer.imageAnalizer import analyze_frame_top, analyze_frame_side
 from VelocityAnalizer.LocalVelocityAnalizer import localVelocityAnalizer
 from imageAnalizer.frameAnalizer import get_frame_params
+from Ui.App import run_loop, show_ui
 from utils.jsonUtils import exportDataToFile, importDataFromFile
 import concurrent.futures
+import threading
 
 
 steps = ["route", "border-analises", "local-velocity", "trajectory-velocity"]
@@ -11,7 +13,8 @@ sideVideo = "C:/Projetos/Tcc-comportamento-abelhas/resource/lado-v4.mp4"
 topVideo = "C:/Projetos/Tcc-comportamento-abelhas/resource/cima-v4.mp4"
 routeJson = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
 
-frameVideo = "C:/Projetos/Tcc-comportamento-abelhas/resource/Frame.mp4"
+frameVideo = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
+_frameVideo = "C:/Projetos/Tcc-comportamento-abelhas/resource/Frame.mp4"
 
 # STEPS => ["route", "border-analises", "local-velocity", "trajectory-velocity"]
 
@@ -33,7 +36,6 @@ def velocityAnalisis(isDebugMode):
 
     analizedData = localVelocityAnalizer(data["route"])
     print(analizedData)
-
 
 
 def route(isDebugMode):
@@ -82,6 +84,17 @@ def route(isDebugMode):
     exportDataToFile(data, routeJson)
 
 
+def run_background_tasks():
+    background_thread = threading.Thread(target=startUp)
+    background_thread.daemon = True
+    background_thread.start()
 
 if __name__ == "__main__":
-    startUp()
+    
+    show_ui()
+    run_background_tasks()
+    run_loop()
+
+
+
+

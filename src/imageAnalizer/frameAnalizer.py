@@ -3,7 +3,9 @@ import numpy as np
 
 from imageAnalizer.perspective import find_perspective, fix_perspective
 from imageAnalizer.imageAnalizer import OpenVideo
-from imageAnalizer.contoursAnalizer import contoursAnalizer, contoursAnalizerHsv
+from imageAnalizer.contoursAnalizer import contoursAnalizerHsv
+from Ui.App import get_next_frame, load_image_on_ui, set_next_frame
+
 
 def get_frame_params(video_path, isDebugMode):
     
@@ -11,15 +13,10 @@ def get_frame_params(video_path, isDebugMode):
     video = OpenVideo(video_path)
 
     success, frame = video.read()
-    image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     
-    maxPointTopLeft = (0, 0)
-    maxPointTopRight = (0, 0)
-    maxPointBottonLeft = (0, 0)
-    maxPointBottonRight = (0, 0)
-
     finishedPerspective = False
 
+    load_image_on_ui(frame)
     while not finishedPerspective:
         finishedPerspective, perspective_frame = find_perspective(frame)
         if perspective_frame is not 0:
@@ -28,68 +25,48 @@ def get_frame_params(video_path, isDebugMode):
         cv2.waitKey(10)
 
     analizedContours = False
+    has_att = True
 
     while True:
         if not analizedContours:
             contours, image_contours = contoursAnalizerHsv(frame)
             analizedContours = True
-
-        cv2.waitKey(0)
         
-        contour_info = []
-        contour_dimensions = []
-        
+        if not isDebugMode or cv2.waitKey(10) == 27 or get_next_frame(): #esc
 
-        if not isDebugMode or cv2.waitKey(10) == 27: #esc
+            set_next_frame(False)
+            
+            has_att = True
             success, frame = video.read()
             analizedContours = False
             _, frame = fix_perspective(frame)
             
-            ## Frame analise
-            x, y, width, height  = cv2.boundingRect(contours[0])
 
-            maxPointBottonLeft = maxPointTopLeft = maxPointTopRight = maxPointBottonRight = (x, y)
-            for contour in contours:
-                x, y, width, height = cv2.boundingRect(contour)
-                contour_dimensions.append((width, height))
+            frame2 = frame.copy()
+            cv2.imshow('frame2', frame2)
+            contornos2 = detect_contours(frame2)
+            cv2.drawContours(frame2, contornos2, -1, (0, 255, 0), 1)
+            cv2.imshow('image_contours_2', frame2)
 
-
-                if x < maxPointTopLeft[0] and y < maxPointTopLeft[1]:
-                    maxPointTopLeft = (x, y)
-                    
-                if x < maxPointBottonLeft[0] and y > maxPointBottonLeft[1]:
-                    maxPointBottonLeft = (x, y)
-
-                if x > maxPointTopRight[0] and y < maxPointTopRight[1]:
-                    maxPointTopRight = (x, y)
-
-                if x > maxPointBottonRight[0] and y > maxPointBottonRight[1]:
-                    maxPointBottonRight = (x, y)
-
-            print([
-                maxPointBottonLeft,
-                maxPointTopLeft,
-                maxPointTopRight,
-                maxPointBottonRight
-            ])
+            cv2.drawContours(frame, contours, -1, (0, 255, 0), 1)
+            cv2.imshow('image_contours', frame)
 
             if not success:
                 break
 
-        
         if isDebugMode:
-            cv2.circle(image_contours, maxPointBottonLeft, 10, (255, 0, 0), -1) #R
-            cv2.circle(image_contours, maxPointTopLeft, 10, (0, 255, 0), -1)    #G
-            cv2.circle(image_contours, maxPointBottonRight, 10, (0, 0, 255), -1)#B
-            cv2.circle(image_contours, maxPointTopRight, 10, (0, 0, 0), -1)     #P
+            if has_att:
+                load_image_on_ui(frame)
+                has_att = False
 
-            cv2.imshow('image_contours', image_contours)
-
-            
     video.release()
     cv2.destroyAllWindows()
     
     print("Fim da analise da moldura")
 
-    print(contour_info)
-
+def detect_contours(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cv2.imshow('gray', gray)
+    _, thresh = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY_INV)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    return contours

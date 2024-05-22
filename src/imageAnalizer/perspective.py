@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-
 def perspective(framePoints, image_contours):
     width = framePoints[1][0] - framePoints[0][0]
     height = framePoints[2][1] - framePoints[0][1]
@@ -13,31 +12,23 @@ def perspective(framePoints, image_contours):
 
     return output
 
-
 def find_perspective(frame):
-    if len(framePoints) == 4:
-        cv2.destroyWindow('Definir Perspectiva')
-    
     return fix_perspective(frame)
 
 def fix_perspective(frame):
-    framePoints = [(10, 99), (452, 99), (15, 751), (477, 728)]
-    
-    if len(framePoints) == 4:
-        return True, perspective(framePoints, frame)
+    _framePoints = [(10, 99), (452, 99), (15, 751), (477, 728)]
+    framePoints = [(25, 119), (444, 107), (23, 741), (472, 715)]
 
-    for index in framePoints:
-        cv2.circle(frame, index, 10, (0, 0, 0), -1) #R
-        
-    cv2.imshow('Definir Perspectiva', frame)
-    cv2.setMouseCallback('Definir Perspectiva', getFramePoints)
-    
+    if len(framePoints) == 4:
+        print(framePoints)
+        return True, perspective(framePoints, frame)
 
     return False, 0
 
 framePoints = []
-def getFramePoints(event, x, y, flags, params):
+def getFramePoints(event):
+    x, y = event.x, event.y
     if len(framePoints) >= 4:
         return
-    if event == cv2.EVENT_LBUTTONDOWN:
-        framePoints.append((x, y))
+    
+    framePoints.append((x, y))
