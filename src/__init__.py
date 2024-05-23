@@ -1,7 +1,7 @@
-from imageAnalizer.imageAnalizer import analyze_frame_top, analyze_frame_side
+from imageAnalizer.movimentAnalizer import analyze_frame_top, analyze_frame_side
 from VelocityAnalizer.LocalVelocityAnalizer import localVelocityAnalizer
 from imageAnalizer.frameAnalizer import get_frame_params
-from Ui.App import run_loop, show_ui
+from Ui.PerspectiveUi import run_loop, show_ui
 from utils.jsonUtils import exportDataToFile, importDataFromFile
 import concurrent.futures
 import threading
@@ -25,8 +25,8 @@ def startUp():
     if "route" in steps:
         route(isDebugMode)
 
-    if "local-velocity" in steps:
-        velocityAnalisis(isDebugMode)
+    #if "local-velocity" in steps:
+     #   velocityAnalisis(isDebugMode)
 
 
 def velocityAnalisis(isDebugMode):

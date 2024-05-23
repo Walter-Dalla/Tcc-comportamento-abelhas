@@ -12,12 +12,10 @@ def perspective(framePoints, image_contours):
 
     return output
 
-def find_perspective(frame):
-    return fix_perspective(frame)
 
 def fix_perspective(frame):
-    _framePoints = [(10, 99), (452, 99), (15, 751), (477, 728)]
-    framePoints = [(25, 119), (444, 107), (23, 741), (472, 715)]
+    #_framePoints = [(10, 99), (452, 99), (15, 751), (477, 728)]
+    #framePoints = [(25, 119), (444, 107), (23, 741), (472, 715)]
 
     if len(framePoints) == 4:
         print(framePoints)

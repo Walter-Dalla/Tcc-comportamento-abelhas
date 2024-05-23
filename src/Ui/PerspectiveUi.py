@@ -10,6 +10,7 @@ class App:
         self.root = root
         self.show_ui()
         self.next_frame = False
+        self.step = "perspective"
 
     def load_image_on_ui(self, image):
         self.root_image = ImageTk.PhotoImage(image)
@@ -80,14 +81,14 @@ class App:
         self.load_small_image_on_ui(small_image)
         
         buttons = []
-        for i in range(4):
-            button = ttk.Button(root, text=f"Botão {i+1}", command=lambda i=i: self.on_button_click(i+1))
-            button.grid(row=i, column=1, padx=10, pady=10)
-            buttons.append(button)
         
-        button = ttk.Button(root, text=f"Proximo Frame", command=lambda i=i: self.set_next_frame(True))
-        button.grid(row=i, column=1, padx=10, pady=10)
+        button = ttk.Button(root, text=f"Proximo Frame", command=lambda i=1: self.set_next_frame(True))
+        button.grid(row=5, column=1, padx=10, pady=10)
         buttons.append(button)
+
+    def show_finish_perspective_btn(self):
+        button = ttk.Button(root, text=f"Finalizar perspectiva", command=lambda i="finish-perspective-btn": self.clear_screen())
+        button.grid(row=6, column=1, padx=10, pady=10)
 
     def get_next_frame(self):
         return self.next_frame
@@ -97,6 +98,10 @@ class App:
 
     def run_loop(self):
         self.root.mainloop()
+
+    def clear_screen(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
 
 def show_ui():
     print("criado!")
@@ -113,6 +118,10 @@ def run_loop():
 def load_image_on_ui(imageCv):
         image = Image.fromarray(imageCv)
         screen.load_image_on_ui(image)
+
+def getScreen():
+    return screen
+    
 
 
 screen = App(root)

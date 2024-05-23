@@ -1,10 +1,11 @@
+import time
 import cv2
 import numpy as np
 
-from imageAnalizer.perspective import find_perspective, fix_perspective
-from imageAnalizer.imageAnalizer import OpenVideo
+from imageAnalizer.perspective import fix_perspective
+from imageAnalizer.movimentAnalizer import OpenVideo
 from imageAnalizer.contoursAnalizer import contoursAnalizerHsv
-from Ui.App import get_next_frame, load_image_on_ui, set_next_frame
+from Ui.PerspectiveUi import get_next_frame, getScreen, load_image_on_ui, set_next_frame
 
 
 def get_frame_params(video_path, isDebugMode):
@@ -17,14 +18,18 @@ def get_frame_params(video_path, isDebugMode):
     finishedPerspective = False
 
     load_image_on_ui(frame)
+    i=0
     while not finishedPerspective:
-        finishedPerspective, perspective_frame = find_perspective(frame)
+        finishedPerspective, perspective_frame = fix_perspective(frame)
+        i +=1
+        time.sleep(0.01)
         if perspective_frame is not 0:
-            frame = perspective_frame
-        
-        cv2.waitKey(10)
+            load_image_on_ui(perspective_frame)
+
+            getScreen().show_finish_perspective_btn()
 
     analizedContours = False
+    return
     has_att = True
 
     while True:
@@ -53,11 +58,6 @@ def get_frame_params(video_path, isDebugMode):
 
             if not success:
                 break
-
-        if isDebugMode:
-            if has_att:
-                load_image_on_ui(frame)
-                has_att = False
 
     video.release()
     cv2.destroyAllWindows()
