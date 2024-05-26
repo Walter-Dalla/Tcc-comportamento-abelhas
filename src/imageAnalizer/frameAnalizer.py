@@ -29,7 +29,7 @@ def get_frame_params(video_path, isDebugMode):
             getScreen().show_finish_perspective_btn()
 
     analizedContours = False
-    return
+    
     has_att = True
 
     while True:

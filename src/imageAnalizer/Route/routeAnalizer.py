@@ -1,5 +1,7 @@
 import concurrent.futures
-from imageAnalizer.movimentAnalizer import analyze_frame_side, analyze_frame_top
+
+from imageAnalizer.moviment.sideAnalizer import analyze_frame_side
+from imageAnalizer.moviment.topAnalizer import analyze_frame_top
 from utils.jsonUtils import exportDataToFile
 
 def route(isDebugMode, topVideoInput, sideVideoInput, outputLocation):
@@ -23,19 +25,20 @@ def route(isDebugMode, topVideoInput, sideVideoInput, outputLocation):
     data = {"route": {}, "frameCount": frameCount }
     
     for index in range(frameCount):
-        x = dataSide["route"][index]["x"]
         y = dataSide["route"][index]["y"]
+        #x2 = dataSide["route"][index]["x"]
 
-        x2 = dataTop["route"][index]["x"]
+        x = dataTop["route"][index]["x"]
         z = dataTop["route"][index]["z"]
 
         #print(index, x, y, z)
         #print(index, x2, y, z)
 
         data["route"][index] = {
-            "x":x, 
+            "x": x, 
             "y": y,
-            "z": z
+            "z": z,
+            #"x2": x2
         }
 
     print(data)

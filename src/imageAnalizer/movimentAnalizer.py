@@ -3,7 +3,7 @@ import cv2
 from imageAnalizer.videoHelper import OpenVideo
 #from Ui.PerspectiveUi import get_next_frame, load_image_on_ui, set_next_frame
 
-def analyze_frame_top(video_path, isDebugMode):
+def _analyze_frame_top(video_path, isDebugMode):
     print("Iniciando analise topo")
     video_top = OpenVideo(video_path)
 
@@ -90,7 +90,7 @@ def analyze_frame_top(video_path, isDebugMode):
     return data
     
 
-def analyze_frame_side(video_path, isDebugMode):
+def _analyze_frame_side(video_path, isDebugMode):
     print("Iniciando analise lado")
     video_top = cv2.VideoCapture(video_path)
     

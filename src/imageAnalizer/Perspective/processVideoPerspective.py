@@ -5,13 +5,13 @@ from imageAnalizer.Perspective.perspective import getPerspectiveSize, perspectiv
 from utils.videoUtils import openVideo
 
 
-def process_video(videoPath):
+def process_video(inputVideoPath, tempName):
 
-    success, originalVideo = openVideo(videoPath)
+    success, originalVideo = openVideo(inputVideoPath)
     if not success:
         return
 
-    tempPath = 'C:/Projetos/Tcc-comportamento-abelhas/temp/top.mp4'
+    tempPath = 'C:/Projetos/Tcc-comportamento-abelhas/temp/'+tempName+'.mp4'
     
     fps =  int(originalVideo.get(cv2.CAP_PROP_FPS))
     fourcc =  int(cv2.VideoWriter().fourcc(*'mp4v') )

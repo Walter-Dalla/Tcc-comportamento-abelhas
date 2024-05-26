@@ -2,20 +2,21 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
-from imageAnalizer.Perspective.perspective import getFramePoints
+from imageAnalizer.Perspective.perspective import getFramePoints, getPerspectiveSize
 from imageAnalizer.Route.routeAnalizer import route
 from imageAnalizer.Perspective.processVideoPerspective import process_video
+from plot.plotRoute import criar_animacao
 
 root = tk.Tk()
 
 class App:
-    #perspective
-    def __init__(self, root, topVideoPath):
+    def __init__(self, root, topVideoPath, sideVideoPath):
         self.root = root
         self.show_ui()
         self.next_frame = False
         self.state = "perspective"
         self.topVideoPath = topVideoPath
+        self.sideVideoPath = sideVideoPath
 
     def load_image_on_ui(self, image):
         self.root_image = ImageTk.PhotoImage(image)
@@ -99,13 +100,21 @@ class App:
         self.root.mainloop()
 
     def finishPerspective(self):
-        _, video_top = process_video(videoPath=self.topVideoPath)
-        
-        #success, aa = video_top.read()
-        #cv2.imshow("sla", aa)
-        #cv2.waitKey(10)
+        _, top_video = process_video(inputVideoPath=self.topVideoPath, tempName="top")
+        _, side_video = process_video(inputVideoPath=self.sideVideoPath, tempName="side")
+        outputLocation = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
+        route(False, top_video, side_video, outputLocation)
 
         self.clear_screen()
+
+        width, height =  getPerspectiveSize()
+
+        xlim = (0, width)
+        ylim = (0, height)
+        zlim = (0, height)
+
+
+        criar_animacao(outputLocation, xlim, ylim, zlim)
 
 
     def clear_screen(self):
@@ -139,4 +148,5 @@ def getScreen():
     
 
 topVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
-screen = App(root, topVideoPath)
+sideVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
+screen = App(root, topVideoPath, sideVideoPath)
