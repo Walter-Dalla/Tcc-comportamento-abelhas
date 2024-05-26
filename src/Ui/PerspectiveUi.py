@@ -7,9 +7,7 @@ from imageAnalizer.Route.routeAnalizer import route
 from imageAnalizer.Perspective.processVideoPerspective import process_video
 from plot.plotRoute import criar_animacao
 
-root = tk.Tk()
-
-class App:
+class PerspectiveUi:
     def __init__(self, root, topVideoPath, sideVideoPath):
         self.root = root
         self.show_ui()
@@ -22,7 +20,7 @@ class App:
         self.root_image = ImageTk.PhotoImage(image)
         self.image = image
 
-        image_label = ttk.Label(root, image=self.root_image)
+        image_label = ttk.Label(self.root, image=self.root_image)
         image_label.grid(row=0, column=0, rowspan=400, padx=10, pady=10)
 
         image_label.bind("<Button-1>", getFramePoints)
@@ -32,7 +30,7 @@ class App:
     def load_small_image_on_ui(self, image):
         self.small_image = ImageTk.PhotoImage(image)
         
-        small_image_label = ttk.Label(root, image=self.small_image)
+        small_image_label = ttk.Label(self.root, image=self.small_image)
         small_image_label.grid(row=1, column=1, rowspan=400, padx=10, pady=10)
         self.small_image_label = small_image_label
 
@@ -71,13 +69,9 @@ class App:
         
         self.small_image_label.config(image=cropped_img_tk)
         self.small_image_label.image = cropped_img_tk
-    
-    def on_button_click(self, button_number):
-        print(f"Botão {button_number} clicado")
-
 
     def show_ui(self):
-        root.title("Interface com Imagem e Botões")
+        self.root.title("Interface com Imagem e Botões")
 
         image = Image.new('RGB', (500, 500), (0, 0, 0))
         self.load_image_on_ui(image)
@@ -87,7 +81,7 @@ class App:
         
 
     def show_finish_perspective_btn(self):
-        button = ttk.Button(root, text=f"Finalizar perspectiva", command=lambda i="finish-perspective-btn": self.finishPerspective())
+        button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=lambda i="finish-perspective-btn": self.finishPerspective())
         button.grid(row=6, column=1, padx=10, pady=10)
 
     def get_next_frame(self):
@@ -121,32 +115,19 @@ class App:
         for widget in self.root.winfo_children():
             widget.destroy()
 
-        
-        #route(False, outputLocation="C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json",
-        #    sideVideoInput=
-        #    topVideoInput=
-        #)
-
 def show_ui():
-    print("criado!")
-
-def get_next_frame():
-    return screen.get_next_frame()
-
-def set_next_frame(value):
-    return screen.set_next_frame(value)
-
-def run_loop():
-    root.mainloop()
-
-def load_image_on_ui(imageCv):
-        image = Image.fromarray(imageCv)
-        screen.load_image_on_ui(image)
-
-def getScreen():
-    return screen
+    topVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
+    sideVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
     
+    root = tk.Tk()
+    screen = PerspectiveUi(root, topVideoPath, sideVideoPath)
 
-topVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
-sideVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
-screen = App(root, topVideoPath, sideVideoPath)
+    return screen
+
+def run_loop(screen):
+    screen.root.mainloop()
+
+def load_image_on_ui(imageCv, screen):
+    image = Image.fromarray(imageCv)
+    screen.load_image_on_ui(image)
+

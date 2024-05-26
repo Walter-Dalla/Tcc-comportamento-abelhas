@@ -1,10 +1,6 @@
 
 import cv2
 
-from imageAnalizer.videoHelper import OpenVideo
-from imageAnalizer.movimentAnalizer import draw_number
-
-
 def analyze_frame_top(video_top, isDebugMode):
     
     video_width = int(video_top.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -63,17 +59,11 @@ def analyze_frame_top(video_top, isDebugMode):
             frame_count += 1
 
         if isDebugMode:
-            #load_image_on_ui(frame)
             
             print(f"Darkest pixel value: {darkest_pixel_value} at location {darkest_pixel_location}")
 
             cv2.circle(gray_frame, darkest_pixel_location, 5, (0, 0, 255), 1)
             cv2.circle(frame, darkest_pixel_location, 5, (0, 0, 255), 1)
-
-            draw_number(time_on_border_north, frame, gray_frame, (100, 100), "N")
-            draw_number(time_on_border_south, frame, gray_frame, (100, 140), "S")
-            draw_number(time_on_border_east, frame, gray_frame, (100, 180), "L")
-            draw_number(time_on_border_west, frame, gray_frame, (100, 220), "O")
 
             cv2.imshow('Frame', frame)
             cv2.imshow('Gray Scale', gray_frame)
