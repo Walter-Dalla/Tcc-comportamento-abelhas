@@ -1,7 +1,7 @@
 import cv2
 
 from imageAnalizer.videoHelper import OpenVideo
-from Ui.PerspectiveUi import get_next_frame, load_image_on_ui, set_next_frame
+#from Ui.PerspectiveUi import get_next_frame, load_image_on_ui, set_next_frame
 
 def analyze_frame_top(video_path, isDebugMode):
     print("Iniciando analise topo")
@@ -29,10 +29,10 @@ def analyze_frame_top(video_path, isDebugMode):
          
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
-        if not isDebugMode or cv2.waitKey(10) == 27  or get_next_frame(): #esc
+        if not isDebugMode or cv2.waitKey(10) == 27: #esc
             success, frame = video_top.read()
 
-            set_next_frame(False)
+            #set_next_frame(False)
 
             if not success:
                 break
@@ -63,7 +63,7 @@ def analyze_frame_top(video_path, isDebugMode):
             frame_count += 1
 
         if isDebugMode:
-            load_image_on_ui(frame)
+            #load_image_on_ui(frame)
             
             print(f"Darkest pixel value: {darkest_pixel_value} at location {darkest_pixel_location}")
 

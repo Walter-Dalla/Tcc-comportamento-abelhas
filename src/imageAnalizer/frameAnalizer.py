@@ -2,7 +2,7 @@ import time
 import cv2
 import numpy as np
 
-from imageAnalizer.perspective import fix_perspective
+from imageAnalizer.Perspective.perspective import fix_perspective
 from imageAnalizer.movimentAnalizer import OpenVideo
 from imageAnalizer.contoursAnalizer import contoursAnalizerHsv
 from Ui.PerspectiveUi import get_next_frame, getScreen, load_image_on_ui, set_next_frame
@@ -14,7 +14,7 @@ def get_frame_params(video_path, isDebugMode):
     video = OpenVideo(video_path)
 
     success, frame = video.read()
-    
+
     finishedPerspective = False
 
     load_image_on_ui(frame)

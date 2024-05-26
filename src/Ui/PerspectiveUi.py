@@ -1,16 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
-from imageAnalizer.perspective import getFramePoints
+import cv2
+from imageAnalizer.Perspective.perspective import getFramePoints
+from imageAnalizer.Route.routeAnalizer import route
+from imageAnalizer.Perspective.processVideoPerspective import process_video
 
 root = tk.Tk()
 
 class App:
-    def __init__(self, root):
+    #perspective
+    def __init__(self, root, topVideoPath):
         self.root = root
         self.show_ui()
         self.next_frame = False
-        self.step = "perspective"
+        self.state = "perspective"
+        self.topVideoPath = topVideoPath
 
     def load_image_on_ui(self, image):
         self.root_image = ImageTk.PhotoImage(image)
@@ -39,7 +44,6 @@ class App:
         upper = max(0, y - crop_size // 2)
         right = min(self.root_image.width(), x + crop_size // 2)
         lower = min(self.root_image.height(), y + crop_size // 2)
-        
         
         image = ImageTk.getimage(self.root_image)
         
@@ -80,14 +84,9 @@ class App:
         small_image = Image.new('RGB', (100, 100), (0, 0, 0))
         self.load_small_image_on_ui(small_image)
         
-        buttons = []
-        
-        button = ttk.Button(root, text=f"Proximo Frame", command=lambda i=1: self.set_next_frame(True))
-        button.grid(row=5, column=1, padx=10, pady=10)
-        buttons.append(button)
 
     def show_finish_perspective_btn(self):
-        button = ttk.Button(root, text=f"Finalizar perspectiva", command=lambda i="finish-perspective-btn": self.clear_screen())
+        button = ttk.Button(root, text=f"Finalizar perspectiva", command=lambda i="finish-perspective-btn": self.finishPerspective())
         button.grid(row=6, column=1, padx=10, pady=10)
 
     def get_next_frame(self):
@@ -99,9 +98,25 @@ class App:
     def run_loop(self):
         self.root.mainloop()
 
+    def finishPerspective(self):
+        _, video_top = process_video(videoPath=self.topVideoPath)
+        
+        #success, aa = video_top.read()
+        #cv2.imshow("sla", aa)
+        #cv2.waitKey(10)
+
+        self.clear_screen()
+
+
     def clear_screen(self):
         for widget in self.root.winfo_children():
             widget.destroy()
+
+        
+        #route(False, outputLocation="C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json",
+        #    sideVideoInput=
+        #    topVideoInput=
+        #)
 
 def show_ui():
     print("criado!")
@@ -123,5 +138,5 @@ def getScreen():
     return screen
     
 
-
-screen = App(root)
+topVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
+screen = App(root, topVideoPath)
