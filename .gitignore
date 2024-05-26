@@ -1,3 +1,7 @@
+# remove project
+temp
+resource
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

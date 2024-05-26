@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-#framePoints = []
-framePoints = [(25, 119), (444, 107), (23, 741), (472, 715)]
+framePoints = []
+#framePoints = [(25, 119), (444, 107), (23, 741), (472, 715)]
 
 def perspective(frame):
     
