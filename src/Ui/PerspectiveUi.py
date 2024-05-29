@@ -1,22 +1,45 @@
+import time
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
-import cv2
-from imageAnalizer.Perspective.perspective import getFramePoints, getPerspectiveSize
+from imageAnalizer.Perspective.perspective import fix_perspective, getFramePoints, getPerspectiveSize
 from imageAnalizer.Route.routeAnalizer import route
 from imageAnalizer.Perspective.processVideoPerspective import process_video
-from plot.plotRoute import criar_animacao
+from plot.plotRoute import plotInsectRouteOnGraph
+from imageAnalizer.videoHelper import OpenVideo
 
 class PerspectiveUi:
     def __init__(self, root, topVideoPath, sideVideoPath):
         self.root = root
-        self.show_ui()
         self.next_frame = False
         self.state = "perspective"
         self.topVideoPath = topVideoPath
         self.sideVideoPath = sideVideoPath
+        
+        self.show_ui()
 
-    def load_image_on_ui(self, image):
+    def startUp(self):
+        print("Iniciando analise moldura")
+        video = OpenVideo(self.sideVideoPath)
+        
+        success, frame = video.read()
+        if not success:
+            return
+        finishedPerspective = False
+
+        self.loadImageOnUiFromCv2(frame)
+        
+        while not finishedPerspective:
+            finishedPerspective, perspective_frame = fix_perspective(frame)
+            time.sleep(0.01)
+            if perspective_frame is not 0:
+                self.loadImageOnUiFromCv2(perspective_frame)
+
+                self.show_finish_perspective_btn()
+        
+        video.release()
+
+    def loadImageOnUiFromArray(self, image):
         self.root_image = ImageTk.PhotoImage(image)
         self.image = image
 
@@ -74,7 +97,7 @@ class PerspectiveUi:
         self.root.title("Interface com Imagem e Botões")
 
         image = Image.new('RGB', (500, 500), (0, 0, 0))
-        self.load_image_on_ui(image)
+        self.loadImageOnUiFromArray(image)
 
         small_image = Image.new('RGB', (100, 100), (0, 0, 0))
         self.load_small_image_on_ui(small_image)
@@ -97,7 +120,7 @@ class PerspectiveUi:
         _, top_video = process_video(inputVideoPath=self.topVideoPath, tempName="top")
         _, side_video = process_video(inputVideoPath=self.sideVideoPath, tempName="side")
         outputLocation = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
-        route(False, top_video, side_video, outputLocation)
+        route(top_video, side_video, outputLocation)
 
         self.clear_screen()
 
@@ -108,8 +131,11 @@ class PerspectiveUi:
         zlim = (0, height)
 
 
-        criar_animacao(outputLocation, xlim, ylim, zlim)
-
+        plotInsectRouteOnGraph(outputLocation, xlim, ylim, zlim)
+    
+    def loadImageOnUiFromCv2(self, imageCv):
+        image = Image.fromarray(imageCv)
+        self.loadImageOnUiFromArray(image)
 
     def clear_screen(self):
         for widget in self.root.winfo_children():
@@ -127,7 +153,4 @@ def show_ui():
 def run_loop(screen):
     screen.root.mainloop()
 
-def load_image_on_ui(imageCv, screen):
-    image = Image.fromarray(imageCv)
-    screen.load_image_on_ui(image)
 

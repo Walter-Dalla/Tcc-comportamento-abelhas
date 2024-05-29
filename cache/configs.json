@@ -2,5 +2,9 @@
     "configura\u00e7\u00e3o 1 teste": {
         "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi",
         "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
+    },
+    "teste gbec": {
+        "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/cima-v4.mp4",
+        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/Frame.mp4"
     }
 }

@@ -8,7 +8,7 @@ def contoursAnalizer(mask_red):
     mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_CLOSE, kernel)
 
     contours, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    print(len(contours))
+
     image_contours = mask_red.copy()
     
     return contours, image_contours

@@ -1,7 +1,7 @@
 
 import cv2
 
-def analyze_frame_side(video_top, isDebugMode):
+def analyze_frame_side(video_top):
     video_width = int(video_top.get(cv2.CAP_PROP_FRAME_WIDTH))
     video_height = int(video_top.get(cv2.CAP_PROP_FRAME_HEIGHT))
     
@@ -17,52 +17,32 @@ def analyze_frame_side(video_top, isDebugMode):
 
     treashold = 250
 
-    darkest_pixel_value = 0
     darkest_pixel_location = (0, 0)
 
     while True:
          
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
-        if not isDebugMode or cv2.waitKey(10) == 27: #esc
-            success, frame = video_top.read()
+        success, frame = video_top.read()
 
-            if not success:
-                break
+        if not success:
+            break
 
 
-            (darkest_pixel_value, maxVal, darkest_pixel_location, maxLoc) = cv2.minMaxLoc(gray_frame)
+        (darkest_pixel_value, maxVal, darkest_pixel_location, maxLoc) = cv2.minMaxLoc(gray_frame)
 
-            insect_position_x = darkest_pixel_location[0]
-            insect_position_y = darkest_pixel_location[1]
+        insect_position_y = darkest_pixel_location[1]
 
-            data['route'].append({
-                'x': insect_position_x,
-                'y': insect_position_y
-            })
+        data['route'].append({
+            'y': insect_position_y
+        })
 
-            if(treashold >= insect_position_x):
-                time_on_border_west += 1
+        if(treashold >= insect_position_y):
+            time_on_border_north += 1
 
-            if(video_width - treashold <= insect_position_x):
-                time_on_border_east += 1
+        if(video_height - treashold <= insect_position_y):
+            time_on_border_south += 1
 
-            if(treashold >= insect_position_y):
-                time_on_border_north += 1
-
-            if(video_height - treashold <= insect_position_y):
-                time_on_border_south += 1
-
-            frame_count += 1
-
-        if isDebugMode:
-            print(f"Darkest pixel value: {darkest_pixel_value} at location {darkest_pixel_location}")
-
-            cv2.circle(gray_frame, darkest_pixel_location, 5, (0, 0, 255), 1)
-            cv2.circle(frame, darkest_pixel_location, 5, (0, 0, 255), 1)
-
-            cv2.imshow('Frame', frame)
-            cv2.imshow('Gray Scale', gray_frame)
+        frame_count += 1
 
     data['time_on_border_north'] = time_on_border_north
     data['time_on_border_south'] = time_on_border_south

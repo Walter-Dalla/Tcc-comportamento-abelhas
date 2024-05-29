@@ -1,0 +1,13 @@
+Analise de tempo na borda:
+- analise de tempo na borda interna (tamanho configuravel, ex: 2cm)
+- analise de tempo parada na borda
+
+Montar um relatorio com os dados do JSON
+
+Analise da velocidade por tempo
+- fazer um grafico
+
+
+Se der tempo:
+Fazer curva
+Contar multiplas instancias (coloridas)

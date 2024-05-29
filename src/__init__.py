@@ -12,23 +12,16 @@ routeJson = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
 frameVideo = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
 _frameVideo = "C:/Projetos/Tcc-comportamento-abelhas/resource/Frame.mp4"
 
-# STEPS => ["route", "border-analises", "local-velocity", "trajectory-velocity"]
-
 def startUp(screen):
     print("iniciando...")
-    isDebugMode = True
+    screen.startUp()
 
-    get_frame_params(frameVideo, isDebugMode, screen)
-
-
-
-def velocityAnalisis(isDebugMode):
+def velocityAnalisis():
     print("local-velocity")
 
     data = importDataFromFile(routeJson)
 
-    analizedData = localVelocityAnalizer(data["route"])
-    print(analizedData)
+    localVelocityAnalizer(data["route"])
 
 
 def run_background_tasks(screen):

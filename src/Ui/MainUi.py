@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog, messagebox
 import json
 import os
 
-from src.Ui.PerspectiveUi import PerspectiveUi
+#from Ui.PerspectiveUi import PerspectiveUi
 
 class ConfigApp:
     def __init__(self, root):
@@ -66,7 +66,7 @@ class ConfigApp:
         topVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
         sideVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
         
-        PerspectiveUi(root, topVideoPath, sideVideoPath)
+        #PerspectiveUi(root, topVideoPath, sideVideoPath)
         
         messagebox.showinfo("Configurar bordas", "Função para configurar bordas do vídeo topo.")
     
