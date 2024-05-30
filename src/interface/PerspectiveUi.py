@@ -2,25 +2,26 @@ import time
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
-from imageAnalizer.Perspective.perspective import fix_perspective, getFramePoints, getPerspectiveSize
-from imageAnalizer.Route.routeAnalizer import route
+from imageAnalizer.Perspective.perspective import fix_perspective, getFramePoints
 from imageAnalizer.Perspective.processVideoPerspective import process_video
-from plot.plotRoute import plotInsectRouteOnGraph
 from imageAnalizer.videoHelper import OpenVideo
+from utils.interfaceUtils import show_frame
 
 class PerspectiveUi:
-    def __init__(self, root, topVideoPath, sideVideoPath):
+    def __init__(self, root, mainFrame):
         self.root = root
         self.next_frame = False
         self.state = "perspective"
-        self.topVideoPath = topVideoPath
-        self.sideVideoPath = sideVideoPath
+        self.mainFrame = mainFrame
+        self.framePerspectivePoints = []
         
         self.show_ui()
 
-    def startUp(self):
+    def startUp(self, videoPath):
         print("Iniciando analise moldura")
-        video = OpenVideo(self.sideVideoPath)
+        print(videoPath)
+        self.videoPath = videoPath
+        video = OpenVideo(videoPath)
         
         success, frame = video.read()
         if not success:
@@ -30,7 +31,7 @@ class PerspectiveUi:
         self.loadImageOnUiFromCv2(frame)
         
         while not finishedPerspective:
-            finishedPerspective, perspective_frame = fix_perspective(frame)
+            finishedPerspective, perspective_frame = fix_perspective(frame, self.framePerspectivePoints)
             time.sleep(0.01)
             if perspective_frame is not 0:
                 self.loadImageOnUiFromCv2(perspective_frame)
@@ -46,9 +47,10 @@ class PerspectiveUi:
         image_label = ttk.Label(self.root, image=self.root_image)
         image_label.grid(row=0, column=0, rowspan=400, padx=10, pady=10)
 
-        image_label.bind("<Button-1>", getFramePoints)
+        image_label.bind("<Button-1>", lambda event: getFramePoints(event, self.framePerspectivePoints))
         image_label.bind("<Motion>", self.on_motion)
         self.image_label = image_label
+        
 
     def load_small_image_on_ui(self, image):
         self.small_image = ImageTk.PhotoImage(image)
@@ -94,7 +96,7 @@ class PerspectiveUi:
         self.small_image_label.image = cropped_img_tk
 
     def show_ui(self):
-        self.root.title("Interface com Imagem e Botões")
+        #self.root.title("Interface com Imagem e Botões")
 
         image = Image.new('RGB', (500, 500), (0, 0, 0))
         self.loadImageOnUiFromArray(image)
@@ -104,7 +106,8 @@ class PerspectiveUi:
         
 
     def show_finish_perspective_btn(self):
-        button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=lambda i="finish-perspective-btn": self.finishPerspective())
+        button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=self.finishPerspective)
+        
         button.grid(row=6, column=1, padx=10, pady=10)
 
     def get_next_frame(self):
@@ -117,21 +120,10 @@ class PerspectiveUi:
         self.root.mainloop()
 
     def finishPerspective(self):
-        _, top_video = process_video(inputVideoPath=self.topVideoPath, tempName="top")
-        _, side_video = process_video(inputVideoPath=self.sideVideoPath, tempName="side")
-        outputLocation = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
-        route(top_video, side_video, outputLocation)
+        self.root.framePerspectivePoints = self.framePerspectivePoints
+        
+        show_frame(self.mainFrame)
 
-        self.clear_screen()
-
-        width, height =  getPerspectiveSize()
-
-        xlim = (0, width)
-        ylim = (0, height)
-        zlim = (0, height)
-
-
-        plotInsectRouteOnGraph(outputLocation, xlim, ylim, zlim)
     
     def loadImageOnUiFromCv2(self, imageCv):
         image = Image.fromarray(imageCv)
@@ -140,17 +132,3 @@ class PerspectiveUi:
     def clear_screen(self):
         for widget in self.root.winfo_children():
             widget.destroy()
-
-def show_ui():
-    topVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
-    sideVideoPath = "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
-    
-    root = tk.Tk()
-    screen = PerspectiveUi(root, topVideoPath, sideVideoPath)
-
-    return screen
-
-def run_loop(screen):
-    screen.root.mainloop()
-
-

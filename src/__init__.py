@@ -1,7 +1,6 @@
 from VelocityAnalizer.LocalVelocityAnalizer import localVelocityAnalizer
-from imageAnalizer.frameAnalizer import get_frame_params
-from Ui.PerspectiveUi import run_loop, show_ui
-from utils.jsonUtils import exportDataToFile, importDataFromFile
+from interface.MainInterface import show_main_ui, run_loop
+from utils.jsonUtils import importDataFromFile
 
 import threading
 
@@ -31,10 +30,6 @@ def run_background_tasks(screen):
 
 if __name__ == "__main__":
     
-    screen = show_ui()
-    run_background_tasks(screen)
+    screen = show_main_ui()
+    #run_background_tasks(screen)
     run_loop(screen)
-
-
-
-

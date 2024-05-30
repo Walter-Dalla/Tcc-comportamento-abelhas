@@ -1,10 +1,82 @@
 {
-    "configura\u00e7\u00e3o 1 teste": {
+    "teste 1": {
         "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi",
-        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi"
+        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi",
+        "framePerspectivePointsTop": [
+            [
+                21,
+                111
+            ],
+            [
+                444,
+                111
+            ],
+            [
+                27,
+                741
+            ],
+            [
+                472,
+                718
+            ]
+        ],
+        "framePerspectivePointsSide": [
+            [
+                22,
+                110
+            ],
+            [
+                444,
+                111
+            ],
+            [
+                29,
+                740
+            ],
+            [
+                468,
+                714
+            ]
+        ]
     },
-    "teste gbec": {
-        "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/cima-v4.mp4",
-        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/Frame.mp4"
+    "teste warpped": {
+        "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi",
+        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect.avi",
+        "framePerspectivePointsTop": [
+            [
+                25,
+                112
+            ],
+            [
+                442,
+                113
+            ],
+            [
+                39,
+                727
+            ],
+            [
+                459,
+                711
+            ]
+        ],
+        "framePerspectivePointsSide": [
+            [
+                43,
+                129
+            ],
+            [
+                227,
+                124
+            ],
+            [
+                253,
+                715
+            ],
+            [
+                426,
+                703
+            ]
+        ]
     }
 }

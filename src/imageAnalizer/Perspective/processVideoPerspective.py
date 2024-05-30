@@ -5,7 +5,7 @@ from imageAnalizer.Perspective.perspective import getPerspectiveSize, perspectiv
 from utils.videoUtils import openVideo
 
 
-def process_video(inputVideoPath, tempName):
+def process_video(inputVideoPath, tempName, framePoints):
 
     success, originalVideo = openVideo(inputVideoPath)
     if not success:
@@ -15,7 +15,7 @@ def process_video(inputVideoPath, tempName):
     
     fps =  int(originalVideo.get(cv2.CAP_PROP_FPS))
     fourcc =  int(cv2.VideoWriter().fourcc(*'mp4v') )
-    width, height = getPerspectiveSize()
+    width, height = getPerspectiveSize(framePoints)
 
     output_stream  = cv2.VideoWriter(tempPath, fourcc, fps, (width, height))
     while True:
@@ -23,7 +23,7 @@ def process_video(inputVideoPath, tempName):
         if not success:
             break
         
-        warppedFrame = perspective(frame)
+        warppedFrame = perspective(frame, framePoints)
         
         output_stream.write(warppedFrame)
     
