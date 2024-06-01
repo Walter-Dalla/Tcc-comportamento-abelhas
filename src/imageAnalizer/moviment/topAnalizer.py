@@ -37,7 +37,7 @@ def analyze_frame_top(video_top):
 
         data['route'].append({
             'x': insect_position_x,
-            'z': insect_position_z
+            'y': insect_position_z
         })
 
         if(treashold >= insect_position_x):

@@ -120,8 +120,6 @@ class PerspectiveUi:
         self.root.mainloop()
 
     def finishPerspective(self):
-        self.root.framePerspectivePoints = self.framePerspectivePoints
-        
         show_frame(self.mainFrame)
 
     

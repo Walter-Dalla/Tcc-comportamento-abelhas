@@ -13,6 +13,7 @@ def getInsectPositionFromFile(jsonFilePath):
     positionsForInsectOnFrame = []
     for i in range(frame_count):
         ponto = route[str(i)]
+        
         positionsForInsectOnFrame.append([ponto['x'], ponto['y'], ponto['z']])
     return pd.DataFrame(positionsForInsectOnFrame, columns=['x', 'y', 'z'])
 
@@ -30,7 +31,12 @@ def updateAnimation(frame, points, pointAnimationObj, lineAnimationObj):
 # Não há motivos para fazer essa limitação
 # Fiz porque acho estranho o comportamento do grafico 
 # Com elev e azim menor que 0 e maior que 89
+
+# az -180 até -90
+# ele 0 até 180
+
 def limitAngleAzimuthAndElevation(event):
+    
     ax = event.inaxes
     if ax and ax.name == '3d':
         elev = ax.elev
@@ -39,10 +45,10 @@ def limitAngleAzimuthAndElevation(event):
             ax.elev = 89
         elif elev < 0:
             ax.elev = 0
-        if azim > 89:
-            ax.azim = 89
-        elif azim < 0:
-            ax.azim = 0
+        if azim > -90:
+            ax.azim = -89
+        elif azim < -180:
+            ax.azim = -179
         fig.canvas.draw_idle()
 
 def plotInsectRouteOnGraph(jsonFilePath, xlim, ylim, zlim):
@@ -53,15 +59,22 @@ def plotInsectRouteOnGraph(jsonFilePath, xlim, ylim, zlim):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     
+    ax.set_title('Gráfico 3D do movimento do inceto')
+    
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)
     ax.set_zlim(zlim)
+    
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
     
     ax.set_box_aspect([1,1,1])
     
     pointAnimationObj, = ax.plot([], [], [], 'ko') # ko é o ponto
     
     lineAnimationObj, = ax.plot([], [], [], 'b-')  # 'b-' é a linha azul
+    
     
     ani = FuncAnimation(fig, updateAnimation, frames=len(positionsForInsectOnFrame), fargs=(positionsForInsectOnFrame, pointAnimationObj, lineAnimationObj), interval=100)
     

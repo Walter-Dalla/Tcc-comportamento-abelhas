@@ -25,10 +25,10 @@ def route(topVideoInput, sideVideoInput, outputLocation):
     data = {"route": {}, "frameCount": frameCount }
     
     for index in range(frameCount):
-        y = dataSide["route"][index]["y"]
+        z = dataSide["route"][index]["z"]
 
         x = dataTop["route"][index]["x"]
-        z = dataTop["route"][index]["z"]
+        y = dataTop["route"][index]["y"]
 
         data["route"][index] = {
             "x": x, 

@@ -111,8 +111,12 @@ class MainConfigurationInterface:
         route(top_video, side_video, outputLocation)
 
         width, depth =  getPerspectiveSize(framePoints=self.perspective_top_interface.framePerspectivePoints)
-        _, height =  getPerspectiveSize(framePoints=self.perspective_side_interface.framePerspectivePoints)
+        sla, height =  getPerspectiveSize(framePoints=self.perspective_side_interface.framePerspectivePoints)
 
+        print(self.root.top_video_path, self.perspective_top_interface.framePerspectivePoints)
+        print(self.root.side_video_path, self.perspective_side_interface.framePerspectivePoints)
+        print(width, depth, height, sla)
+    
         xlim = (0, width)
         ylim = (0, height)
         zlim = (0, depth)

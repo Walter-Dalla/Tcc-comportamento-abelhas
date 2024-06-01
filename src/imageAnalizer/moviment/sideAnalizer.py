@@ -33,7 +33,8 @@ def analyze_frame_side(video_top):
         insect_position_y = darkest_pixel_location[1]
 
         data['route'].append({
-            'y': insect_position_y
+            'z': insect_position_y,
+            'z2': darkest_pixel_location[0]
         })
 
         if(treashold >= insect_position_y):
