@@ -1,6 +1,6 @@
 import math
 
-def calculateSpeed(data):
+def speed_module(data):
     previusPoint = None
     
     fps = data["fps"]

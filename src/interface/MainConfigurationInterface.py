@@ -1,16 +1,15 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-import json
 
-from imageAnalizer.Perspective.perspective import getPerspectiveSize
-from imageAnalizer.Route.routeAnalizer import route
-from plot.plotRoute import plotInsectRouteOnGraph
-from imageAnalizer.Perspective.processVideoPerspective import process_video
+from src.imageAnalizer.Perspective.perspective import get_perspective_size
+from src.modules.borderModule import border_module
+from src.modules.routeAnalizer import route_module
+from src.plot.plotRoute import plot_insect_route_on_graph
+from src.imageAnalizer.Perspective.processVideoPerspective import process_video
 
-from imageAnalizer.GetData import getVideoData
-from analizerModules.speedAnalizer import calculateSpeed
-from analizerModules.borderAnalizerModule import borderAnalizer
-from utils.jsonUtils import exportDataToFile, importDataFromFile
+from src.imageAnalizer.GetData import get_video_data
+from src.modules.speedModule import speed_module
+from src.utils.jsonUtils import export_data_to_file, import_data_from_file
 
 class MainConfigurationInterface:
     def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface):
@@ -76,7 +75,7 @@ class MainConfigurationInterface:
         self.btn_config_side_edges.pack(pady=5)
     
     def load_configs(self):
-        return importDataFromFile(self.configsPath)
+        return import_data_from_file(self.configsPath)
     
     def load_selected_config(self, event):
         config_name = self.selected_config.get()
@@ -85,8 +84,8 @@ class MainConfigurationInterface:
             config = self.configs[config_name]
             self.root.top_video_path.set(config.get("top_video_path", ""))
             self.root.side_video_path.set(config.get("side_video_path", ""))
-            self.perspective_top_interface.framePerspectivePoints = (config.get("framePerspectivePointsTop", ""))
-            self.perspective_side_interface.framePerspectivePoints = (config.get("framePerspectivePointsSide", ""))
+            self.perspective_top_interface.frame_perspective_points = (config.get("frame_perspective_points_top", ""))
+            self.perspective_side_interface.frame_perspective_points = (config.get("frame_perspective_points_side", ""))
             
             self.width_box_cm.insert(0, config.get("width_box_cm", ""))
             self.height_box_cm.insert(0, config.get("height_box_cm", ""))
@@ -105,7 +104,7 @@ class MainConfigurationInterface:
     
     def save_config(self):
         config_name = self.selected_config.get()
-        if not isinstance(self.root.top_video_path.get(), str) or not isinstance(self.root.side_video_path.get(), str) or not isinstance(self.perspective_top_interface.framePerspectivePoints, list) or not isinstance(self.perspective_side_interface.framePerspectivePoints, list):
+        if not isinstance(self.root.top_video_path.get(), str) or not isinstance(self.root.side_video_path.get(), str) or not isinstance(self.perspective_top_interface.frame_perspective_points, list) or not isinstance(self.perspective_side_interface.frame_perspective_points, list):
             messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
                
         
@@ -117,32 +116,31 @@ class MainConfigurationInterface:
         self.configs[config_name] = {
             "top_video_path": self.root.top_video_path.get(),
             "side_video_path": self.root.side_video_path.get(),
-            "framePerspectivePointsTop": self.perspective_top_interface.framePerspectivePoints,
-            "framePerspectivePointsSide": self.perspective_side_interface.framePerspectivePoints,
+            "frame_perspective_points_top": self.perspective_top_interface.frame_perspective_points,
+            "frame_perspective_points_side": self.perspective_side_interface.frame_perspective_points,
             "width_box_cm": self.width_box_cm.get(),
             "height_box_cm": self.height_box_cm.get(),
             "depth_box_cm": self.depth_box_cm.get()
         }
+        export_data_to_file(self.configs, self.configsPath)
         
-        with open(self.configsPath, "w") as f:
-            json.dump(self.configs, f, indent=4)
         self.config_combobox.config(values=["Novo"] + list(self.configs.keys()))
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
     def Process(self):
         _, top_video, fps = process_video(
-            framePoints=self.perspective_top_interface.framePerspectivePoints,
-            inputVideoPath=self.root.top_video_path.get(),
-            tempName="top",
+            frame_points=self.perspective_top_interface.frame_perspective_points,
+            input_video_path=self.root.top_video_path.get(),
+            temp_name="top",
         )
         
         _, side_video, _ = process_video(
-            framePoints=self.perspective_side_interface.framePerspectivePoints,
-            inputVideoPath=self.root.side_video_path.get(), 
-            tempName="side",
+            frame_points=self.perspective_side_interface.frame_perspective_points,
+            input_video_path=self.root.side_video_path.get(), 
+            temp_name="side",
         )
         
-        fps, pixel_to_cm_ratio = getVideoData(
+        fps, pixel_to_cm_ratio = get_video_data(
             width_box_cm = float(self.width_box_cm.get()),
             height_box_cm = float(self.height_box_cm.get()),
             depth_box_cm = float(self.depth_box_cm.get()),
@@ -150,29 +148,30 @@ class MainConfigurationInterface:
             side_video = side_video
         )
         
-        outputLocation = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
-        print("pixel_to_cm_ratio", pixel_to_cm_ratio)
+        output_location = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
         
-        data = route(top_video, side_video, outputLocation)
+        data = route_module(top_video, side_video, output_location)
         data["width_box_cm"] = float(self.width_box_cm.get())
         data["height_box_cm"] = float(self.height_box_cm.get())
         data["depth_box_cm"] = float(self.depth_box_cm.get())
         data["pixel_to_cm_ratio"] = pixel_to_cm_ratio
         data["fps"] = fps
         
-        borderAnalizer(data)
-        calculateSpeed(data)
-        exportDataToFile(data, outputLocation)
+        border_module(data)
+        speed_module(data)
+        export_data_to_file(data, output_location)
         
-        width, depth =  getPerspectiveSize(framePoints=self.perspective_top_interface.framePerspectivePoints)
-        _, height =  getPerspectiveSize(framePoints=self.perspective_side_interface.framePerspectivePoints)
+        
+        
+        width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
+        _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
 
         xlim = (0, width)
         ylim = (0, height)
         zlim = (0, depth)
 
 
-        plotInsectRouteOnGraph(outputLocation, xlim, ylim, zlim)
+        plot_insect_route_on_graph(output_location, xlim, ylim, zlim)
         
 
 

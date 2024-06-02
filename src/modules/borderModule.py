@@ -1,4 +1,4 @@
-def borderAnalizer(data):
+def border_module(data):
     data["time_border_x"] = 0
     data["time_border_y"] = 0
     data["time_border_z"] = 0

@@ -1,6 +1,6 @@
 import cv2
 
-def openVideo(video_path):
+def open_video(video_path):
     video = cv2.VideoCapture(video_path)
     
     if not video.isOpened():

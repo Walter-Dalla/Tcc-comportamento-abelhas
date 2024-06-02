@@ -1,7 +1,7 @@
 import cv2
 from numpy import median
 
-def getVideoData(width_box_cm, height_box_cm, depth_box_cm, top_video, side_video):
+def get_video_data(width_box_cm, height_box_cm, depth_box_cm, top_video, side_video):
     
     fps_top =  int(top_video.get(cv2.CAP_PROP_FPS))
     height_top =  int(top_video.get(cv2.CAP_PROP_FRAME_HEIGHT))

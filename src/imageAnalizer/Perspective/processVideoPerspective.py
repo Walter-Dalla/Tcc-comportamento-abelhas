@@ -1,21 +1,20 @@
 
 import cv2
 
-from imageAnalizer.Perspective.perspective import getPerspectiveSize, perspective
-from utils.videoUtils import openVideo
+from src.imageAnalizer.Perspective.perspective import get_perspective_size, perspective
+from src.utils.videoUtils import open_video
 
+def process_video(input_video_path, temp_name, frame_points):
 
-def process_video(inputVideoPath, tempName, framePoints):
-
-    success, originalVideo = openVideo(inputVideoPath)
+    success, originalVideo = open_video(input_video_path)
     if not success:
         return
 
-    tempPath = 'C:/Projetos/Tcc-comportamento-abelhas/temp/'+tempName+'.mp4'
+    tempPath = 'C:/Projetos/Tcc-comportamento-abelhas/temp/'+temp_name+'.mp4'
     
     fps =  int(originalVideo.get(cv2.CAP_PROP_FPS))
     fourcc =  int(cv2.VideoWriter().fourcc(*'mp4v') )
-    width, height = getPerspectiveSize(framePoints)
+    width, height = get_perspective_size(frame_points)
 
     output_stream  = cv2.VideoWriter(tempPath, fourcc, fps, (width, height))
     while True:
@@ -23,13 +22,13 @@ def process_video(inputVideoPath, tempName, framePoints):
         if not success:
             break
         
-        warppedFrame = perspective(frame, framePoints)
+        warppedFrame = perspective(frame, frame_points)
         
         output_stream.write(warppedFrame)
     
     output_stream.release()
     originalVideo.release()
     
-    success, video = openVideo(tempPath)
+    success, video = open_video(tempPath)
     
     return success, video, fps

@@ -1,9 +1,9 @@
 import threading
 import tkinter as tk
 
-from interface.PerspectiveUi import PerspectiveUi
-from interface.MainConfigurationInterface import MainConfigurationInterface
-from utils.interfaceUtils import show_frame
+from src.interface.PerspectiveUi import PerspectiveUi
+from src.interface.MainConfigurationInterface import MainConfigurationInterface
+from src.utils.interfaceUtils import show_frame
 
 class MainInterface:
     def __init__(self, root):
@@ -18,13 +18,13 @@ class MainInterface:
         self.perspective_side_frame = tk.Frame(root)
         self.perspective_side_interface = PerspectiveUi(
             root=self.perspective_side_frame, 
-            mainFrame = self.perspective_main_frame
+            main_frame = self.perspective_main_frame
         )
         
         self.perspective_top_frame = tk.Frame(root)
         self.perspective_top_interface = PerspectiveUi(
             root=self.perspective_top_frame,
-            mainFrame = self.perspective_main_frame
+            main_frame = self.perspective_main_frame
         )
     
         self.perspective_main_interface = MainConfigurationInterface(

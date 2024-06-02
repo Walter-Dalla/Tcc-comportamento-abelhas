@@ -1,52 +1,51 @@
 import time
-import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
-from imageAnalizer.Perspective.perspective import fix_perspective, getFramePoints
-from utils.videoUtils import openVideo
-from utils.interfaceUtils import show_frame
+
+from src.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
+from src.utils.videoUtils import open_video
+from src.utils.interfaceUtils import show_frame
 
 class PerspectiveUi:
-    def __init__(self, root, mainFrame):
+    def __init__(self, root, main_frame):
         self.root = root
         self.next_frame = False
         self.state = "perspective"
-        self.mainFrame = mainFrame
-        self.framePerspectivePoints = []
+        self.main_frame = main_frame
+        self.frame_perspective_points = []
         
         self.show_ui()
 
     def startUp(self, videoPath):
         print("Iniciando analise moldura")
-        print(videoPath)
         self.videoPath = videoPath
-        _, video = openVideo(videoPath)
+        _, video = open_video(videoPath)
         
         success, frame = video.read()
         if not success:
             return
-        finishedPerspective = False
+        finished_perspective = False
 
-        self.loadImageOnUiFromCv2(frame)
+        self.load_image_on_ui_from_cv2(frame)
         
-        while not finishedPerspective:
-            finishedPerspective, perspective_frame = fix_perspective(frame, self.framePerspectivePoints)
+        while not finished_perspective:
+            finished_perspective, perspective_frame = fix_perspective(frame, self.frame_perspective_points)
             time.sleep(0.01)
             if perspective_frame is not 0:
-                self.loadImageOnUiFromCv2(perspective_frame)
+                self.load_image_on_ui_from_cv2(perspective_frame)
 
                 self.show_finish_perspective_btn()
         
         video.release()
 
-    def loadImageOnUiFromArray(self, image):
+    def load_image_on_ui_from_array(self, image):
         self.root_image = ImageTk.PhotoImage(image)
         self.image = image
 
         image_label = ttk.Label(self.root, image=self.root_image)
         image_label.grid(row=0, column=0, rowspan=400, padx=10, pady=10)
 
-        image_label.bind("<Button-1>", lambda event: getFramePoints(event, self.framePerspectivePoints))
+        image_label.bind("<Button-1>", lambda event: get_frame_points(event, self.frame_perspective_points))
         image_label.bind("<Motion>", self.on_motion)
         self.image_label = image_label
         
@@ -98,14 +97,14 @@ class PerspectiveUi:
         #self.root.title("Interface com Imagem e Botões")
 
         image = Image.new('RGB', (500, 500), (0, 0, 0))
-        self.loadImageOnUiFromArray(image)
+        self.load_image_on_ui_from_array(image)
 
         small_image = Image.new('RGB', (100, 100), (0, 0, 0))
         self.load_small_image_on_ui(small_image)
         
 
     def show_finish_perspective_btn(self):
-        button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=self.finishPerspective)
+        button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=self.finish_perspective)
         
         button.grid(row=6, column=1, padx=10, pady=10)
 
@@ -118,13 +117,13 @@ class PerspectiveUi:
     def run_loop(self):
         self.root.mainloop()
 
-    def finishPerspective(self):
-        show_frame(self.mainFrame)
+    def finish_perspective(self):
+        show_frame(self.main_frame)
 
     
-    def loadImageOnUiFromCv2(self, imageCv):
+    def load_image_on_ui_from_cv2(self, imageCv):
         image = Image.fromarray(imageCv)
-        self.loadImageOnUiFromArray(image)
+        self.load_image_on_ui_from_array(image)
 
     def clear_screen(self):
         for widget in self.root.winfo_children():

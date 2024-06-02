@@ -2,12 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from utils.jsonUtils import importDataFromFile
-
+from src.utils.jsonUtils import import_data_from_file
 
 def getInsectPositionFromFile(jsonFilePath):
-    data = importDataFromFile(jsonFilePath)
-    frame_count = data['frameCount']
+    data = import_data_from_file(jsonFilePath)
+    frame_count = data['frame_count']
     route = data['route']
     positionsForInsectOnFrame = []
     for i in range(frame_count):
@@ -50,7 +49,7 @@ def limitAngleAzimuthAndElevation(event):
             ax.azim = -179
         fig.canvas.draw_idle()
 
-def plotInsectRouteOnGraph(jsonFilePath, xlim, ylim, zlim):
+def plot_insect_route_on_graph(jsonFilePath, xlim, ylim, zlim):
     
     positionsForInsectOnFrame = getInsectPositionFromFile(jsonFilePath)
     
