@@ -37,7 +37,10 @@
                 461,
                 711
             ]
-        ]
+        ],
+        "width_box_cm": "42",
+        "height_box_cm": "29.7",
+        "depth_box_cm": "42"
     },
     "test 2": {
         "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_line.avi",
@@ -116,6 +119,86 @@
             [
                 468,
                 714
+            ]
+        ]
+    },
+    "circulo 2x": {
+        "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_circle.avi",
+        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_circle.avi",
+        "framePerspectivePointsTop": [
+            [
+                23,
+                112
+            ],
+            [
+                444,
+                115
+            ],
+            [
+                33,
+                733
+            ],
+            [
+                467,
+                709
+            ]
+        ],
+        "framePerspectivePointsSide": [
+            [
+                25,
+                117
+            ],
+            [
+                442,
+                121
+            ],
+            [
+                37,
+                732
+            ],
+            [
+                466,
+                711
+            ]
+        ]
+    },
+    "circulo - linha ": {
+        "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_circle.avi",
+        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_line.avi",
+        "framePerspectivePointsTop": [
+            [
+                24,
+                114
+            ],
+            [
+                440,
+                118
+            ],
+            [
+                32,
+                736
+            ],
+            [
+                464,
+                710
+            ]
+        ],
+        "framePerspectivePointsSide": [
+            [
+                31,
+                117
+            ],
+            [
+                435,
+                121
+            ],
+            [
+                33,
+                734
+            ],
+            [
+                464,
+                702
             ]
         ]
     }

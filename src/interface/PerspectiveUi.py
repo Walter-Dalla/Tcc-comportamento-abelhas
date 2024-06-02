@@ -3,8 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 from imageAnalizer.Perspective.perspective import fix_perspective, getFramePoints
-from imageAnalizer.Perspective.processVideoPerspective import process_video
-from imageAnalizer.videoHelper import OpenVideo
+from utils.videoUtils import openVideo
 from utils.interfaceUtils import show_frame
 
 class PerspectiveUi:
@@ -21,7 +20,7 @@ class PerspectiveUi:
         print("Iniciando analise moldura")
         print(videoPath)
         self.videoPath = videoPath
-        video = OpenVideo(videoPath)
+        _, video = openVideo(videoPath)
         
         success, frame = video.read()
         if not success:

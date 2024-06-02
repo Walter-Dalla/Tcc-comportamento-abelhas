@@ -36,4 +36,4 @@ def route(topVideoInput, sideVideoInput, outputLocation):
             "z": z,
         }
 
-    exportDataToFile(data, outputLocation)
+    return data

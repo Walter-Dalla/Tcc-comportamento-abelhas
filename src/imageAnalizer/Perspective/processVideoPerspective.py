@@ -30,4 +30,6 @@ def process_video(inputVideoPath, tempName, framePoints):
     output_stream.release()
     originalVideo.release()
     
-    return openVideo(tempPath)
+    success, video = openVideo(tempPath)
+    
+    return success, video, fps

@@ -5,8 +5,6 @@ from interface.PerspectiveUi import PerspectiveUi
 from interface.MainConfigurationInterface import MainConfigurationInterface
 from utils.interfaceUtils import show_frame
 
-#from Ui.PerspectiveUi import PerspectiveUi
-
 class MainInterface:
     def __init__(self, root):
         self.root = root
@@ -45,11 +43,11 @@ class MainInterface:
     
     def showFrameSide(self):
         show_frame(self.perspective_side_frame)
-        self.run_background_tasks(self.perspective_side_interface, self.perspective_main_frame.side_video_path)
+        self.run_background_tasks(self.perspective_side_interface, self.perspective_main_frame.side_video_path.get())
         
     def showFrameTop(self):
         show_frame(self.perspective_top_frame)
-        self.run_background_tasks(self.perspective_top_interface, self.perspective_main_frame.top_video_path)
+        self.run_background_tasks(self.perspective_top_interface, self.perspective_main_frame.top_video_path.get())
     
     def run_background_tasks(self, screen, videoPath):
         background_thread = threading.Thread(target=screen.startUp, args=[videoPath])
