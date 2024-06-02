@@ -1,7 +1,10 @@
 import math
 
-def calculateSpeed(data, toCentimetersRatio, framesPerSeccond):
+def calculateSpeed(data):
     previusPoint = None
+    
+    fps = data["fps"]
+    pixel_to_cm_ratio = float(data["pixel_to_cm_ratio"])
     
     distance = 0
     speed = []
@@ -14,11 +17,13 @@ def calculateSpeed(data, toCentimetersRatio, framesPerSeccond):
             previusPoint = point
             continue
         
-        distance += math.dist(previusPoint, point) * toCentimetersRatio/100
+        distance += math.dist(previusPoint, point) * pixel_to_cm_ratio/100
         
-        if(int(index) % framesPerSeccond == 0):
-            speed.append(distance/framesPerSeccond)
+        if(int(index) % fps == 0):
+            speed.append(distance/pixel_to_cm_ratio)
             distance = 0
+    
     data["speed"] = speed
+    
     return speed
 

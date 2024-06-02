@@ -21,26 +21,29 @@ def analyze_frame_side(video_top):
 
     while True:
          
+        frame = cv2.flip(frame, 0)
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         success, frame = video_top.read()
 
         if not success:
             break
 
+        #frame = cv2.rotate(frame, cv2.ROTATE_180)
 
         (darkest_pixel_value, maxVal, darkest_pixel_location, maxLoc) = cv2.minMaxLoc(gray_frame)
 
-        insect_position_y = darkest_pixel_location[1]
-
+        insect_position_y = darkest_pixel_location[0]
+        insect_position_z = darkest_pixel_location[1]
+        
         data['route'].append({
-            'z': insect_position_y,
-            'z2': darkest_pixel_location[0]
+            'y': insect_position_y,
+            'z': insect_position_z
         })
 
-        if(treashold >= insect_position_y):
+        if(treashold >= insect_position_z):
             time_on_border_north += 1
 
-        if(video_height - treashold <= insect_position_y):
+        if(video_height - treashold <= insect_position_z):
             time_on_border_south += 1
 
         frame_count += 1

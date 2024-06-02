@@ -8,7 +8,8 @@ from plot.plotRoute import plotInsectRouteOnGraph
 from imageAnalizer.Perspective.processVideoPerspective import process_video
 
 from imageAnalizer.GetData import getVideoData
-from speedAnalizer.speedAnalizer import calculateSpeed
+from analizerModules.speedAnalizer import calculateSpeed
+from analizerModules.borderAnalizerModule import borderAnalizer
 from utils.jsonUtils import exportDataToFile, importDataFromFile
 
 class MainConfigurationInterface:
@@ -122,6 +123,7 @@ class MainConfigurationInterface:
             "height_box_cm": self.height_box_cm.get(),
             "depth_box_cm": self.depth_box_cm.get()
         }
+        
         with open(self.configsPath, "w") as f:
             json.dump(self.configs, f, indent=4)
         self.config_combobox.config(values=["Novo"] + list(self.configs.keys()))
@@ -149,10 +151,17 @@ class MainConfigurationInterface:
         )
         
         outputLocation = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
+        print("pixel_to_cm_ratio", pixel_to_cm_ratio)
         
         data = route(top_video, side_video, outputLocation)
+        data["width_box_cm"] = float(self.width_box_cm.get())
+        data["height_box_cm"] = float(self.height_box_cm.get())
+        data["depth_box_cm"] = float(self.depth_box_cm.get())
+        data["pixel_to_cm_ratio"] = pixel_to_cm_ratio
+        data["fps"] = fps
         
-        calculateSpeed(data, pixel_to_cm_ratio, fps)
+        borderAnalizer(data)
+        calculateSpeed(data)
         exportDataToFile(data, outputLocation)
         
         width, depth =  getPerspectiveSize(framePoints=self.perspective_top_interface.framePerspectivePoints)

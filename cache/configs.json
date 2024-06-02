@@ -120,7 +120,10 @@
                 468,
                 714
             ]
-        ]
+        ],
+        "width_box_cm": "42",
+        "height_box_cm": "29.7",
+        "depth_box_cm": "42"
     },
     "circulo 2x": {
         "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_circle.avi",
@@ -160,7 +163,10 @@
                 466,
                 711
             ]
-        ]
+        ],
+        "width_box_cm": "42",
+        "height_box_cm": "29.7",
+        "depth_box_cm": "42"
     },
     "circulo - linha ": {
         "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_circle.avi",
@@ -201,5 +207,48 @@
                 702
             ]
         ]
+    },
+    "sqr - circle": {
+        "top_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/frame-with-incect_circle.avi",
+        "side_video_path": "C:/Projetos/Tcc-comportamento-abelhas/resource/square_side.avi",
+        "framePerspectivePointsTop": [
+            [
+                26,
+                114
+            ],
+            [
+                445,
+                116
+            ],
+            [
+                32,
+                740
+            ],
+            [
+                463,
+                715
+            ]
+        ],
+        "framePerspectivePointsSide": [
+            [
+                25,
+                113
+            ],
+            [
+                441,
+                112
+            ],
+            [
+                26,
+                741
+            ],
+            [
+                468,
+                714
+            ]
+        ],
+        "width_box_cm": "42",
+        "height_box_cm": "27.9",
+        "depth_box_cm": "42"
     }
 }

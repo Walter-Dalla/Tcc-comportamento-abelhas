@@ -1,8 +1,5 @@
-
-
 import cv2
 from numpy import median
-
 
 def getVideoData(width_box_cm, height_box_cm, depth_box_cm, top_video, side_video):
     

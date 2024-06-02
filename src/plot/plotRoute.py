@@ -35,7 +35,7 @@ def updateAnimation(frame, points, pointAnimationObj, lineAnimationObj):
 # ele 0 até 180
 
 def limitAngleAzimuthAndElevation(event):
-    
+    return
     ax = event.inaxes
     if ax and ax.name == '3d':
         elev = ax.elev
