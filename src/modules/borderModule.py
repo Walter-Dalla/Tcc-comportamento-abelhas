@@ -7,12 +7,14 @@ def border_module(data):
     for index in data["route"]:
         value = data["route"][index]
         
-        border_min_x = 10
-        border_max_x = 10
-        border_min_y = 10
-        border_max_y = 10
-        border_min_z = 10
-        border_max_z = 10
+        constante = 100
+        
+        border_min_x = constante
+        border_max_x = constante
+        border_min_y = constante
+        border_max_y = constante
+        border_min_z = constante
+        border_max_z = constante
         
         x = value['x']
         y = value['y']
@@ -31,11 +33,3 @@ def border_module(data):
             data["time_border_z"] += 1
         
         return data
-        
-        
-        
-        
-        
-        
-    
-    

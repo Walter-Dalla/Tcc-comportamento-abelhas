@@ -150,7 +150,7 @@ class MainConfigurationInterface:
         
         output_location = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
         
-        data = route_module(top_video, side_video, output_location)
+        data = route_module(top_video, side_video)
         data["width_box_cm"] = float(self.width_box_cm.get())
         data["height_box_cm"] = float(self.height_box_cm.get())
         data["depth_box_cm"] = float(self.depth_box_cm.get())
@@ -160,8 +160,6 @@ class MainConfigurationInterface:
         border_module(data)
         speed_module(data)
         export_data_to_file(data, output_location)
-        
-        
         
         width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
         _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
