@@ -1,14 +1,13 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
+from src.internalModules.call_external_modules import execute_module_calls
 from src.imageAnalizer.Perspective.perspective import get_perspective_size
-from src.modules.borderModule import border_module
-from src.modules.routeAnalizer import route_module
+from src.internalModules.routeAnalizer import route_module
 from src.plot.plotRoute import plot_insect_route_on_graph
 from src.imageAnalizer.Perspective.processVideoPerspective import process_video
 
 from src.imageAnalizer.GetData import get_video_data
-from src.modules.speedModule import speed_module
 from src.utils.jsonUtils import export_data_to_file, import_data_from_file
 
 class MainConfigurationInterface:
@@ -71,7 +70,10 @@ class MainConfigurationInterface:
         self.btn_save_config = tk.Button(root, text="Salvar configurações", command=self.save_config)
         self.btn_save_config.pack(pady=20)
         
-        self.btn_config_side_edges = tk.Button(root, text="Processar", command=self.Process)
+        self.btn_config_side_edges = tk.Button(root, text="Processar video", command=self.process_video)
+        self.btn_config_side_edges.pack(pady=5)
+        
+        self.btn_config_side_edges = tk.Button(root, text="Processar dados", command=self.process_output_data)
         self.btn_config_side_edges.pack(pady=5)
     
     def load_configs(self):
@@ -127,7 +129,7 @@ class MainConfigurationInterface:
         self.config_combobox.config(values=["Novo"] + list(self.configs.keys()))
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
-    def Process(self):
+    def process_video(self):
         _, top_video, fps = process_video(
             frame_points=self.perspective_top_interface.frame_perspective_points,
             input_video_path=self.root.top_video_path.get(),
@@ -148,8 +150,6 @@ class MainConfigurationInterface:
             side_video = side_video
         )
         
-        output_location = "C:/Projetos/Tcc-comportamento-abelhas/output/output_data.json"
-        
         data = route_module(top_video, side_video)
         data["width_box_cm"] = float(self.width_box_cm.get())
         data["height_box_cm"] = float(self.height_box_cm.get())
@@ -157,8 +157,15 @@ class MainConfigurationInterface:
         data["pixel_to_cm_ratio"] = pixel_to_cm_ratio
         data["fps"] = fps
         
-        border_module(data)
-        speed_module(data)
+        output_location = "C:/Projetos/Tcc-comportamento-abelhas/cache/outputs/"+self.selected_config.get()+".json"
+        export_data_to_file(data, output_location)
+    
+    def process_output_data(self):
+        output_location = "C:/Projetos/Tcc-comportamento-abelhas/cache/outputs/"+self.selected_config.get()+".json"
+        
+        data = import_data_from_file(output_location)
+        
+        execute_module_calls(data)
         export_data_to_file(data, output_location)
         
         width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)

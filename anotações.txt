@@ -11,3 +11,13 @@ Analise da velocidade por tempo
 Se der tempo:
 Fazer curva
 Contar multiplas instancias (coloridas)
+
+
+
+
+Problemas:
+
+
+Devo focar a monografia no problema a ser resolvido ou em apresentar o projeto como uma ferramenta?
+-> Como exibir os dados?
+-velocidade: definir a velocidade media dentro um periodo calculando a velocidade entre dois pontos

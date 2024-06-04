@@ -1,7 +1,7 @@
 import concurrent.futures
 
-from src.modules.routeModuleAddons.sideAnalizer import analyze_frame_side
-from src.modules.routeModuleAddons.topAnalizer import analyze_frame_top
+from src.internalModules.routeModuleAddons.sideAnalizer import analyze_frame_side
+from src.internalModules.routeModuleAddons.topAnalizer import analyze_frame_top
 
 
 def route_module(top_video_input, side_video_input):
