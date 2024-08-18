@@ -11,15 +11,26 @@ from src.imageAnalizer.GetData import get_video_data
 from src.utils.jsonUtils import export_data_to_file, import_data_from_file
 
 class MainConfigurationInterface:
-    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface):
+    def __init__(
+        self,
+        root, 
+        
+        show_top_frame,
+        show_side_frame,
+        show_border_frame,
+         
+        border_interface,
+        perspective_top_interface,
+        perspective_side_interface, 
+    ):
 
-        self.perspective_top_interface = perspective_top_interface
         self.perspective_side_interface = perspective_side_interface
+        self.perspective_top_interface = perspective_top_interface
+        self.show_border_frame = show_border_frame
 
         self.configsPath = "cache/configs.json"
 
         self.root = root
-        #self.root.title("Configuração de Vídeo")
         
         self.configs = self.load_configs()
         self.selected_config = tk.StringVar(value="Novo")
@@ -39,14 +50,17 @@ class MainConfigurationInterface:
         self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
         self.btn_select_top_video.pack(pady=5)
         
-        self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (topo)", command=showTopFrame)
+        self.btn_config_top_edges = tk.Button(root, text="Configurar perspectiva (topo)", command=show_top_frame)
         self.btn_config_top_edges.pack(pady=5)
         
         self.btn_select_side_video = tk.Button(root, text="Selecione o local do arquivo de video lado", command=self.select_side_video)
         self.btn_select_side_video.pack(pady=5)
         
-        self.btn_config_side_edges = tk.Button(root, text="Configurar bordas (lado)", command=showSideFrame)
+        self.btn_config_side_edges = tk.Button(root, text="Configurar perspectiva (lado)", command=show_side_frame)
         self.btn_config_side_edges.pack(pady=5)
+        
+        self.btn_config_top_edges = tk.Button(root, text="Configurar bordas", command=show_border_frame)
+        self.btn_config_top_edges.pack(pady=5)
         
         self.label_height = tk.Label(root, text="Altura (cm)")
         self.label_height.pack(pady=5)

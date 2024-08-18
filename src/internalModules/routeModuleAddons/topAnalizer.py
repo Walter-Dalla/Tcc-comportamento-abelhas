@@ -52,6 +52,10 @@ def analyze_frame_top(video_top):
             time_on_border_south += 1
 
         frame_count += 1
+             
+            
+        
+        
 
     data['time_on_border_north'] = time_on_border_north
     data['time_on_border_south'] = time_on_border_south

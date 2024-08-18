@@ -6,16 +6,16 @@ Objetivo
 -> Velocidade
 -> Aceleração (positiva ou negativa)
 -> Direção
--> Orientação do inceto
+-> Orientação do inseto
 -> Deteção de curvas fechadas
--> Recriar o movimento do inceto em um ambiente 3D
--> Detectar multiplos incetos ao mesmo tempo e distinguir individuos entre eles
+-> Recriar o movimento do inseto em um ambiente 3D
+-> Detectar multiplos insetos ao mesmo tempo e distinguir individuos entre eles
 -> Tempo de repouso no vidro
 
 Objetivos já alcansados na prova de conceito:
 -> Posição (x, y)
 -> "Tempo" de repouso no vidro
--> Extração da rota do inceto
+-> Extração da rota do inseto
 
 
 Problemas já identificados:
@@ -28,21 +28,21 @@ Video é somente um mokup para um teste de conseito
 
 Roadmap de melhorias:
 
-1. Identificação do inceto
+1. Identificação do inseto
 -> Meio da media pixels escuros na imagem
 -> Introdução da perspectiva 3D do eixo da altura
 -> Calculos de px -> cm
 -> Calculo de frame -> tempo (s)
--> Crop da imagem ao redor do inceto 
+-> Crop da imagem ao redor do inseto 
   L-> Analise de imagem para mais detalhes
--> Detectar multiplos incetos ao mesmo tempo e distinguir individuos entre eles
+-> Detectar multiplos insetos ao mesmo tempo e distinguir individuos entre eles
 
 2. Analise dos dados coletos para obter:
 -> Velocidade
 -> Aceleração (positiva ou negativa)
 -> Direção
--> Orientação do inceto
+-> Orientação do inseto
 -> Deteção de curvas fechadas
 
 3. Integrações:
--> Recriar o movimento do inceto em um ambiente 3D
+-> Recriar o movimento do inseto em um ambiente 3D

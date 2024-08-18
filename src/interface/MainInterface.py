@@ -1,6 +1,7 @@
 import threading
 import tkinter as tk
 
+from src.interface.BorderInterface import BorderInterface
 from src.interface.PerspectiveUi import PerspectiveUi
 from src.interface.MainConfigurationInterface import MainConfigurationInterface
 from src.utils.interfaceUtils import show_frame
@@ -17,40 +18,54 @@ class MainInterface:
         
         self.perspective_side_frame = tk.Frame(root)
         self.perspective_side_interface = PerspectiveUi(
+            main_frame = self.perspective_main_frame,
             root=self.perspective_side_frame, 
-            main_frame = self.perspective_main_frame
         )
         
         self.perspective_top_frame = tk.Frame(root)
         self.perspective_top_interface = PerspectiveUi(
+            main_frame = self.perspective_main_frame,
             root=self.perspective_top_frame,
-            main_frame = self.perspective_main_frame
+        )
+        
+        self.border_interface_frame = tk.Frame(root)
+        self.border_interface = BorderInterface(
+            main_frame = self.perspective_main_frame,
+            root=self.border_interface_frame,
         )
     
         self.perspective_main_interface = MainConfigurationInterface(
             root=self.perspective_main_frame,
-            showSideFrame=self.showFrameSide,
-            showTopFrame= self.showFrameTop,
+            
+            show_border_frame= self.show_border_frame,
+            show_side_frame=self.show_frame_side,
+            show_top_frame= self.show_frame_top,
+            
+            perspective_side_interface=self.perspective_side_interface,
             perspective_top_interface=self.perspective_top_interface,
-            perspective_side_interface=self.perspective_side_interface
+            border_interface=self.border_interface,
         )
         
         show_frame(self.perspective_main_frame)
     
-    def showMainFrame(self):
+    def show_main_frame(self):
         print(self.perspective_main_frame)
         show_frame(self.perspective_main_frame)
     
-    def showFrameSide(self):
+    def show_frame_side(self):
         show_frame(self.perspective_side_frame)
-        self.run_background_tasks(self.perspective_side_interface, self.perspective_main_frame.side_video_path.get())
+        self.run_background_tasks(self.perspective_side_interface, [self.perspective_main_frame.side_video_path.get()])
         
-    def showFrameTop(self):
+    def show_border_frame(self):
+        show_frame(self.border_interface_frame)
+        self.run_background_tasks(self.border_interface, [self.perspective_main_frame.top_video_path.get(), self.perspective_main_frame.side_video_path.get()])
+        
+    def show_frame_top(self):
         show_frame(self.perspective_top_frame)
-        self.run_background_tasks(self.perspective_top_interface, self.perspective_main_frame.top_video_path.get())
+        self.run_background_tasks(self.perspective_top_interface, [self.perspective_main_frame.top_video_path.get()])
     
-    def run_background_tasks(self, screen, videoPath):
-        background_thread = threading.Thread(target=screen.startUp, args=[videoPath])
+    def run_background_tasks(self, screen, args):
+        background_thread = threading.Thread(target=screen.start_up, args=args)
         background_thread.daemon = True
         background_thread.start()
     

@@ -57,7 +57,7 @@ def plot_insect_route_on_graph(jsonFilePath, xlim, ylim, zlim):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     
-    ax.set_title('Gráfico 3D do movimento do inceto')
+    ax.set_title('Gráfico 3D do movimento do inseto')
     
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)

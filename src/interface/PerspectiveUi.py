@@ -9,17 +9,15 @@ from src.utils.interfaceUtils import show_frame
 class PerspectiveUi:
     def __init__(self, root, main_frame):
         self.root = root
-        self.next_frame = False
-        self.state = "perspective"
         self.main_frame = main_frame
         self.frame_perspective_points = []
         
         self.show_ui()
 
-    def startUp(self, videoPath):
+    def start_up(self, video_path):
         print("Iniciando analise moldura")
-        self.videoPath = videoPath
-        _, video = open_video(videoPath)
+        self.video_path = video_path
+        _, video = open_video(video_path)
         
         success, frame = video.read()
         if not success:
@@ -94,8 +92,6 @@ class PerspectiveUi:
         self.small_image_label.image = cropped_img_tk
 
     def show_ui(self):
-        #self.root.title("Interface com Imagem e Botões")
-
         image = Image.new('RGB', (500, 500), (0, 0, 0))
         self.load_image_on_ui_from_array(image)
 
@@ -107,13 +103,7 @@ class PerspectiveUi:
         button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=self.finish_perspective)
         
         button.grid(row=6, column=1, padx=10, pady=10)
-
-    def get_next_frame(self):
-        return self.next_frame
-    
-    def set_next_frame(self, value):
-        self.next_frame = value
-
+        
     def run_loop(self):
         self.root.mainloop()
 
