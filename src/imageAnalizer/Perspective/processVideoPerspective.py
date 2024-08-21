@@ -1,34 +1,37 @@
-
 import cv2
+import numpy as np
 
-from src.imageAnalizer.Perspective.perspective import get_perspective_size, perspective
+from src.imageAnalizer.Perspective.perspective import perspective
 from src.utils.videoUtils import open_video
 
-def process_video(input_video_path, temp_name, frame_points):
-
+def process_video(frame_points, input_video_path):
     success, originalVideo = open_video(input_video_path)
     if not success:
-        return
+        return False, None, None
 
-    tempPath = 'C:/Projetos/Tcc-comportamento-abelhas/temp/'+temp_name+'.mp4'
-    
     fps =  int(originalVideo.get(cv2.CAP_PROP_FPS))
-    fourcc =  int(cv2.VideoWriter().fourcc(*'mp4v') )
-    width, height = get_perspective_size(frame_points)
-
-    output_stream  = cv2.VideoWriter(tempPath, fourcc, fps, (width, height))
+    
+    warppedFrames = []
     while True:
         success, frame = originalVideo.read()
         if not success:
             break
         
         warppedFrame = perspective(frame, frame_points)
-        
-        output_stream.write(warppedFrame)
+        warppedFrames.append(warppedFrame)
     
-    output_stream.release()
     originalVideo.release()
     
-    success, video = open_video(tempPath)
+    median = np.median(warppedFrames, axis=0).astype(np.uint8)
+    median = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
     
-    return success, video, fps
+    frames = []
+    for frame in warppedFrames:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        dif_frame = cv2.absdiff(median, frame)
+        threshold, diff = cv2.threshold(
+            dif_frame, 100, 255, cv2.THRESH_BINARY)
+        
+        frames.append(diff)
+    
+    return success, frames, fps

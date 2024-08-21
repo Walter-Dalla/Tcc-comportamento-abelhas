@@ -4,11 +4,11 @@ from src.internalModules.routeModuleAddons.sideAnalizer import analyze_frame_sid
 from src.internalModules.routeModuleAddons.topAnalizer import analyze_frame_top
 
 
-def route_module(top_video_input, side_video_input):
+def route_module(top_frames, side_frames):
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_top = executor.submit(analyze_frame_top, top_video_input)
-        future_side = executor.submit(analyze_frame_side, side_video_input)
+        future_top = executor.submit(analyze_frame_top, top_frames)
+        future_side = executor.submit(analyze_frame_side, side_frames)
 
         data_top = future_top.result()
         data_side = future_side.result()

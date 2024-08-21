@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import concurrent.futures
 
 from src.internalModules.call_external_modules import execute_module_calls
 from src.imageAnalizer.Perspective.perspective import get_perspective_size
@@ -130,27 +131,23 @@ class MainConfigurationInterface:
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
     def process_video(self):
-        _, top_video, fps = process_video(
-            frame_points=self.perspective_top_interface.frame_perspective_points,
-            input_video_path=self.root.top_video_path.get(),
-            temp_name="top",
-        )
         
-        _, side_video, _ = process_video(
-            frame_points=self.perspective_side_interface.frame_perspective_points,
-            input_video_path=self.root.side_video_path.get(), 
-            temp_name="side",
-        )
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(),)
+            future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get())
+
+            success, top_frames, fps = future_top.result()
+            success, side_frames, fps = future_side.result()
         
-        fps, pixel_to_cm_ratio = get_video_data(
+        pixel_to_cm_ratio = get_video_data(
             width_box_cm = float(self.width_box_cm.get()),
             height_box_cm = float(self.height_box_cm.get()),
             depth_box_cm = float(self.depth_box_cm.get()),
-            top_video= top_video,
-            side_video = side_video
+            top_frames = top_frames,
+            side_frames = side_frames
         )
         
-        data = route_module(top_video, side_video)
+        data = route_module(top_frames, side_frames)
         data["width_box_cm"] = float(self.width_box_cm.get())
         data["height_box_cm"] = float(self.height_box_cm.get())
         data["depth_box_cm"] = float(self.depth_box_cm.get())
