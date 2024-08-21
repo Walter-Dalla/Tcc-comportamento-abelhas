@@ -19,10 +19,10 @@ def analyze_frame_top(top_frames):
         frame = cv2.flip(frame, 0)
         gray_frame = frame
         
-        (darkest_pixel_value, maxVal, darkest_pixel_location, maxLoc) = cv2.minMaxLoc(gray_frame)
+        (darkest_pixel_value, maxVal, darkest_pixel_location, brigthest_pixel_location) = cv2.minMaxLoc(gray_frame)
 
-        insect_position_x = darkest_pixel_location[0]
-        insect_position_y = darkest_pixel_location[1]
+        insect_position_x = brigthest_pixel_location[0]
+        insect_position_y = brigthest_pixel_location[1]
 
         data['route'].append({
             'x': insect_position_x,

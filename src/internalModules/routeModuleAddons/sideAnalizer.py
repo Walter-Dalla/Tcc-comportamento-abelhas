@@ -22,10 +22,10 @@ def analyze_frame_side(side_video):
 
         #frame = cv2.rotate(frame, cv2.ROTATE_180)
 
-        (darkest_pixel_value, maxVal, darkest_pixel_location, maxLoc) = cv2.minMaxLoc(gray_frame)
+        (darkest_pixel_value, maxVal, darkest_pixel_location, brigthest_pixel_location) = cv2.minMaxLoc(gray_frame)
 
-        insect_position_y = darkest_pixel_location[0]
-        insect_position_z = darkest_pixel_location[1]
+        insect_position_y = brigthest_pixel_location[0]
+        insect_position_z = brigthest_pixel_location[1]
         
         data['route'].append({
             'y': insect_position_y,

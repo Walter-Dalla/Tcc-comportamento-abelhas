@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import concurrent.futures
 
+import cv2
+import numpy as np
+
 from src.internalModules.call_external_modules import execute_module_calls
 from src.imageAnalizer.Perspective.perspective import get_perspective_size
 from src.internalModules.routeAnalizer import route_module
@@ -133,11 +136,15 @@ class MainConfigurationInterface:
     def process_video(self):
         
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(),)
-            future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get())
+            future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(), False)
+            future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get(), True)
 
-            success, top_frames, fps = future_top.result()
-            success, side_frames, fps = future_side.result()
+            top_success, top_frames, fps, top_data, top_raw_warpped_frames = future_top.result()
+            side_success, side_frames, fps, side_data, side_raw_warpped_frames = future_side.result()
+        
+        if(top_success or side_success ):
+            print("Erro ocorreu durante o proces video")
+            return
         
         pixel_to_cm_ratio = get_video_data(
             width_box_cm = float(self.width_box_cm.get()),
@@ -146,8 +153,17 @@ class MainConfigurationInterface:
             top_frames = top_frames,
             side_frames = side_frames
         )
+
+        debug = True
+        if debug:
+            count = len(side_frames)
+            for frame_index in range(count):
+                cv2.imshow('top_frames', side_frames[frame_index])
+                cv2.imshow('top_raw_warpped_frames', side_raw_warpped_frames[frame_index])
+                
+                cv2.waitKey(0)
         
-        data = route_module(top_frames, side_frames)
+        data = route_module(top_data, side_data)
         data["width_box_cm"] = float(self.width_box_cm.get())
         data["height_box_cm"] = float(self.height_box_cm.get())
         data["depth_box_cm"] = float(self.depth_box_cm.get())

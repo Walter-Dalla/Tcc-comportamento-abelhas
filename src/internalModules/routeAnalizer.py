@@ -3,18 +3,9 @@ import concurrent.futures
 from src.internalModules.routeModuleAddons.sideAnalizer import analyze_frame_side
 from src.internalModules.routeModuleAddons.topAnalizer import analyze_frame_top
 
-
-def route_module(top_frames, side_frames):
-
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_top = executor.submit(analyze_frame_top, top_frames)
-        future_side = executor.submit(analyze_frame_side, side_frames)
-
-        data_top = future_top.result()
-        data_side = future_side.result()
-
-    top_route_count = len(data_top["route"])
-    side_route_count = len(data_side["route"])
+def route_module(top_data, side_data):
+    top_route_count = len(top_data["route"])
+    side_route_count = len(side_data["route"])
     
     max_frame_count = side_route_count
     
@@ -30,11 +21,11 @@ def route_module(top_frames, side_frames):
     for index in range(max_frame_count):
         
         if(index < top_route_count):
-            x = data_top["route"][index]["x"]
-            y = data_top["route"][index]["y"]
+            x = top_data["route"][index]["x"]
+            y = top_data["route"][index]["y"]
 
         if(index < side_route_count):
-            z = data_side["route"][index]["z"]
+            z = side_data["route"][index]["z"]
 
         data["route"][index] = {
             "x": x, 

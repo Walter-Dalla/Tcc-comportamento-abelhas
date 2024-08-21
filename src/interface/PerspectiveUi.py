@@ -105,8 +105,10 @@ class PerspectiveUi:
 
     def show_finish_perspective_btn(self):
         button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=self.finish_perspective)
-        
         button.grid(row=6, column=1, padx=10, pady=10)
+        
+        button = ttk.Button(self.root, text=f"Resetar perspectiva", command=self.reset_perspective)
+        button.grid(row=7, column=1, padx=10, pady=10)
 
     def get_next_frame(self):
         return self.next_frame
@@ -119,7 +121,11 @@ class PerspectiveUi:
 
     def finish_perspective(self):
         show_frame(self.main_frame)
-
+        
+    def reset_perspective(self):
+        self.frame_perspective_points = []
+        self.startUp(self.videoPath)
+        
     
     def load_image_on_ui_from_cv2(self, imageCv):
         image = Image.fromarray(imageCv)
