@@ -139,10 +139,10 @@ class MainConfigurationInterface:
             future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(), False)
             future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get(), True)
 
-            top_success, top_frames, fps, top_data, top_raw_warpped_frames = future_top.result()
             side_success, side_frames, fps, side_data, side_raw_warpped_frames = future_side.result()
+            top_success, top_frames, fps, top_data, top_raw_warpped_frames = future_top.result()
         
-        if(top_success or side_success ):
+        if(not (top_success and side_success)):
             print("Erro ocorreu durante o proces video")
             return
         

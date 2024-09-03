@@ -16,6 +16,8 @@ def analyze_frame_top(top_frames):
     darkest_pixel_location = (0, 0)
 
     for frame in top_frames:
+        
+        
         frame = cv2.flip(frame, 0)
         gray_frame = frame
         

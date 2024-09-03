@@ -1,3 +1,4 @@
+import threading
 import time
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
@@ -124,7 +125,10 @@ class PerspectiveUi:
         
     def reset_perspective(self):
         self.frame_perspective_points = []
-        self.startUp(self.videoPath)
+    
+        background_thread = threading.Thread(target=self.startUp, args=[self.videoPath])
+        background_thread.daemon = True
+        background_thread.start()
         
     
     def load_image_on_ui_from_cv2(self, imageCv):
