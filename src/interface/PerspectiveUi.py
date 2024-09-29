@@ -40,6 +40,11 @@ class PerspectiveUi:
         video.release()
 
     def load_image_on_ui_from_array(self, image):
+        
+        image_height, image_width = image.size
+        
+        image.thumbnail((image_height/2, image_width/2), Image.Resampling.LANCZOS)
+        
         self.root_image = ImageTk.PhotoImage(image)
         self.image = image
 

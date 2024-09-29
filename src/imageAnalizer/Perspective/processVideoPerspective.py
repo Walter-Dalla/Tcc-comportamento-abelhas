@@ -29,7 +29,7 @@ def process_video(frame_points, input_video_path, is_side):
     
     selected_random_frames = []
     
-    frame_block = 50
+    frame_block = 500
     
     for index in range(0, len(raw_warpped_frames), frame_block):
         selected_random_frames.append(raw_warpped_frames[index])

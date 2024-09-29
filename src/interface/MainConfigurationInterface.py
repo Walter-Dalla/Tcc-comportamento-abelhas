@@ -134,7 +134,6 @@ class MainConfigurationInterface:
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
     def process_video(self):
-        
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(), False)
             future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get(), True)
@@ -154,7 +153,7 @@ class MainConfigurationInterface:
             side_frames = side_frames
         )
 
-        debug = True
+        debug = False
         if debug:
             count = len(side_frames)
             for frame_index in range(count):
