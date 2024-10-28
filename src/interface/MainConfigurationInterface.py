@@ -5,6 +5,7 @@ import concurrent.futures
 import cv2
 import numpy as np
 
+from src.export import pdfFactory
 from src.internalModules.call_external_modules import execute_module_calls
 from src.imageAnalizer.Perspective.perspective import get_perspective_size
 from src.internalModules.routeAnalizer import route_module
@@ -80,6 +81,9 @@ class MainConfigurationInterface:
         self.btn_config_side_edges = tk.Button(root, text="Processar dados", command=self.process_output_data)
         self.btn_config_side_edges.pack(pady=5)
     
+        self.btn_config_side_edges = tk.Button(root, text="Exportar para PDF", command=self.process_pdf)
+        self.btn_config_side_edges.pack(pady=5)
+        
     def load_configs(self):
         return import_data_from_file(self.configsPath)
     
@@ -190,5 +194,10 @@ class MainConfigurationInterface:
 
         plot_insect_route_on_graph(output_location, xlim, ylim, zlim)
         
-
+    def process_pdf(self):
+        title = self.selected_config.get()
+        output_location = "C:/Projetos/Tcc-comportamento-abelhas/cache/outputs/"+title
+        data = import_data_from_file(output_location+ ".json")
+        
+        pdfFactory.GeneratePdf(data, output_location+".pdf", title)
 
