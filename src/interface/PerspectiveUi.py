@@ -19,8 +19,14 @@ class PerspectiveUi:
 
     def startUp(self, videoPath):
         print("Iniciando analise moldura")
+        if(videoPath == ""):
+            return
+        
         self.videoPath = videoPath
-        _, video = open_video(videoPath)
+        
+        success, video = open_video(videoPath)
+        if(not success):
+            return
         
         success, frame = video.read()
         if not success:
@@ -32,7 +38,7 @@ class PerspectiveUi:
         while not finished_perspective:
             finished_perspective, perspective_frame = fix_perspective(frame, self.frame_perspective_points)
             time.sleep(0.01)
-            if perspective_frame is not 0:
+            if perspective_frame != 0:
                 self.load_image_on_ui_from_cv2(perspective_frame)
 
                 self.show_finish_perspective_btn()
@@ -107,6 +113,9 @@ class PerspectiveUi:
 
         small_image = Image.new('RGB', (100, 100), (0, 0, 0))
         self.load_small_image_on_ui(small_image)
+        
+        button = ttk.Button(self.root, text=f"Voltar", command=self.finish_perspective)
+        button.grid(row=8, column=1, padx=10, pady=10)
         
 
     def show_finish_perspective_btn(self):

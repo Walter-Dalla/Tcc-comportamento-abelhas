@@ -16,25 +16,26 @@ from src.imageAnalizer.GetData import get_video_data
 from src.utils.jsonUtils import export_data_to_file, import_data_from_file
 
 class MainConfigurationInterface:
+    new_analises_profile = "Novo perfil de analise"
+    
     def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface):
-
         self.perspective_top_interface = perspective_top_interface
         self.perspective_side_interface = perspective_side_interface
-
+        
         self.configsPath = "cache/configs.json"
 
         self.root = root
         #self.root.title("Configuração de Vídeo")
         
         self.configs = self.load_configs()
-        self.selected_config = tk.StringVar(value="Novo")
+        self.selected_config = tk.StringVar(value=self.new_analises_profile)
         
         # Seleção de configurações
-        self.label_config = tk.Label(root, text="Selecione configurações")
-        self.label_config.pack(pady=5)
+        self.label_config = tk.Label(root, text="Selecione o perfil de analise")
+        self.label_config.pack(pady=5, anchor="center")
         
-        self.config_combobox = ttk.Combobox(root, textvariable=self.selected_config, values=["Novo"] + list(self.configs.keys()))
-        self.config_combobox.pack(pady=5)
+        self.config_combobox = ttk.Combobox(root, textvariable=self.selected_config, values=[self.new_analises_profile] + list(self.configs.keys()))
+        self.config_combobox.pack(pady=5, anchor="center")
         self.config_combobox.bind("<<ComboboxSelected>>", self.load_selected_config)
         
         # Seleção de arquivos de vídeo
@@ -42,64 +43,69 @@ class MainConfigurationInterface:
         self.root.side_video_path = tk.StringVar()
         
         self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
-        self.btn_select_top_video.pack(pady=5)
+        self.btn_select_top_video.pack(pady=5, anchor="center")
         
         self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (topo)", command=showTopFrame)
-        self.btn_config_top_edges.pack(pady=5)
+        self.btn_config_top_edges.pack(pady=5, anchor="center")
         
         self.btn_select_side_video = tk.Button(root, text="Selecione o local do arquivo de video lado", command=self.select_side_video)
-        self.btn_select_side_video.pack(pady=5)
+        self.btn_select_side_video.pack(pady=5, anchor="center")
         
         self.btn_config_side_edges = tk.Button(root, text="Configurar bordas (lado)", command=showSideFrame)
-        self.btn_config_side_edges.pack(pady=5)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
         
         self.label_height = tk.Label(root, text="Altura (cm)")
-        self.label_height.pack(pady=5)
+        self.label_height.pack(pady=5, anchor="center")
         
         self.height_box_cm = tk.Entry(root)
-        self.height_box_cm.pack(pady=5)
+        self.height_box_cm.pack(pady=5, anchor="center")
         
         self.label_width = tk.Label(root, text="Largura (cm)")
-        self.label_width.pack(pady=5)
+        self.label_width.pack(pady=5, anchor="center")
         
         self.width_box_cm = tk.Entry(root)
-        self.width_box_cm.pack(pady=5)
+        self.width_box_cm.pack(pady=5, anchor="center")
         
         self.label_depth = tk.Label(root, text="Profundidade (cm)")
-        self.label_depth.pack(pady=5)
+        self.label_depth.pack(pady=5, anchor="center")
         
         self.depth_box_cm = tk.Entry(root)
-        self.depth_box_cm.pack(pady=5)
+        self.depth_box_cm.pack(pady=5, anchor="center")
         
         # Salvar configurações
         self.btn_save_config = tk.Button(root, text="Salvar configurações", command=self.save_config)
         self.btn_save_config.pack(pady=20)
         
-        self.btn_config_side_edges = tk.Button(root, text="Processar video", command=self.process_video)
-        self.btn_config_side_edges.pack(pady=5)
+        self.btn_config_side_edges = tk.Button(root, text="Processar video e executar modulos", command=self.process_video)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
         
-        self.btn_config_side_edges = tk.Button(root, text="Processar dados", command=self.process_output_data)
-        self.btn_config_side_edges.pack(pady=5)
+        self.btn_config_side_edges = tk.Button(root, text="Exibir grafico de rota", command=self.process_output_data)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
     
         self.btn_config_side_edges = tk.Button(root, text="Exportar para PDF", command=self.process_pdf)
-        self.btn_config_side_edges.pack(pady=5)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
         
     def load_configs(self):
         return import_data_from_file(self.configsPath)
     
     def load_selected_config(self, event):
         config_name = self.selected_config.get()
+        print(config_name)
         
-        if config_name != "Novo":
+        if config_name == self.new_analises_profile:
+            config = {}
+        else:
             config = self.configs[config_name]
-            self.root.top_video_path.set(config.get("top_video_path", ""))
-            self.root.side_video_path.set(config.get("side_video_path", ""))
-            self.perspective_top_interface.frame_perspective_points = (config.get("frame_perspective_points_top", ""))
-            self.perspective_side_interface.frame_perspective_points = (config.get("frame_perspective_points_side", ""))
             
-            self.width_box_cm.insert(0, config.get("width_box_cm", ""))
-            self.height_box_cm.insert(0, config.get("height_box_cm", ""))
-            self.depth_box_cm.insert(0, config.get("depth_box_cm", ""))
+        self.root.top_video_path.set(config.get("top_video_path", ""))
+        self.root.side_video_path.set(config.get("side_video_path", ""))
+        self.perspective_top_interface.frame_perspective_points = (config.get("frame_perspective_points_top", ""))
+        self.perspective_side_interface.frame_perspective_points = (config.get("frame_perspective_points_side", ""))
+        
+        self.width_box_cm.insert(0, config.get("width_box_cm", ""))
+        self.height_box_cm.insert(0, config.get("height_box_cm", ""))
+        self.depth_box_cm.insert(0, config.get("depth_box_cm", ""))
+        
             
     
     def select_top_video(self):
@@ -118,8 +124,8 @@ class MainConfigurationInterface:
             messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
                
         
-        if config_name == "Novo":
-            config_name = tk.simpledialog.askstring("Salvar configuração", "Digite o nome para a nova configuração:")
+        if config_name == self.new_analises_profile:
+            config_name = tk.simpledialog.askstring("Salvar o perfil de analise", "Digite o nome para o novo perfil de analise:")
             if not config_name:
                 return
             
@@ -134,7 +140,7 @@ class MainConfigurationInterface:
         }
         export_data_to_file(self.configs, self.configsPath)
         
-        self.config_combobox.config(values=["Novo"] + list(self.configs.keys()))
+        self.config_combobox.config(values=[self.new_analises_profile] + list(self.configs.keys()))
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
     def process_video(self):

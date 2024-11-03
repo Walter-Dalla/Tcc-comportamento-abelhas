@@ -8,10 +8,21 @@ from src.utils.interfaceUtils import show_frame
 class MainInterface:
     def __init__(self, root):
         self.root = root
-        root.title("Main Window")
-        root.geometry("1400x1300")
+        root.title("Ferramenta para a analise comportamental de insetos")
         root.side_video_path = ""
         root.top_video_path = ""
+        
+        window_width = 800  # Largura desejada da janela
+        window_height = 600  # Altura desejada da janela
+
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+
+        x_coordinate = int((screen_width / 2) - (window_width / 2))
+        y_coordinate = int((screen_height / 2) - (window_height / 2))
+
+        root.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
+        root.pack_propagate(False)
         
         self.perspective_main_frame = tk.Frame(root)
         
