@@ -2,6 +2,7 @@ import threading
 import time
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
+import cv2
 
 from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
 from src.utils.videoUtils import open_video
@@ -27,6 +28,8 @@ class PerspectiveUi:
         success, video = open_video(videoPath)
         if(not success):
             return
+        
+        self.video = video
         
         success, frame = video.read()
         if not success:
@@ -135,6 +138,15 @@ class PerspectiveUi:
         self.root.mainloop()
 
     def finish_perspective(self):
+        video_width = int(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        video_height = int(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
+        self.frame_perspective_points = [
+            [0, 0],
+            [video_width, 0],
+            [0, video_height],
+            [video_width, video_height]
+        ]
         show_frame(self.main_frame)
         
     def reset_perspective(self):

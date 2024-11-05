@@ -49,7 +49,6 @@ class MainInterface:
         show_frame(self.perspective_main_frame)
     
     def showMainFrame(self):
-        print(self.perspective_main_frame)
         show_frame(self.perspective_main_frame)
     
     def showFrameSide(self):
