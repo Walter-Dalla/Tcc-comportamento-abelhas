@@ -88,7 +88,6 @@ class MainConfigurationInterface:
     
     def load_selected_config(self, event):
         config_name = self.selected_config.get()
-        print(config_name)
         
         if config_name == self.new_analises_profile:
             config = {}
@@ -117,6 +116,9 @@ class MainConfigurationInterface:
             self.root.side_video_path.set(filepath)
     
     def save_config(self):
+        if(self.is_video_valid()):
+            return
+        
         config_name = self.selected_config.get()
         if not isinstance(self.root.top_video_path.get(), str) or not isinstance(self.root.side_video_path.get(), str) or not isinstance(self.perspective_top_interface.frame_perspective_points, list) or not isinstance(self.perspective_side_interface.frame_perspective_points, list):
             messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
@@ -141,7 +143,24 @@ class MainConfigurationInterface:
         self.config_combobox.config(values=[self.new_analises_profile] + list(self.configs.keys()))
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
+    def is_video_valid(self):
+        if(self.root.top_video_path.get() == "" or self.root.side_video_path.get() == ""):
+            messagebox.showerror("Erro!", f"Video não configurado.")
+            return True
+        
+        top_pespective_points_len = len(self.perspective_top_interface.frame_perspective_points)
+        side_pespective_points_len = len(self.perspective_side_interface.frame_perspective_points)
+        
+        if(top_pespective_points_len != side_pespective_points_len or side_pespective_points_len != 4 ):
+            messagebox.showerror("Erro!", f"Bordas não configuradas.")
+            return True
+        
+        return False
+
     def process_video(self):
+        if(self.is_video_valid()):
+            return
+        
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(), False)
             future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get(), True)

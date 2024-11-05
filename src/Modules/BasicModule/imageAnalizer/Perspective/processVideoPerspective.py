@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
+from src.Modules.BasicModule.sideAnalizer import analyze_frame_side
+from src.Modules.BasicModule.topAnalizer import analyze_frame_top
 from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import perspective
-from src.Modules.MetadataModule.sideAnalizer import analyze_frame_side
-from src.Modules.MetadataModule.topAnalizer import analyze_frame_top
 from src.utils.videoUtils import open_video
 
 def process_video(frame_points, input_video_path, is_side):
@@ -12,6 +12,18 @@ def process_video(frame_points, input_video_path, is_side):
         return False, None, None
 
     fps = int(originalVideo.get(cv2.CAP_PROP_FPS))
+    
+    
+    if(len(frame_points) != 4):
+        video_width = int(originalVideo.get(cv2.CAP_PROP_FRAME_WIDTH))
+        video_height = int(originalVideo.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
+        frame_points = [
+            [0, 0],
+            [video_width, 0],
+            [0, video_height],
+            [video_width, video_height]
+        ]
     
     raw_warpped_frames = []
     while True:

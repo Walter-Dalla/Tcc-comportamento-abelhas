@@ -8,7 +8,8 @@ def load_module(module_name, module_path):
     return module
 
 def execute_module_calls(data):
-    directory_path = "./modules"
+    directory_path = "./src/Modules/MetadataModule"
+    
     for filename in os.listdir(directory_path):
         if filename.endswith(".py"):
             module_name = filename[:-3]

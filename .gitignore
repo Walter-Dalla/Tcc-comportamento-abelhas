@@ -1,6 +1,8 @@
 # remove project
 temp
 resource
+cache/config.json
+cache/outputs
 cache
 
 #VS
