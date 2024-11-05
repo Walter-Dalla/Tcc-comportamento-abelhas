@@ -29,7 +29,11 @@ def get_perspective_size(frame_points):
 
 def get_frame_points(event, frame_points):
     x, y = event.x, event.y
+    
+    x = x*2
+    y = y*2
+    
     if len(frame_points) >= 4:
         return
     
-    frame_points.append((x, y))
+    frame_points.append((int(x), int(y)))

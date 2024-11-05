@@ -1,35 +1,39 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import concurrent.futures
 
-from src.internalModules.call_external_modules import execute_module_calls
-from src.imageAnalizer.Perspective.perspective import get_perspective_size
-from src.internalModules.routeAnalizer import route_module
-from src.plot.plotRoute import plot_insect_route_on_graph
-from src.imageAnalizer.Perspective.processVideoPerspective import process_video
+import cv2
 
-from src.imageAnalizer.GetData import get_video_data
+from src.Modules.BasicModule.imageAnalizer.Perspective.processVideoPerspective import process_video
+from src.Modules.BasicModule.imageAnalizer.GetData import get_video_data
+from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import get_perspective_size
+from src.Modules.BasicModule.routeAnalizer import route_module
+from src.Modules.ExportModule import pdfFactory
+from src.Modules.call_external_modules import execute_module_calls
+from src.Modules.ExportModule.plotRoute import plot_insect_route_on_graph
 from src.utils.jsonUtils import export_data_to_file, import_data_from_file
 
 class MainConfigurationInterface:
+    new_analises_profile = "Novo perfil de analise"
+    
     def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface):
-
         self.perspective_top_interface = perspective_top_interface
         self.perspective_side_interface = perspective_side_interface
-
+        
         self.configsPath = "cache/configs.json"
 
         self.root = root
         #self.root.title("Configuração de Vídeo")
         
         self.configs = self.load_configs()
-        self.selected_config = tk.StringVar(value="Novo")
+        self.selected_config = tk.StringVar(value=self.new_analises_profile)
         
         # Seleção de configurações
-        self.label_config = tk.Label(root, text="Selecione configurações")
-        self.label_config.pack(pady=5)
+        self.label_config = tk.Label(root, text="Selecione o perfil de analise")
+        self.label_config.pack(pady=5, anchor="center")
         
-        self.config_combobox = ttk.Combobox(root, textvariable=self.selected_config, values=["Novo"] + list(self.configs.keys()))
-        self.config_combobox.pack(pady=5)
+        self.config_combobox = ttk.Combobox(root, textvariable=self.selected_config, values=[self.new_analises_profile] + list(self.configs.keys()))
+        self.config_combobox.pack(pady=5, anchor="center")
         self.config_combobox.bind("<<ComboboxSelected>>", self.load_selected_config)
         
         # Seleção de arquivos de vídeo
@@ -37,61 +41,69 @@ class MainConfigurationInterface:
         self.root.side_video_path = tk.StringVar()
         
         self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
-        self.btn_select_top_video.pack(pady=5)
+        self.btn_select_top_video.pack(pady=5, anchor="center")
         
         self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (topo)", command=showTopFrame)
-        self.btn_config_top_edges.pack(pady=5)
+        self.btn_config_top_edges.pack(pady=5, anchor="center")
         
         self.btn_select_side_video = tk.Button(root, text="Selecione o local do arquivo de video lado", command=self.select_side_video)
-        self.btn_select_side_video.pack(pady=5)
+        self.btn_select_side_video.pack(pady=5, anchor="center")
         
         self.btn_config_side_edges = tk.Button(root, text="Configurar bordas (lado)", command=showSideFrame)
-        self.btn_config_side_edges.pack(pady=5)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
         
         self.label_height = tk.Label(root, text="Altura (cm)")
-        self.label_height.pack(pady=5)
+        self.label_height.pack(pady=5, anchor="center")
         
         self.height_box_cm = tk.Entry(root)
-        self.height_box_cm.pack(pady=5)
+        self.height_box_cm.pack(pady=5, anchor="center")
         
         self.label_width = tk.Label(root, text="Largura (cm)")
-        self.label_width.pack(pady=5)
+        self.label_width.pack(pady=5, anchor="center")
         
         self.width_box_cm = tk.Entry(root)
-        self.width_box_cm.pack(pady=5)
+        self.width_box_cm.pack(pady=5, anchor="center")
         
         self.label_depth = tk.Label(root, text="Profundidade (cm)")
-        self.label_depth.pack(pady=5)
+        self.label_depth.pack(pady=5, anchor="center")
         
         self.depth_box_cm = tk.Entry(root)
-        self.depth_box_cm.pack(pady=5)
+        self.depth_box_cm.pack(pady=5, anchor="center")
         
         # Salvar configurações
         self.btn_save_config = tk.Button(root, text="Salvar configurações", command=self.save_config)
         self.btn_save_config.pack(pady=20)
         
-        self.btn_config_side_edges = tk.Button(root, text="Processar video", command=self.process_video)
-        self.btn_config_side_edges.pack(pady=5)
+        self.btn_config_side_edges = tk.Button(root, text="Processar video e executar modulos", command=self.process_video)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
         
-        self.btn_config_side_edges = tk.Button(root, text="Processar dados", command=self.process_output_data)
-        self.btn_config_side_edges.pack(pady=5)
+        self.btn_config_side_edges = tk.Button(root, text="Exibir grafico de rota", command=self.process_output_data)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
     
+        self.btn_config_side_edges = tk.Button(root, text="Exportar para PDF", command=self.process_pdf)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
+        
     def load_configs(self):
         return import_data_from_file(self.configsPath)
     
     def load_selected_config(self, event):
         config_name = self.selected_config.get()
+        print(config_name)
         
-        if config_name != "Novo":
+        if config_name == self.new_analises_profile:
+            config = {}
+        else:
             config = self.configs[config_name]
-            self.root.top_video_path.set(config.get("top_video_path", ""))
-            self.root.side_video_path.set(config.get("side_video_path", ""))
-            self.perspective_top_interface.frame_perspective_points = (config.get("frame_perspective_points_top", ""))
-            self.perspective_side_interface.frame_perspective_points = (config.get("frame_perspective_points_side", ""))
             
-            self.width_box_cm.insert(0, config.get("width_box_cm", ""))
-            self.height_box_cm.insert(0, config.get("height_box_cm", ""))
-            self.depth_box_cm.insert(0, config.get("depth_box_cm", ""))
+        self.root.top_video_path.set(config.get("top_video_path", ""))
+        self.root.side_video_path.set(config.get("side_video_path", ""))
+        self.perspective_top_interface.frame_perspective_points = (config.get("frame_perspective_points_top", ""))
+        self.perspective_side_interface.frame_perspective_points = (config.get("frame_perspective_points_side", ""))
+        
+        self.width_box_cm.insert(0, config.get("width_box_cm", ""))
+        self.height_box_cm.insert(0, config.get("height_box_cm", ""))
+        self.depth_box_cm.insert(0, config.get("depth_box_cm", ""))
+        
             
     
     def select_top_video(self):
@@ -110,8 +122,8 @@ class MainConfigurationInterface:
             messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
                
         
-        if config_name == "Novo":
-            config_name = tk.simpledialog.askstring("Salvar configuração", "Digite o nome para a nova configuração:")
+        if config_name == self.new_analises_profile:
+            config_name = tk.simpledialog.askstring("Salvar o perfil de analise", "Digite o nome para o novo perfil de analise:")
             if not config_name:
                 return
             
@@ -126,31 +138,39 @@ class MainConfigurationInterface:
         }
         export_data_to_file(self.configs, self.configsPath)
         
-        self.config_combobox.config(values=["Novo"] + list(self.configs.keys()))
+        self.config_combobox.config(values=[self.new_analises_profile] + list(self.configs.keys()))
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
     def process_video(self):
-        _, top_video, fps = process_video(
-            frame_points=self.perspective_top_interface.frame_perspective_points,
-            input_video_path=self.root.top_video_path.get(),
-            temp_name="top",
-        )
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(), False)
+            future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get(), True)
+
+            side_success, side_frames, fps, side_data, side_raw_warpped_frames = future_side.result()
+            top_success, top_frames, fps, top_data, top_raw_warpped_frames = future_top.result()
         
-        _, side_video, _ = process_video(
-            frame_points=self.perspective_side_interface.frame_perspective_points,
-            input_video_path=self.root.side_video_path.get(), 
-            temp_name="side",
-        )
+        if(not (top_success and side_success)):
+            print("Erro ocorreu durante o proces video")
+            return
         
-        fps, pixel_to_cm_ratio = get_video_data(
+        pixel_to_cm_ratio = get_video_data(
             width_box_cm = float(self.width_box_cm.get()),
             height_box_cm = float(self.height_box_cm.get()),
             depth_box_cm = float(self.depth_box_cm.get()),
-            top_video= top_video,
-            side_video = side_video
+            top_frames = top_frames,
+            side_frames = side_frames
         )
+
+        debug = False
+        if debug:
+            count = len(side_frames)
+            for frame_index in range(count):
+                cv2.imshow('top_frames', side_frames[frame_index])
+                cv2.imshow('top_raw_warpped_frames', side_raw_warpped_frames[frame_index])
+                
+                cv2.waitKey(0)
         
-        data = route_module(top_video, side_video)
+        data = route_module(top_data, side_data)
         data["width_box_cm"] = float(self.width_box_cm.get())
         data["height_box_cm"] = float(self.height_box_cm.get())
         data["depth_box_cm"] = float(self.depth_box_cm.get())
@@ -178,5 +198,10 @@ class MainConfigurationInterface:
 
         plot_insect_route_on_graph(output_location, xlim, ylim, zlim)
         
-
+    def process_pdf(self):
+        title = self.selected_config.get()
+        output_location = "C:/Projetos/Tcc-comportamento-abelhas/cache/outputs/"+title
+        data = import_data_from_file(output_location+ ".json")
+        
+        pdfFactory.GeneratePdf(data, output_location+".pdf", title)
 

@@ -1,8 +1,9 @@
+import threading
 import time
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 
-from src.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
+from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
 from src.utils.videoUtils import open_video
 from src.utils.interfaceUtils import show_frame
 
@@ -18,8 +19,14 @@ class PerspectiveUi:
 
     def startUp(self, videoPath):
         print("Iniciando analise moldura")
+        if(videoPath == ""):
+            return
+        
         self.videoPath = videoPath
-        _, video = open_video(videoPath)
+        
+        success, video = open_video(videoPath)
+        if(not success):
+            return
         
         success, frame = video.read()
         if not success:
@@ -39,6 +46,11 @@ class PerspectiveUi:
         video.release()
 
     def load_image_on_ui_from_array(self, image):
+        
+        image_height, image_width = image.size
+        
+        image.thumbnail((image_height/2, image_width/2), Image.Resampling.LANCZOS)
+        
         self.root_image = ImageTk.PhotoImage(image)
         self.image = image
 
@@ -102,11 +114,16 @@ class PerspectiveUi:
         small_image = Image.new('RGB', (100, 100), (0, 0, 0))
         self.load_small_image_on_ui(small_image)
         
+        button = ttk.Button(self.root, text=f"Voltar", command=self.finish_perspective)
+        button.grid(row=8, column=1, padx=10, pady=10)
+        
 
     def show_finish_perspective_btn(self):
         button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=self.finish_perspective)
-        
         button.grid(row=6, column=1, padx=10, pady=10)
+        
+        button = ttk.Button(self.root, text=f"Resetar perspectiva", command=self.reset_perspective)
+        button.grid(row=7, column=1, padx=10, pady=10)
 
     def get_next_frame(self):
         return self.next_frame
@@ -119,7 +136,14 @@ class PerspectiveUi:
 
     def finish_perspective(self):
         show_frame(self.main_frame)
-
+        
+    def reset_perspective(self):
+        self.frame_perspective_points = []
+    
+        background_thread = threading.Thread(target=self.startUp, args=[self.videoPath])
+        background_thread.daemon = True
+        background_thread.start()
+        
     
     def load_image_on_ui_from_cv2(self, imageCv):
         image = Image.fromarray(imageCv)

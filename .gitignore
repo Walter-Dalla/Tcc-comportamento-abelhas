@@ -1,6 +1,7 @@
 # remove project
 temp
 resource
+cache
 
 #VS
 .vscode

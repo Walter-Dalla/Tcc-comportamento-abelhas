@@ -74,7 +74,7 @@ def plot_insect_route_on_graph(jsonFilePath, xlim, ylim, zlim):
     lineAnimationObj, = ax.plot([], [], [], 'b-')  # 'b-' é a linha azul
     
     
-    ani = FuncAnimation(fig, updateAnimation, frames=len(positionsForInsectOnFrame), fargs=(positionsForInsectOnFrame, pointAnimationObj, lineAnimationObj), interval=100)
+    ani = FuncAnimation(fig, updateAnimation, frames=len(positionsForInsectOnFrame), fargs=(positionsForInsectOnFrame, pointAnimationObj, lineAnimationObj), interval=0.1)
     
     fig.canvas.mpl_connect('motion_notify_event', limitAngleAzimuthAndElevation)
     
