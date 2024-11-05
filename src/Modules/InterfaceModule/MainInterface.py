@@ -1,8 +1,8 @@
 import threading
 import tkinter as tk
 
-from src.interface.PerspectiveUi import PerspectiveUi
-from src.interface.MainConfigurationInterface import MainConfigurationInterface
+from src.Modules.InterfaceModule.MainConfigurationInterface import MainConfigurationInterface
+from src.Modules.InterfaceModule.PerspectiveUi import PerspectiveUi
 from src.utils.interfaceUtils import show_frame
 
 class MainInterface:

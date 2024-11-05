@@ -3,7 +3,7 @@ import time
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 
-from src.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
+from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
 from src.utils.videoUtils import open_video
 from src.utils.interfaceUtils import show_frame
 
@@ -38,7 +38,7 @@ class PerspectiveUi:
         while not finished_perspective:
             finished_perspective, perspective_frame = fix_perspective(frame, self.frame_perspective_points)
             time.sleep(0.01)
-            if perspective_frame != 0:
+            if perspective_frame is not 0:
                 self.load_image_on_ui_from_cv2(perspective_frame)
 
                 self.show_finish_perspective_btn()

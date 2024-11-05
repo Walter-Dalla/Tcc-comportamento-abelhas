@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
-from src.internalModules.routeModuleAddons.sideAnalizer import analyze_frame_side
-from src.internalModules.routeModuleAddons.topAnalizer import analyze_frame_top
-from src.imageAnalizer.Perspective.perspective import perspective
+from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import perspective
+from src.Modules.MetadataModule.sideAnalizer import analyze_frame_side
+from src.Modules.MetadataModule.topAnalizer import analyze_frame_top
 from src.utils.videoUtils import open_video
 
 def process_video(frame_points, input_video_path, is_side):

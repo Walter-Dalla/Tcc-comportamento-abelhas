@@ -1,8 +1,3 @@
-import concurrent.futures
-
-from src.internalModules.routeModuleAddons.sideAnalizer import analyze_frame_side
-from src.internalModules.routeModuleAddons.topAnalizer import analyze_frame_top
-
 def route_module(top_data, side_data):
     top_route_count = len(top_data["route"])
     side_route_count = len(side_data["route"])
