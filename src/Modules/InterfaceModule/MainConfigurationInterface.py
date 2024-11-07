@@ -26,12 +26,12 @@ class MainConfigurationInterface:
         #self.root.title("Configuração de Vídeo")
         
         self.configs = self.load_configs()
-        self.selected_config = tk.StringVar(value=self.new_analises_profile)
         
         # Seleção de configurações
         self.label_config = tk.Label(root, text="Selecione o perfil de analise")
         self.label_config.pack(pady=5, anchor="center")
         
+        self.selected_config = tk.StringVar(value=self.new_analises_profile)
         self.config_combobox = ttk.Combobox(root, textvariable=self.selected_config, values=[self.new_analises_profile] + list(self.configs.keys()))
         self.config_combobox.pack(pady=5, anchor="center")
         self.config_combobox.bind("<<ComboboxSelected>>", self.load_selected_config)
@@ -99,6 +99,10 @@ class MainConfigurationInterface:
         self.perspective_top_interface.frame_perspective_points = (config.get("frame_perspective_points_top", ""))
         self.perspective_side_interface.frame_perspective_points = (config.get("frame_perspective_points_side", ""))
         
+        self.width_box_cm.delete(0, tk.END)
+        self.height_box_cm.delete(0, tk.END)
+        self.depth_box_cm.delete(0, tk.END)
+        
         self.width_box_cm.insert(0, config.get("width_box_cm", ""))
         self.height_box_cm.insert(0, config.get("height_box_cm", ""))
         self.depth_box_cm.insert(0, config.get("depth_box_cm", ""))
@@ -122,13 +126,12 @@ class MainConfigurationInterface:
         config_name = self.selected_config.get()
         if not isinstance(self.root.top_video_path.get(), str) or not isinstance(self.root.side_video_path.get(), str) or not isinstance(self.perspective_top_interface.frame_perspective_points, list) or not isinstance(self.perspective_side_interface.frame_perspective_points, list):
             messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
-               
-        
+
         if config_name == self.new_analises_profile:
             config_name = tk.simpledialog.askstring("Salvar o perfil de analise", "Digite o nome para o novo perfil de analise:")
             if not config_name:
                 return
-            
+        
         self.configs[config_name] = {
             "top_video_path": self.root.top_video_path.get(),
             "side_video_path": self.root.side_video_path.get(),
@@ -138,10 +141,17 @@ class MainConfigurationInterface:
             "height_box_cm": self.height_box_cm.get(),
             "depth_box_cm": self.depth_box_cm.get()
         }
+        
         export_data_to_file(self.configs, self.configsPath)
         
         self.config_combobox.config(values=[self.new_analises_profile] + list(self.configs.keys()))
         messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
+        self.update_config_name(config_name)
+
+    def update_config_name(self, config_name):
+        self.selected_config.set(config_name)
+        self.load_selected_config(None)
+        
 
     def is_video_valid(self):
         if(self.root.top_video_path.get() == "" or self.root.side_video_path.get() == ""):
@@ -196,30 +206,27 @@ class MainConfigurationInterface:
         data["pixel_to_cm_ratio"] = pixel_to_cm_ratio
         data["fps"] = fps
         
-        output_location = "C:/Projetos/Tcc-comportamento-abelhas/cache/outputs/"+self.selected_config.get()+".json"
+        output_location = "./cache/outputs/"+self.selected_config.get()+".json"
         export_data_to_file(data, output_location)
     
     def process_output_data(self):
-        output_location = "C:/Projetos/Tcc-comportamento-abelhas/cache/outputs/"+self.selected_config.get()+".json"
+        output_location = "./cache/outputs/"+self.selected_config.get()+".json"
         
         data = import_data_from_file(output_location)
-        
         execute_module_calls(data)
         export_data_to_file(data, output_location)
         
         width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
         _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
-
         xlim = (0, width)
         ylim = (0, height)
         zlim = (0, depth)
-
 
         plot_insect_route_on_graph(output_location, xlim, ylim, zlim)
         
     def process_pdf(self):
         title = self.selected_config.get()
-        output_location = "C:/Projetos/Tcc-comportamento-abelhas/cache/outputs/"+title
+        output_location = "./cache/outputs/"+title
         data = import_data_from_file(output_location+ ".json")
         
         pdfFactory.GeneratePdf(data, output_location+".pdf", title)
