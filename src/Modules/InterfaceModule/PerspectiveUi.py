@@ -15,6 +15,7 @@ class PerspectiveUi:
         self.state = "perspective"
         self.main_frame = main_frame
         self.frame_perspective_points = []
+        self.finished = False
         
         self.show_ui()
 
@@ -117,11 +118,13 @@ class PerspectiveUi:
         small_image = Image.new('RGB', (100, 100), (0, 0, 0))
         self.load_small_image_on_ui(small_image)
         
-        button = ttk.Button(self.root, text=f"Voltar", command=self.finish_perspective)
+        button = ttk.Button(self.root, text=f"Voltar", command=self.finish_perspective_without_config)
         button.grid(row=8, column=1, padx=10, pady=10)
         
 
     def show_finish_perspective_btn(self):
+        self.finished = True
+        
         button = ttk.Button(self.root, text=f"Finalizar perspectiva", command=self.finish_perspective)
         button.grid(row=6, column=1, padx=10, pady=10)
         
@@ -137,16 +140,20 @@ class PerspectiveUi:
     def run_loop(self):
         self.root.mainloop()
 
+    def finish_perspective_without_config(self):
+        if(not self.finished):
+            video_width = int(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
+            video_height = int(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            
+            self.frame_perspective_points = [
+                [0, 0],
+                [video_width, 0],
+                [0, video_height],
+                [video_width, video_height]
+            ]
+        self.finish_perspective()
+
     def finish_perspective(self):
-        video_width = int(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
-        video_height = int(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        
-        self.frame_perspective_points = [
-            [0, 0],
-            [video_width, 0],
-            [0, video_height],
-            [video_width, video_height]
-        ]
         show_frame(self.main_frame)
         
     def reset_perspective(self):
