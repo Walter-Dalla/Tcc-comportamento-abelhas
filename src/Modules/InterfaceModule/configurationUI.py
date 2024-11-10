@@ -73,7 +73,10 @@ class MainConfigurationInterface:
         self.btn_save_config = tk.Button(root, text="Salvar configurações", command=self.save_config)
         self.btn_save_config.pack(pady=20)
         
-        self.btn_config_side_edges = tk.Button(root, text="Processar video e executar modulos", command=self.process_video)
+        self.btn_config_side_edges = tk.Button(root, text="Processar video (Módulos Basicos)", command=self.process_video)
+        self.btn_config_side_edges.pack(pady=5, anchor="center")
+        
+        self.btn_config_side_edges = tk.Button(root, text="Executar módulos de metadados", command=self.process_metadata_modules)
         self.btn_config_side_edges.pack(pady=5, anchor="center")
         
         self.btn_config_side_edges = tk.Button(root, text="Exibir grafico de rota", command=self.process_output_data)
@@ -207,9 +210,16 @@ class MainConfigurationInterface:
         
         output_location = "./cache/outputs/"+self.selected_config.get()+".json"
         export_data_to_file(data, output_location)
+        
+        messagebox.showinfo("Sucesso!", f"Modulos básicos executados!")
+    
+    def process_metadata_modules(self):
+        data = execute_metadata_module_calls(self.selected_config.get())
+        messagebox.showinfo("Sucesso!", f"Modulos de metadata executados!")
     
     def process_output_data(self):
-        data = execute_metadata_module_calls(self.selected_config.get())
+        data_location = "./cache/outputs/"+self.selected_config.get()+".json"
+        data = import_data_from_file(data_location)
         
         width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
         _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
@@ -225,4 +235,6 @@ class MainConfigurationInterface:
         data = import_data_from_file(output_location+ ".json")
         
         pdfFactory.GeneratePdf(data, output_location+".pdf", title)
+        
+        messagebox.showinfo("Sucesso!", f"Exportação concluida!")
 
