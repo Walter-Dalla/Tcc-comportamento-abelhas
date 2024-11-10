@@ -49,7 +49,7 @@ def limitAngleAzimuthAndElevation(event):
             ax.azim = -179
         fig.canvas.draw_idle()
 
-def plot_insect_route_on_graph(jsonFilePath, xlim, ylim, zlim):
+def plot_insect_route_on_graph_animated(jsonFilePath, xlim, ylim, zlim):
     
     positionsForInsectOnFrame = getInsectPositionFromFile(jsonFilePath)
     
@@ -75,6 +75,39 @@ def plot_insect_route_on_graph(jsonFilePath, xlim, ylim, zlim):
     
     
     ani = FuncAnimation(fig, updateAnimation, frames=len(positionsForInsectOnFrame), fargs=(positionsForInsectOnFrame, pointAnimationObj, lineAnimationObj), interval=0.1)
+    
+    fig.canvas.mpl_connect('motion_notify_event', limitAngleAzimuthAndElevation)
+    
+    plt.show()
+
+
+
+def plot_insect_route_on_graph_without_animation(jsonFilePath, xlim, ylim, zlim):
+    positionsForInsectOnFrame = getInsectPositionFromFile(jsonFilePath)
+    
+    global fig
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    
+    ax.set_title('Gráfico 3D do movimento do inseto')
+    
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+    ax.set_zlim(zlim)
+    
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    
+    ax.set_box_aspect([1,1,1])
+    
+    x_data = positionsForInsectOnFrame['x'].tolist()
+    y_data = positionsForInsectOnFrame['y'].tolist()
+    z_data = positionsForInsectOnFrame['z'].tolist()
+    
+    ax.plot([x_data[0]], [y_data[0]], [z_data[0]], 'ko') 
+    
+    ax.plot(x_data, y_data, z_data, 'b-') 
     
     fig.canvas.mpl_connect('motion_notify_event', limitAngleAzimuthAndElevation)
     

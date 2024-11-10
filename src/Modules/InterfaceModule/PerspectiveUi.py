@@ -110,8 +110,6 @@ class PerspectiveUi:
         self.small_image_label.image = cropped_img_tk
 
     def show_ui(self):
-        #self.root.title("Interface com Imagem e Botões")
-
         image = Image.new('RGB', (500, 500), (0, 0, 0))
         self.load_image_on_ui_from_array(image)
 

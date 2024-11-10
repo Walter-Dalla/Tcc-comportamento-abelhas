@@ -10,7 +10,7 @@ from src.Modules.BasicModule.perspectiveModule import get_perspective_size
 from src.Modules.BasicModule.routeAnalizer import route_module
 from src.Modules.ExportModule import pdfFactory
 from src.Modules.MetadataModule.modulesInvoker import execute_module_calls
-from src.Modules.ExportModule.plotRoute import plot_insect_route_on_graph
+from src.Modules.ExportModule.plotRoute import plot_insect_route_on_graph_animated, plot_insect_route_on_graph_without_animation
 from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_from_file
 
 class MainConfigurationInterface:
@@ -23,7 +23,6 @@ class MainConfigurationInterface:
         self.configsPath = "cache/configs.json"
 
         self.root = root
-        #self.root.title("Configuração de Vídeo")
         
         self.configs = self.load_configs()
         
@@ -222,7 +221,7 @@ class MainConfigurationInterface:
         ylim = (0, height)
         zlim = (0, depth)
 
-        plot_insect_route_on_graph(output_location, xlim, ylim, zlim)
+        plot_insect_route_on_graph_without_animation(output_location, xlim, ylim, zlim)
         
     def process_pdf(self):
         title = self.selected_config.get()
