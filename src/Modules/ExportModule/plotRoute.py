@@ -4,8 +4,7 @@ from matplotlib.animation import FuncAnimation
 
 from src.Modules.ExportModule.jsonUtils import import_data_from_file
 
-def getInsectPositionFromFile(jsonFilePath):
-    data = import_data_from_file(jsonFilePath)
+def getInsectPositionFromFile(data):
     frame_count = data['frame_count']
     route = data['route']
     positionsForInsectOnFrame = []
@@ -49,9 +48,9 @@ def limitAngleAzimuthAndElevation(event):
             ax.azim = -179
         fig.canvas.draw_idle()
 
-def plot_insect_route_on_graph_animated(jsonFilePath, xlim, ylim, zlim):
+def plot_insect_route_on_graph_animated(data, xlim, ylim, zlim):
     
-    positionsForInsectOnFrame = getInsectPositionFromFile(jsonFilePath)
+    positionsForInsectOnFrame = getInsectPositionFromFile(data)
     
     global fig
     fig = plt.figure()

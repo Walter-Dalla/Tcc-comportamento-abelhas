@@ -9,7 +9,7 @@ from src.Modules.BasicModule.utils.GetData import get_video_data
 from src.Modules.BasicModule.perspectiveModule import get_perspective_size
 from src.Modules.BasicModule.routeAnalizer import route_module
 from src.Modules.ExportModule import pdfFactory
-from src.Modules.MetadataModule.modulesInvoker import execute_module_calls
+from src.Modules.MetadataModule.modulesInvoker import execute_metadata_module_calls
 from src.Modules.ExportModule.plotRoute import plot_insect_route_on_graph_animated, plot_insect_route_on_graph_without_animation
 from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_from_file
 
@@ -209,11 +209,7 @@ class MainConfigurationInterface:
         export_data_to_file(data, output_location)
     
     def process_output_data(self):
-        output_location = "./cache/outputs/"+self.selected_config.get()+".json"
-        
-        data = import_data_from_file(output_location)
-        execute_module_calls(data)
-        export_data_to_file(data, output_location)
+        data = execute_metadata_module_calls(self.selected_config.get())
         
         width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
         _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
@@ -221,7 +217,7 @@ class MainConfigurationInterface:
         ylim = (0, height)
         zlim = (0, depth)
 
-        plot_insect_route_on_graph_without_animation(output_location, xlim, ylim, zlim)
+        plot_insect_route_on_graph_without_animation(data, xlim, ylim, zlim)
         
     def process_pdf(self):
         title = self.selected_config.get()

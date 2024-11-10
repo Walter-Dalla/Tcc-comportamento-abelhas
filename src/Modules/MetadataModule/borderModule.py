@@ -32,4 +32,4 @@ def module_call(data):
         if(z < border_min_z or z < border_max_z):
             data["time_border_z"] += 1
         
-        return data
+    return data

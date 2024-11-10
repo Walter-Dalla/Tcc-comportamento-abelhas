@@ -25,5 +25,5 @@ def module_call(data):
     
     data["speed"] = speed
     
-    return speed
+    return data
 
