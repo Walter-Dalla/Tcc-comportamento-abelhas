@@ -13,15 +13,13 @@ def analyze_frame_top(top_frames):
 
     treashold = 250
 
-    darkest_pixel_location = (0, 0)
-
     for frame in top_frames:
         
         
         frame = cv2.flip(frame, 0)
         gray_frame = frame
         
-        (darkest_pixel_value, maxVal, darkest_pixel_location, brigthest_pixel_location) = cv2.minMaxLoc(gray_frame)
+        (dark_est_pixel_value, maxVal, darkest_pixel_location, brigthest_pixel_location) = cv2.minMaxLoc(gray_frame)
 
         insect_position_x = brigthest_pixel_location[0]
         insect_position_y = brigthest_pixel_location[1]
@@ -49,6 +47,6 @@ def analyze_frame_top(top_frames):
     data['time_on_border_south'] = time_on_border_south
     data['time_on_border_east'] = time_on_border_east
     data['time_on_border_west'] = time_on_border_west
-    
+
     print("Fim da analise topo")
     return data

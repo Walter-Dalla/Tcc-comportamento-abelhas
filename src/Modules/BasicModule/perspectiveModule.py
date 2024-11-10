@@ -1,6 +1,32 @@
 import cv2
 import numpy as np
 
+def process_perspective(originalVideo, frame_points):
+    if(len(frame_points) != 4):
+        video_width = int(originalVideo.get(cv2.CAP_PROP_FRAME_WIDTH))
+        video_height = int(originalVideo.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
+        frame_points = [
+            [0, 0],
+            [video_width, 0],
+            [0, video_height],
+            [video_width, video_height]
+        ]
+    
+    raw_warpped_frames = []
+    while True:
+        success, frame = originalVideo.read()
+        if not success:
+            break
+        warppedFrame = perspective(frame, frame_points)
+        
+        gray_frame = cv2.cvtColor(warppedFrame, cv2.COLOR_BGR2GRAY)
+        raw_warpped_frames.append(gray_frame)
+    
+    originalVideo.release()
+    return raw_warpped_frames
+
+
 def perspective(frame, frame_points):
     
     width, height = get_perspective_size(frame_points)

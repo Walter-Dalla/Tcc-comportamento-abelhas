@@ -4,7 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
 
-from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
+from src.Modules.BasicModule.perspectiveModule import fix_perspective
 from src.Modules.ExportModule.videoUtils import open_video
 from src.utils.interfaceUtils import show_frame
 

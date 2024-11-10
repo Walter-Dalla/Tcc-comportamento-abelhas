@@ -9,24 +9,19 @@ def analyze_frame_side(side_video):
     time_on_border_south = 0
     time_on_border_east = 0
     time_on_border_west = 0
-
     data = {'route': []}
 
     treashold = 250
 
-    darkest_pixel_location = (0, 0)
-
     for frame in side_video:
         frame = cv2.flip(frame, 0)
         gray_frame = frame
-
-        #frame = cv2.rotate(frame, cv2.ROTATE_180)
-
+        
         (darkest_pixel_value, maxVal, darkest_pixel_location, brigthest_pixel_location) = cv2.minMaxLoc(gray_frame)
 
         insect_position_y = brigthest_pixel_location[0]
         insect_position_z = brigthest_pixel_location[1]
-        
+
         data['route'].append({
             'y': insect_position_y,
             'z': insect_position_z
