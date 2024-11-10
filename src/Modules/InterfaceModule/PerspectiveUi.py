@@ -5,7 +5,7 @@ from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
 
 from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import fix_perspective, get_frame_points
-from src.utils.videoUtils import open_video
+from src.Modules.ExportModule.videoUtils import open_video
 from src.utils.interfaceUtils import show_frame
 
 class PerspectiveUi:

@@ -1,7 +1,7 @@
-def objToPoint(object):
+def OLD_objToPoint(object):
     return [object['x'], object['y']]
 
-def pointToObj(point):
+def OLD_pointToObj(point):
     return {
         'x': point[0],
         'y': point[1]

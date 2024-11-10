@@ -9,9 +9,9 @@ from src.Modules.BasicModule.imageAnalizer.GetData import get_video_data
 from src.Modules.BasicModule.imageAnalizer.Perspective.perspective import get_perspective_size
 from src.Modules.BasicModule.routeAnalizer import route_module
 from src.Modules.ExportModule import pdfFactory
-from src.Modules.call_external_modules import execute_module_calls
+from src.Modules.MetadataModule.modulesInvoker import execute_module_calls
 from src.Modules.ExportModule.plotRoute import plot_insect_route_on_graph
-from src.utils.jsonUtils import export_data_to_file, import_data_from_file
+from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_from_file
 
 class MainConfigurationInterface:
     new_analises_profile = "Novo perfil de analise"

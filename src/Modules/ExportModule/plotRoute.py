@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from src.utils.jsonUtils import import_data_from_file
+from src.Modules.ExportModule.jsonUtils import import_data_from_file
 
 def getInsectPositionFromFile(jsonFilePath):
     data = import_data_from_file(jsonFilePath)
@@ -57,7 +57,7 @@ def plot_insect_route_on_graph(jsonFilePath, xlim, ylim, zlim):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     
-    ax.set_title('Gráfico 3D do movimento do inceto')
+    ax.set_title('Gráfico 3D do movimento do inseto')
     
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)
