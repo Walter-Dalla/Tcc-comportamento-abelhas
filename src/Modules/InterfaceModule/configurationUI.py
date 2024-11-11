@@ -5,7 +5,7 @@ import concurrent.futures
 import cv2
 
 from src.Modules.BasicModule.processVideoModule import process_video
-from src.Modules.BasicModule.utils.GetData import get_video_data
+from src.Modules.BasicModule.utils.getData import get_video_data
 from src.Modules.BasicModule.perspectiveModule import get_perspective_size
 from src.Modules.BasicModule.routeAnalizer import route_module
 from src.Modules.ExportModule import pdfFactory
