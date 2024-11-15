@@ -13,34 +13,47 @@ def remove_background(raw_warpped_frames, debug_mode, is_side):
     max_frame = np.max(selected_random_frames, axis=0).astype(np.uint8)
     
     frames = []
-    minThreshold = 100
+    minThreshold = 80
+    contour_positions = []
     for i, frame in enumerate(raw_warpped_frames):
         dif_frame = cv2.absdiff(max_frame, frame)
         
         _, diff = cv2.threshold(dif_frame, minThreshold, 255, cv2.THRESH_BINARY)
         _, binarizada = cv2.threshold(diff, 127, 255, cv2.THRESH_BINARY)
+        frames.append(diff)
         
         contornos, _ = cv2.findContours(binarizada, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if(len(contornos) > 0):
-            maior_contorno = max(contornos, key=cv2.contourArea)
-            cv2.drawContours(frame, [maior_contorno], -1, (0, 255, 0), 2)
-        
-        
-        frames.append(diff)
+            max_contour = max(contornos, key=cv2.contourArea)
+            max_contour_pos = cv2.moments(max_contour)
+            
+            contour_position = None
+            if max_contour_pos["m00"] != 0:
+                cx = int(max_contour_pos["m10"] / max_contour_pos["m00"])
+                cy = int(max_contour_pos["m01"] / max_contour_pos["m00"])
+                contour_position = (cx, cy)
+
+            contour_positions.append(contour_position)
+            
+            if(debug_mode):
+                cv2.drawContours(frame, [max_contour], -1, (0, 255, 0), 2)
+        else:
+            contour_positions.append((-1, -1))
         
         if(debug_mode and not resume_debug_mode):
-            
             frame_name = 'side' if is_side else 'top'
             
             cv2.imshow(frame_name+"_dif_frame", dif_frame)
             cv2.imshow(frame_name+"_diff", diff)
             cv2.imshow(frame_name+"_frame", frame)
             
+            
             key = cv2.waitKey(0) & 0xFF
             
             if key == ord('n'):  # 'n' key
                 continue
             elif key == 27:  # ESC key
+                cv2.destroyAllWindows()
                 resume_debug_mode = True
         
-    return frames
+    return frames, contour_positions

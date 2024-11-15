@@ -1,4 +1,4 @@
-def route_module(top_data, side_data):
+def route_module(top_data, side_data, positions_top, positions_side):
     top_route_count = len(top_data["route"])
     side_route_count = len(side_data["route"])
     
@@ -9,9 +9,6 @@ def route_module(top_data, side_data):
 
     data = {"route": {}, "frame_count": max_frame_count }
     
-    x = 0
-    y = 0
-    z = 0
     
     for index in range(max_frame_count):
         
@@ -21,6 +18,7 @@ def route_module(top_data, side_data):
 
         if(index < side_route_count):
             z = side_data["route"][index]["z"]
+        
 
         data["route"][index] = {
             "x": x, 
