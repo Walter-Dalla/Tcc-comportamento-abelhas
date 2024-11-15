@@ -4,7 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
 
-from src.Modules.BasicModule.perspectiveModule import fix_perspective, get_frame_points
+from src.Modules.BasicModule.perspectiveModule import perspective
 from src.Modules.ExportModule.videoUtils import open_video
 from src.utils.interfaceUtils import show_frame
 
@@ -169,3 +169,20 @@ class PerspectiveUi:
     def clear_screen(self):
         for widget in self.root.winfo_children():
             widget.destroy()
+
+def fix_perspective(frame, frame_points):
+    if len(frame_points) == 4:
+        return True, perspective(frame, frame_points)
+
+    return False, 0
+
+def get_frame_points(event, frame_points):
+    x, y = event.x, event.y
+    
+    x = x*2
+    y = y*2
+    
+    if len(frame_points) >= 4:
+        return
+    
+    frame_points.append((int(x), int(y)))

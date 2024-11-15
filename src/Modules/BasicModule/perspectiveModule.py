@@ -40,26 +40,8 @@ def perspective(frame, frame_points):
     return output
 
 
-def fix_perspective(frame, frame_points):
-    if len(frame_points) == 4:
-        return True, perspective(frame, frame_points)
-
-    return False, 0
-
-
 def get_perspective_size(frame_points):
-   width = frame_points[1][0] - frame_points[0][0]
-   height = frame_points[2][1] - frame_points[0][1]
-   
-   return width, height
-
-def get_frame_points(event, frame_points):
-    x, y = event.x, event.y
+    width = frame_points[1][0] - frame_points[0][0]
+    height = frame_points[2][1] - frame_points[0][1]
     
-    x = x*2
-    y = y*2
-    
-    if len(frame_points) >= 4:
-        return
-    
-    frame_points.append((int(x), int(y)))
+    return width, height

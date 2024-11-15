@@ -123,10 +123,5 @@ def plot_insect_route_on_graph_without_animation(jsonFilePath, xlim, ylim, zlim)
         if segment:
             x_segment, y_segment, z_segment = zip(*segment)
             ax.plot(x_segment, y_segment, z_segment, 'b-')
-
-    
-    if segments and segments[0]:
-        x_start, y_start, z_start = segments[0][0]
-        ax.plot([x_start], [y_start], [z_start], 'ko') 
     
     plt.show()
