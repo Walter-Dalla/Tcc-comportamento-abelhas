@@ -4,20 +4,22 @@ def route_module(positions_top, positions_side):
     top_route_count = len(positions_top)
     side_route_count = len(positions_side)
     
-    max_frame_count = side_route_count
-    if(top_route_count > side_route_count):
-        max_frame_count = top_route_count
+    min_frame_count = side_route_count
+    if(top_route_count < side_route_count):
+        min_frame_count = top_route_count
 
     index_side = 0
     index_top = 0
-    for index in range(max_frame_count):
+    for index in range(min_frame_count):
         index_top += 1
         index_side += 1
         
-        if(top_route_count -1 == (index_top)):
+        if(top_route_count == (index_top)):
+            break
             index_top = 0
             
-        if(side_route_count -1 == (index_side)):
+        if(side_route_count == (index_side)):
+            break
             index_side = 0
         
         position_top = positions_top[index_top]
@@ -35,5 +37,5 @@ def route_module(positions_top, positions_side):
             "z": z
         }
         
-    data["frame_count"] = max_frame_count
+    data["frame_count"] = min_frame_count - 1
     return data

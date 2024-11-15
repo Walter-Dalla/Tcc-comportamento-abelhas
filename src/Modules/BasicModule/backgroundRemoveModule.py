@@ -31,19 +31,11 @@ def remove_background(raw_warpped_frames, debug_mode, is_side):
             max_contour_pos = cv2.moments(max_contour)
             
             if max_contour_pos["m00"] != 0:
-                if(is_side):
-                    cx = int(max_contour_pos["m10"] / max_contour_pos["m00"])
-                    cy_from_top = int(max_contour_pos["m01"] / max_contour_pos["m00"])
-                    
-                    # Convert cy to be relative to the bottom of the image
-                    frame_height = diff.shape[0]
-                    cy_from_bottom = frame_height - cy_from_top
-                    
-                    contour_position = (cx, cy_from_bottom)  
-                else:
-                    cx = int(max_contour_pos["m10"] / max_contour_pos["m00"])
-                    cy = int(max_contour_pos["m01"] / max_contour_pos["m00"])
-                    contour_position = (cx, cy)
+                cx = int(max_contour_pos["m10"] / max_contour_pos["m00"])
+                cy_from_top = int(max_contour_pos["m01"] / max_contour_pos["m00"])
+                frame_height = diff.shape[0]
+                cy_from_bottom = frame_height - cy_from_top
+                contour_position = (cx, cy_from_bottom)
 
             if debug_mode:
                 cv2.drawContours(frame, [max_contour], -1, (0, 255, 0), 2)

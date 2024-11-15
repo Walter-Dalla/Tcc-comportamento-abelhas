@@ -124,4 +124,6 @@ def plot_insect_route_on_graph_without_animation(jsonFilePath, xlim, ylim, zlim)
             x_segment, y_segment, z_segment = zip(*segment)
             ax.plot(x_segment, y_segment, z_segment, 'b-')
     
+    ax.view_init(elev=45, azim=-135)
+    
     plt.show()
