@@ -11,8 +11,6 @@ from src.utils.interfaceUtils import show_frame
 class PerspectiveUi:
     def __init__(self, root, main_frame):
         self.root = root
-        self.next_frame = False
-        self.state = "perspective"
         self.main_frame = main_frame
         self.frame_perspective_points = []
         self.finished = False
@@ -128,12 +126,6 @@ class PerspectiveUi:
         
         button = ttk.Button(self.root, text=f"Resetar perspectiva", command=self.reset_perspective)
         button.grid(row=7, column=1, padx=10, pady=10)
-
-    def get_next_frame(self):
-        return self.next_frame
-    
-    def set_next_frame(self, value):
-        self.next_frame = value
 
     def run_loop(self):
         self.root.mainloop()
