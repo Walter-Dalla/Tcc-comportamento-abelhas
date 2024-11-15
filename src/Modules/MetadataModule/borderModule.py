@@ -3,11 +3,10 @@ def module_call(data):
     data["time_border_y"] = 0
     data["time_border_z"] = 0
 
-    # Extracting border values from frame_border_points_top and frame_border_points_side
-    frame_border_points_top = data["frame_border_points_top"]  # Used for x and y axes
-    frame_border_points_side = data["frame_border_points_side"]  # Used for y and z axes
+    frame_border_points_top = data["frame_border_points_top"]  
+    frame_border_points_side = data["frame_border_points_side"]
 
-    # Set up min and max borders for each axis based on frame_border_points
+    
     border_min_x = min(frame_border_points_top[0][0], frame_border_points_top[1][0])
     border_max_x = max(frame_border_points_top[0][0], frame_border_points_top[1][0])
 
@@ -19,7 +18,6 @@ def module_call(data):
     border_min_z = min(frame_border_points_side[0][1], frame_border_points_side[1][1])
     border_max_z = max(frame_border_points_side[0][1], frame_border_points_side[1][1])
 
-    # Iterate through each point in the route and calculate time within borders
     for index in data["route"]:
         value = data["route"][index]
 
@@ -27,7 +25,6 @@ def module_call(data):
         y = value['y']
         z = value['z']
 
-        # Check if each coordinate is within the specified border range
         if border_min_x <= x <= border_max_x:
             data["time_border_x"] += 1
 

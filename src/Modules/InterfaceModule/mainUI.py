@@ -14,7 +14,7 @@ class MainInterface:
         root.top_video_path = ""
         
         window_width = 800  # Largura desejada da janela
-        window_height = 600  # Altura desejada da janela
+        window_height = 800  # Altura desejada da janela
 
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
