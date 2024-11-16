@@ -51,7 +51,7 @@ def remove_background(raw_warpped_frames, debug_mode, is_side):
             cv2.imshow(frame_name+"_diff", diff)
             cv2.imshow(frame_name+"_frame", frame)
             
-            key = cv2.waitKey(1) & 0xFF
+            key = cv2.waitKey(0) & 0xFF
                
             if key == ord('n'):  # 'n' key
                 continue
