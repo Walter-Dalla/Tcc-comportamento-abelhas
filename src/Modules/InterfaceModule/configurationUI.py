@@ -209,8 +209,8 @@ class MainConfigurationInterface:
         width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
         _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
         xlim = (0, width)
-        ylim = (0, height)
-        zlim = (0, depth)
+        ylim = (0, depth)
+        zlim = (0, height)
 
         plot_insect_route_on_graph_without_animation(data, xlim, ylim, zlim)
         
