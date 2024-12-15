@@ -1,6 +1,7 @@
 import threading
 import tkinter as tk
 
+from src.Modules.InterfaceModule.borderUi import BorderUi
 from src.Modules.InterfaceModule.configurationUI import MainConfigurationInterface
 from src.Modules.InterfaceModule.perspectiveUi import PerspectiveUi
 from src.utils.interfaceUtils import show_frame
@@ -13,7 +14,7 @@ class MainInterface:
         root.top_video_path = ""
         
         window_width = 800  # Largura desejada da janela
-        window_height = 600  # Altura desejada da janela
+        window_height = 800  # Altura desejada da janela
 
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
@@ -38,12 +39,28 @@ class MainInterface:
             main_frame = self.perspective_main_frame
         )
     
+        self.border_config_top_frame = tk.Frame(root)
+        self.border_config_top_interface = BorderUi(
+            root=self.border_config_top_frame,
+            main_frame = self.perspective_main_frame
+        )
+        
+        self.border_config_side_frame = tk.Frame(root)
+        self.border_config_side_interface = BorderUi(
+            root=self.border_config_side_frame,
+            main_frame = self.perspective_main_frame
+        )
+    
         self.perspective_main_interface = MainConfigurationInterface(
-            root=self.perspective_main_frame,
-            showSideFrame=self.showFrameSide,
+            root= self.perspective_main_frame,
+            showSideFrame= self.showFrameSide,
             showTopFrame= self.showFrameTop,
-            perspective_top_interface=self.perspective_top_interface,
-            perspective_side_interface=self.perspective_side_interface
+            showConfigBorderSide= self.showConfigBorderSide,
+            showConfigBorderTop= self.showConfigBorderTop,
+            perspective_top_interface= self.perspective_top_interface,
+            perspective_side_interface= self.perspective_side_interface,
+            border_config_top_interface= self.border_config_top_interface,
+            border_config_side_interface= self.border_config_side_interface
         )
         
         show_frame(self.perspective_main_frame)
@@ -58,6 +75,14 @@ class MainInterface:
     def showFrameTop(self):
         show_frame(self.perspective_top_frame)
         self.run_background_tasks(self.perspective_top_interface, self.perspective_main_frame.top_video_path.get())
+        
+    def showConfigBorderTop(self):
+        show_frame(self.border_config_top_frame)
+        self.run_background_tasks(self.border_config_top_interface, self.perspective_main_frame.top_video_path.get())
+        
+    def showConfigBorderSide(self):
+        show_frame(self.border_config_side_frame)
+        self.run_background_tasks(self.border_config_side_interface, self.perspective_main_frame.side_video_path.get())
     
     def run_background_tasks(self, screen, videoPath):
         background_thread = threading.Thread(target=screen.startUp, args=[videoPath])

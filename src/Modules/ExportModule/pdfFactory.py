@@ -42,15 +42,15 @@ def GeneratePdf(data, output_location, title):
                 </tr>
                 <tr>
                     <td>Largura da Caixa (cm)</td>
-                    <td>{data['width_box_cm']}</td>
+                    <td>{data['box_width_cm']}</td>
                 </tr>
                 <tr>
                     <td>Altura da Caixa (cm)</td>
-                    <td>{data['height_box_cm']}</td>
+                    <td>{data['box_height_cm']}</td>
                 </tr>
                 <tr>
                     <td>Profundidade da Caixa (cm)</td>
-                    <td>{data['depth_box_cm']}</td>
+                    <td>{data['box_depth_cm']}</td>
                 </tr>
                 <tr>
                     <td>Razão Pixel para cm</td>

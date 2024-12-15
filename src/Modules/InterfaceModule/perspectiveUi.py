@@ -4,15 +4,13 @@ from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
 
-from src.Modules.BasicModule.perspectiveModule import fix_perspective, get_frame_points
+from src.Modules.BasicModule.perspectiveModule import perspective
 from src.Modules.ExportModule.videoUtils import open_video
 from src.utils.interfaceUtils import show_frame
 
 class PerspectiveUi:
     def __init__(self, root, main_frame):
         self.root = root
-        self.next_frame = False
-        self.state = "perspective"
         self.main_frame = main_frame
         self.frame_perspective_points = []
         self.finished = False
@@ -129,12 +127,6 @@ class PerspectiveUi:
         button = ttk.Button(self.root, text=f"Resetar perspectiva", command=self.reset_perspective)
         button.grid(row=7, column=1, padx=10, pady=10)
 
-    def get_next_frame(self):
-        return self.next_frame
-    
-    def set_next_frame(self, value):
-        self.next_frame = value
-
     def run_loop(self):
         self.root.mainloop()
 
@@ -169,3 +161,20 @@ class PerspectiveUi:
     def clear_screen(self):
         for widget in self.root.winfo_children():
             widget.destroy()
+
+def fix_perspective(frame, frame_points):
+    if len(frame_points) == 4:
+        return True, perspective(frame, frame_points)
+
+    return False, 0
+
+def get_frame_points(event, frame_points):
+    x, y = event.x, event.y
+    
+    x = x*2
+    y = y*2
+    
+    if len(frame_points) >= 4:
+        return
+    
+    frame_points.append((int(x), int(y)))

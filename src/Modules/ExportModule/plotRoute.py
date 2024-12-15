@@ -98,16 +98,37 @@ def plot_insect_route_on_graph_without_animation(jsonFilePath, xlim, ylim, zlim)
     ax.set_ylabel('y')
     ax.set_zlabel('z')
     
-    ax.set_box_aspect([1,1,1])
+    ax.set_box_aspect([1, 1, 1])
     
     x_data = positionsForInsectOnFrame['x'].tolist()
     y_data = positionsForInsectOnFrame['y'].tolist()
     z_data = positionsForInsectOnFrame['z'].tolist()
     
-    ax.plot([x_data[0]], [y_data[0]], [z_data[0]], 'ko') 
     
-    ax.plot(x_data, y_data, z_data, 'b-') 
+    segments = []
+    current_segment = []
     
-    fig.canvas.mpl_connect('motion_notify_event', limitAngleAzimuthAndElevation)
+    for x, y, z in zip(x_data, y_data, z_data):
+        if x == -1 or y == -1 or z == -1:
+            if current_segment:
+                segments.append(current_segment)
+                current_segment = [] 
+        else:
+            current_segment.append((x, y, z))
+    
+    if current_segment:
+        segments.append(current_segment)
+    
+    for segment in segments:
+        if segment:
+            x_segment, y_segment, z_segment = zip(*segment)
+            ax.plot(x_segment, y_segment, z_segment, 'b-')
+    
+    
+    
+    # visão de cima elev=90, azim=-90
+    
+    
+    ax.view_init(elev=45, azim=-135)
     
     plt.show()

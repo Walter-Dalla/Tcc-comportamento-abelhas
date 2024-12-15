@@ -1,13 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-import concurrent.futures
 
-import cv2
-
-from src.Modules.BasicModule.processVideoModule import process_video
-from src.Modules.BasicModule.utils.getData import get_video_data
+from src.Modules.BasicModule.processVideoModule import process_basic_modules
 from src.Modules.BasicModule.perspectiveModule import get_perspective_size
-from src.Modules.BasicModule.routeAnalizer import route_module
 from src.Modules.ExportModule import pdfFactory
 from src.Modules.MetadataModule.modulesInvoker import execute_metadata_module_calls
 from src.Modules.ExportModule.plotRoute import plot_insect_route_on_graph_animated, plot_insect_route_on_graph_without_animation
@@ -16,9 +11,12 @@ from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_
 class MainConfigurationInterface:
     new_analises_profile = "Novo perfil de analise"
     
-    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface):
+    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface, border_config_top_interface, border_config_side_interface, showConfigBorderSide, showConfigBorderTop):
         self.perspective_top_interface = perspective_top_interface
         self.perspective_side_interface = perspective_side_interface
+        self.border_config_top_interface = border_config_top_interface
+        self.border_config_side_interface = border_config_side_interface
+        
         
         self.configsPath = "cache/configs.json"
 
@@ -42,14 +40,20 @@ class MainConfigurationInterface:
         self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
         self.btn_select_top_video.pack(pady=5, anchor="center")
         
-        self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (topo)", command=showTopFrame)
+        self.btn_config_top_edges = tk.Button(root, text="Configurar perspectiva (topo)", command=showTopFrame)
+        self.btn_config_top_edges.pack(pady=5, anchor="center")
+        
+        self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (topo)", command=showConfigBorderTop)
         self.btn_config_top_edges.pack(pady=5, anchor="center")
         
         self.btn_select_side_video = tk.Button(root, text="Selecione o local do arquivo de video lado", command=self.select_side_video)
         self.btn_select_side_video.pack(pady=5, anchor="center")
         
-        self.btn_config_side_edges = tk.Button(root, text="Configurar bordas (lado)", command=showSideFrame)
+        self.btn_config_side_edges = tk.Button(root, text="Configurar perspectiva (lado)", command=showSideFrame)
         self.btn_config_side_edges.pack(pady=5, anchor="center")
+        
+        self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (lado)", command=showConfigBorderSide)
+        self.btn_config_top_edges.pack(pady=5, anchor="center")
         
         self.label_height = tk.Label(root, text="Altura (cm)")
         self.label_height.pack(pady=5, anchor="center")
@@ -109,6 +113,9 @@ class MainConfigurationInterface:
         self.height_box_cm.insert(0, config.get("height_box_cm", ""))
         self.depth_box_cm.insert(0, config.get("depth_box_cm", ""))
         
+        self.border_config_top_interface.frame_border_points = config.get("frame_border_points_top", None)
+        self.border_config_side_interface.frame_border_points = config.get("frame_border_points_side", None)
+        
             
     
     def select_top_video(self):
@@ -141,7 +148,9 @@ class MainConfigurationInterface:
             "frame_perspective_points_side": self.perspective_side_interface.frame_perspective_points,
             "width_box_cm": self.width_box_cm.get(),
             "height_box_cm": self.height_box_cm.get(),
-            "depth_box_cm": self.depth_box_cm.get()
+            "depth_box_cm": self.depth_box_cm.get(),
+            "frame_border_points_top": self.border_config_top_interface.frame_border_points,
+            "frame_border_points_side": self.border_config_side_interface.frame_border_points
         }
         
         export_data_to_file(self.configs, self.configsPath)
@@ -173,45 +182,21 @@ class MainConfigurationInterface:
         if(self.is_video_valid()):
             return
         
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future_top = executor.submit(process_video, self.perspective_top_interface.frame_perspective_points,self.root.top_video_path.get(), False)
-            future_side = executor.submit(process_video, self.perspective_side_interface.frame_perspective_points, self.root.side_video_path.get(), True)
-
-            side_success, side_frames, fps, side_data, side_raw_warpped_frames = future_side.result()
-            top_success, top_frames, fps, top_data, top_raw_warpped_frames = future_top.result()
+        sucess = process_basic_modules(self.perspective_top_interface.frame_perspective_points, 
+                      self.perspective_side_interface.frame_perspective_points, 
+                      self.root.top_video_path.get(), 
+                      self.root.side_video_path.get(), 
+                      self.width_box_cm.get(), 
+                      self.height_box_cm.get(), 
+                      self.depth_box_cm.get(), 
+                      self.selected_config.get(),
+                      self.border_config_top_interface.frame_border_points,
+                      self.border_config_side_interface.frame_border_points
+                      )
+        if(not sucess):
+            messagebox.showerror("Erro!", f"Erro na execução dos modulos basicos.")
         
-        if(not (top_success and side_success)):
-            print("Erro ocorreu durante o proces video")
-            return
-        
-        pixel_to_cm_ratio = get_video_data(
-            width_box_cm = float(self.width_box_cm.get()),
-            height_box_cm = float(self.height_box_cm.get()),
-            depth_box_cm = float(self.depth_box_cm.get()),
-            top_frames = top_frames,
-            side_frames = side_frames
-        )
-
-        debug = False
-        if debug:
-            count = len(side_frames)
-            for frame_index in range(count):
-                cv2.imshow('top_frames', side_frames[frame_index])
-                cv2.imshow('top_raw_warpped_frames', side_raw_warpped_frames[frame_index])
-                
-                cv2.waitKey(0)
-        
-        data = route_module(top_data, side_data)
-        data["width_box_cm"] = float(self.width_box_cm.get())
-        data["height_box_cm"] = float(self.height_box_cm.get())
-        data["depth_box_cm"] = float(self.depth_box_cm.get())
-        data["pixel_to_cm_ratio"] = pixel_to_cm_ratio
-        data["fps"] = fps
-        
-        output_location = "./cache/outputs/"+self.selected_config.get()+".json"
-        export_data_to_file(data, output_location)
-        
-        messagebox.showinfo("Sucesso!", f"Modulos básicos executados!")
+        messagebox.showinfo("Sucesso!", "Modulos básicos executados!")
     
     def process_metadata_modules(self):
         data = execute_metadata_module_calls(self.selected_config.get())
@@ -224,8 +209,8 @@ class MainConfigurationInterface:
         width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
         _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
         xlim = (0, width)
-        ylim = (0, height)
-        zlim = (0, depth)
+        ylim = (0, depth)
+        zlim = (0, height)
 
         plot_insect_route_on_graph_without_animation(data, xlim, ylim, zlim)
         
