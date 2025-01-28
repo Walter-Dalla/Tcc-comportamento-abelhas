@@ -11,7 +11,7 @@ from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_
 class MainConfigurationInterface:
     new_analises_profile = "Novo perfil de analise"
     
-    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface, border_config_top_interface, border_config_side_interface, showConfigBorderSide, showConfigBorderTop):
+    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface, border_config_top_interface, border_config_side_interface, showConfigBorderSide, showConfigBorderTop, showRecordWebcamFrame):
         self.perspective_top_interface = perspective_top_interface
         self.perspective_side_interface = perspective_side_interface
         self.border_config_top_interface = border_config_top_interface
@@ -36,6 +36,9 @@ class MainConfigurationInterface:
         # Seleção de arquivos de vídeo
         self.root.top_video_path = tk.StringVar()
         self.root.side_video_path = tk.StringVar()
+        
+        self.btn_select_top_video = tk.Button(root, text="Capiturar videos", command=showRecordWebcamFrame)
+        self.btn_select_top_video.pack(pady=5, anchor="center")
         
         self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
         self.btn_select_top_video.pack(pady=5, anchor="center")
@@ -115,8 +118,6 @@ class MainConfigurationInterface:
         
         self.border_config_top_interface.frame_border_points = config.get("frame_border_points_top", None)
         self.border_config_side_interface.frame_border_points = config.get("frame_border_points_side", None)
-        
-            
     
     def select_top_video(self):
         filepath = filedialog.askopenfilename(title="Selecione o arquivo de vídeo topo", filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
