@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
+from src.Modules.ExportModule.folderUtils import assert_dir_exists
 from src.Modules.BasicModule.processVideoModule import process_basic_modules
 from src.Modules.BasicModule.perspectiveModule import get_perspective_size
 from src.Modules.ExportModule import pdfFactory
@@ -24,6 +25,9 @@ class MainConfigurationInterface:
         
         self.configs = self.load_configs()
         
+        self.btn_select_top_video = tk.Button(root, text="Capturar videos", command=showRecordWebcamFrame)
+        self.btn_select_top_video.pack(pady=5, anchor="center")
+        
         # Seleção de configurações
         self.label_config = tk.Label(root, text="Selecione o perfil de analise")
         self.label_config.pack(pady=5, anchor="center")
@@ -36,9 +40,6 @@ class MainConfigurationInterface:
         # Seleção de arquivos de vídeo
         self.root.top_video_path = tk.StringVar()
         self.root.side_video_path = tk.StringVar()
-        
-        self.btn_select_top_video = tk.Button(root, text="Capiturar videos", command=showRecordWebcamFrame)
-        self.btn_select_top_video.pack(pady=5, anchor="center")
         
         self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
         self.btn_select_top_video.pack(pady=5, anchor="center")
@@ -218,6 +219,9 @@ class MainConfigurationInterface:
     def process_pdf(self):
         title = self.selected_config.get()
         output_location = "./cache/outputs/"+title
+        
+        assert_dir_exists("./cache/outputs/")
+        
         data = import_data_from_file(output_location+ ".json")
         
         pdfFactory.GeneratePdf(data, output_location+".pdf", title)

@@ -2,6 +2,7 @@ import concurrent.futures
 import cv2
 import time
 
+from src.Modules.ExportModule.folderUtils import assert_dir_exists
 from src.Modules.BasicModule.utils.getData import get_video_data
 from src.Modules.BasicModule.routeAnalizer import route_module
 from src.Modules.ExportModule.jsonUtils import export_data_to_file
@@ -58,7 +59,7 @@ def process_basic_modules(frame_perspective_points_top,
     data["frame_perspective_points_top"] = frame_perspective_points_top
     data["frame_perspective_points_side"] = frame_perspective_points_side
     
-
+    assert_dir_exists("./cache/outputs/")
     output_location = f"./cache/outputs/{selected_config}.json"
     export_data_to_file(data, output_location)
     

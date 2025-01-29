@@ -1,14 +1,17 @@
 import threading
+import time
 from tkinter import ttk
 from PIL import Image, ImageTk
 from queue import Queue
 
+from src.Modules.ExportModule.folderUtils import assert_dir_exists
 from src.Modules.ExportModule.recordVideo import start_webcams
 from src.utils.interfaceUtils import show_frame
 
 class RecordWebcamVideoUI:
     def __init__(self, root, main_frame):
         self.root = root
+        
         self.main_frame = main_frame
         self.finished = False
         self.kill_all_threads = threading.Event()
@@ -22,32 +25,20 @@ class RecordWebcamVideoUI:
                 "side": None
             }
         }
-        
-        self.show_ui()
 
-
-    def show_ui(self):
-        print("Show image")
-        
-        
-        self.labels["fps"] = ttk.Label(self.root, text="FPS")
-        self.labels["fps"].grid(row=1, column=2, padx=10, pady=10)
-        
-        self.entry["fps"] = ttk.Entry(self.root)
-        self.entry["fps"].grid(row=2, column=2, padx=10, pady=10)
-        self.entry["fps"].insert(0, "30")
-        
-        self.buttons["StartRecording"] = ttk.Button(self.root, text="Iniciar gravação", command=self.init_recording)
-        self.buttons["StartRecording"].grid(row=3, column=2, padx=10, pady=10)
-        
     def init_recording(self):
-        output_dir = "./temp/"
-        output_file_side = output_dir+"side.avi"
-        output_file_top = output_dir+"top.avi"
+        output_dir = "./records/"
+        
+        assert_dir_exists(output_dir)
+        
+        date_time = time.strftime("%Y%m%d_%H%M%S")
+        
+        output_file_side = output_dir+date_time+"_side.avi"
+        output_file_top = output_dir+date_time+"_top.avi"
         
         frame_rate = int(self.entry["fps"].get())
         
-        self.init_waiting_for_webcams_sreen_state()
+        self.init_waiting_for_webcams_screen_state()
         
         queueSide = Queue()
         queueTop = Queue()
@@ -69,52 +60,7 @@ class RecordWebcamVideoUI:
         
         self.cache["thread_show_recoding_video"].start()
         
-        self.init_recording_sreen_state()
-        
-    
-    
-    def init_recording_sreen_state(self):
-        self.labels["waiting_to_sync"].destroy()
-        self.clear_screen()
-        
-        self.buttons["StopRecording"] = ttk.Button(self.root, text="Parar gravação", command=self.stop_recording)
-        self.buttons["StopRecording"].grid(row=1, column=1, padx=10, pady=10)
-        
-        
-        self.labels["side_text"] = ttk.Label(self.root, text="Lado")
-        self.labels["side_text"].grid(row=2, column=1)
-        
-        self.labels["side_image"] = ttk.Label(self.root)
-        self.labels["side_image"].grid(row=3, column=1)
-        
-        
-        
-        self.labels["top_text"] = ttk.Label(self.root, text="Superior")
-        self.labels["top_text"].grid(row=2, column=2)
-        
-        self.labels["top_image"] = ttk.Label(self.root)
-        self.labels["top_image"].grid(row=3, column=2)
-        
-        self.root.update_idletasks()
-        self.root.grid_propagate(True)
-        
-        
-        
-    def init_waiting_for_webcams_sreen_state(self):
-        self.buttons["StartRecording"].destroy()
-        
-        self.entry["fps"].destroy()
-        self.labels["fps"].destroy()
-        
-        self.clear_screen()
-        
-        self.labels["waiting_to_sync"] = ttk.Label(self.root, text="Esperando sincronização")
-        self.labels["waiting_to_sync"].grid(row=1, column=2)
-        
-        self.root.update_idletasks()
-        self.root.grid_propagate(True)
-        
-    
+        self.init_recording_screen_state()
         
     def show_recoding_video(self, queueSide, queueTop, error_event_side, error_event_top):
         image_size = (400, 400)
@@ -172,9 +118,7 @@ class RecordWebcamVideoUI:
         self.cache["thread_side"].join()
         self.cache["thread_top"].join()
         print("parou todas as treads")
-        self.clear_screen()
-        
-        show_frame(self.main_frame)
+        self.close_screen()
         
     def run_loop(self):
         self.root.mainloop()
@@ -183,3 +127,63 @@ class RecordWebcamVideoUI:
         for widget in self.root.winfo_children():
             widget.destroy()
             
+    # SCREEN STATES
+    def initial_screen_state(self):
+        self.labels["fps"] = ttk.Label(self.root, text="FPS")
+        self.labels["fps"].grid(row=1, column=2, padx=10, pady=10)
+        
+        self.entry["fps"] = ttk.Entry(self.root)
+        self.entry["fps"].grid(row=2, column=2, padx=10, pady=10)
+        self.entry["fps"].insert(0, "30")
+        
+        self.buttons["StartRecording"] = ttk.Button(self.root, text="Iniciar gravação", command=self.init_recording)
+        self.buttons["StartRecording"].grid(row=3, column=2, padx=10, pady=10)
+        
+        self.buttons["StartRecording"] = ttk.Button(self.root, text="Voltar", command=self.close_screen)
+        self.buttons["StartRecording"].grid(row=4, column=2, padx=10, pady=10)
+    
+    def init_recording_screen_state(self):
+        self.labels["waiting_to_sync"].destroy()
+        self.clear_screen()
+        
+        self.buttons["StopRecording"] = ttk.Button(self.root, text="Parar gravação", command=self.stop_recording)
+        self.buttons["StopRecording"].grid(row=1, column=1, padx=10, pady=10)
+        
+        
+        self.labels["side_text"] = ttk.Label(self.root, text="Lado")
+        self.labels["side_text"].grid(row=2, column=1)
+        
+        self.labels["side_image"] = ttk.Label(self.root)
+        self.labels["side_image"].grid(row=3, column=1)
+        
+        
+        
+        self.labels["top_text"] = ttk.Label(self.root, text="Superior")
+        self.labels["top_text"].grid(row=2, column=2)
+        
+        self.labels["top_image"] = ttk.Label(self.root)
+        self.labels["top_image"].grid(row=3, column=2)
+        
+        self.root.update_idletasks()
+        self.root.grid_propagate(True)
+        
+        
+        
+    def init_waiting_for_webcams_screen_state(self):
+        self.buttons["StartRecording"].destroy()
+        
+        self.entry["fps"].destroy()
+        self.labels["fps"].destroy()
+        
+        self.clear_screen()
+        
+        self.labels["waiting_to_sync"] = ttk.Label(self.root, text="Esperando sincronização")
+        self.labels["waiting_to_sync"].grid(row=1, column=2)
+        
+        self.root.update_idletasks()
+        self.root.grid_propagate(True)
+        
+    def close_screen(self):
+        self.clear_screen()
+        
+        show_frame(self.main_frame)

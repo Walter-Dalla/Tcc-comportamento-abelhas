@@ -94,6 +94,7 @@ class MainInterface:
         self.run_background_tasks(self.border_config_side_interface, self.perspective_main_frame.side_video_path.get())
         
     def showRecordWebcamFrame(self):
+        self.record_webcam_interface.initial_screen_state()
         show_frame(self.record_webcam_frame)
     
     def run_background_tasks(self, screen, videoPath):
