@@ -1,5 +1,6 @@
 def GeneratePdf(data, output_location, title):
     from xhtml2pdf import pisa
+    
     html_content = f"""
             <!DOCTYPE html>
         <html lang="pt-BR">

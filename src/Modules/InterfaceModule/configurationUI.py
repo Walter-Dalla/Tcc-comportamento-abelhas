@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
+from src.Modules.ExportModule.folderUtils import assert_dir_exists
 from src.Modules.BasicModule.processVideoModule import process_basic_modules
 from src.Modules.BasicModule.perspectiveModule import get_perspective_size
 from src.Modules.ExportModule import pdfFactory
@@ -11,7 +12,7 @@ from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_
 class MainConfigurationInterface:
     new_analises_profile = "Novo perfil de analise"
     
-    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface, border_config_top_interface, border_config_side_interface, showConfigBorderSide, showConfigBorderTop):
+    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface, border_config_top_interface, border_config_side_interface, showConfigBorderSide, showConfigBorderTop, showRecordWebcamFrame):
         self.perspective_top_interface = perspective_top_interface
         self.perspective_side_interface = perspective_side_interface
         self.border_config_top_interface = border_config_top_interface
@@ -23,6 +24,9 @@ class MainConfigurationInterface:
         self.root = root
         
         self.configs = self.load_configs()
+        
+        self.btn_select_top_video = tk.Button(root, text="Capturar videos", command=showRecordWebcamFrame)
+        self.btn_select_top_video.pack(pady=5, anchor="center")
         
         # Seleção de configurações
         self.label_config = tk.Label(root, text="Selecione o perfil de analise")
@@ -115,8 +119,6 @@ class MainConfigurationInterface:
         
         self.border_config_top_interface.frame_border_points = config.get("frame_border_points_top", None)
         self.border_config_side_interface.frame_border_points = config.get("frame_border_points_side", None)
-        
-            
     
     def select_top_video(self):
         filepath = filedialog.askopenfilename(title="Selecione o arquivo de vídeo topo", filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
@@ -217,6 +219,9 @@ class MainConfigurationInterface:
     def process_pdf(self):
         title = self.selected_config.get()
         output_location = "./cache/outputs/"+title
+        
+        assert_dir_exists("./cache/outputs/")
+        
         data = import_data_from_file(output_location+ ".json")
         
         pdfFactory.GeneratePdf(data, output_location+".pdf", title)

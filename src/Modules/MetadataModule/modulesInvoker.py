@@ -10,7 +10,7 @@ def load_module(module_name, module_path):
     return module
 
 def execute_metadata_module_calls(selected_config):
-    metadata_module_path = "./src/Modules/MetadataModule"
+    metadata_module_path = "./MetadataModule"
     
     data_location = "./cache/outputs/"+selected_config+".json"
     data = import_data_from_file(data_location)
