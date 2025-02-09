@@ -1,9 +1,8 @@
 import threading
-import time
 from tkinter import ttk
 from PIL import Image, ImageTk
 
-from src.Modules.InterfaceModule.recodWebCamVideo.recordWebcamController import prepare_recording
+from src.Modules.InterfaceModule.recodWebCamVideo.recordWebcamController import get_image_from_frame_queue, prepare_recording, stop_recording
 from src.Modules.ExportModule.folderUtils import assert_dir_exists
 from src.Modules.ExportModule.recordVideo import start_webcams
 from src.utils.interfaceUtils import show_frame
@@ -39,28 +38,31 @@ class RecordWebcamVideoUI:
         ):
             count = 1
         
-        self.cache["thread_show_recoding_video"] = threading.Thread(target=self.show_recoding_video, args=(self.cache["queue_side"], self.cache["queue_top"], self.cache["error_event_side"], self.cache["error_event_top"]))
+        self.cache["thread_show_recoding_video"] = threading.Thread(target=self.show_recoding_video)
         self.cache["thread_show_recoding_video"].start()
         
         self.prepare_recording_screen_state()
-        
-    
+
     def init_recording(self):
         self.cache["start_recording_event_side"].set()
         self.cache["start_recording_event_top"].set()
         
         self.init_recording_screen_state()
-        
-        
-    def show_recoding_video(self, queueSide, queueTop, error_event_side, error_event_top):
+
+    def show_recoding_video(self):
         image_size = (400, 400)
         first = True
+        
+        queueSide = self.cache["queue_side"]
+        queueTop = self.cache["queue_top"]
+        error_event_side = self.cache["error_event_side"]
+        error_event_top = self.cache["error_event_top"]
         
         try:
             while(not self.cache["stop_event"].is_set()):
                 
                 if(not error_event_side.is_set()):
-                    imageTkSide = self.get_image_from_frame_queue(queueSide, image_size)
+                    imageTkSide = get_image_from_frame_queue(queueSide, image_size)
                     self.labels["side_image"].config(image=imageTkSide)
                     self.cache["image"]["side"] = imageTkSide
                 else:
@@ -71,7 +73,7 @@ class RecordWebcamVideoUI:
                     self.cache["image"]["side"] = imageTkSide
                 
                 if(not error_event_top.is_set()):
-                    imageTkTop = self.get_image_from_frame_queue(queueTop, image_size)
+                    imageTkTop = get_image_from_frame_queue(queueTop, image_size)
                     self.labels["top_image"].config(image=imageTkTop)
                     self.cache["image"]["top"] = imageTkTop
                 else:
@@ -91,23 +93,9 @@ class RecordWebcamVideoUI:
                         first = False
         except:
             print("erro esperado")
-            
-    def get_image_from_frame_queue(self, queue, image_size):
-        try:
-            frame = queue.get(timeout=1)
-            image = Image.fromarray(frame)
-        except:
-            image = Image.new("RGB", image_size, "black")
-        
-        imageTk = ImageTk.PhotoImage(image)
-        return imageTk
         
     def stop_recording(self):
-        self.cache["stop_event"].set()
-        
-        self.cache["thread_side"].join()
-        self.cache["thread_top"].join()
-        print("parou todas as treads")
+        stop_recording(self.cache)
         self.close_screen()
         
     def run_loop(self):
@@ -164,9 +152,6 @@ class RecordWebcamVideoUI:
         
         self.buttons["StopRecording"] = ttk.Button(self.root, text="Iniciar gravação", command=self.init_recording)
         self.buttons["StopRecording"].grid(row=1, column=1, padx=10, pady=10)
-        
-        
-        
         
     def init_waiting_for_webcams_screen_state(self):
         self.clear_screen()

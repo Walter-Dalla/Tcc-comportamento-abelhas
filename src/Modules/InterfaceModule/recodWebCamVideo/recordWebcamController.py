@@ -2,6 +2,7 @@ from queue import Queue
 import time
 from src.Modules.ExportModule.recordVideo import start_webcams
 from src.Modules.ExportModule.folderUtils import assert_dir_exists
+from PIL import Image, ImageTk
 
 def prepare_recording(cache, entry):
         output_dir = "./records/"
@@ -34,6 +35,20 @@ def prepare_recording(cache, entry):
         cache["queue_side"] = queue_side
         cache["queue_top"] = queue_top
         
-            
-            
+def get_image_from_frame_queue(self, queue, image_size):
+    try:
+        frame = queue.get(timeout=1)
+        image = Image.fromarray(frame)
+    except:
+        image = Image.new("RGB", image_size, "black")
+    
+    imageTk = ImageTk.PhotoImage(image)
+    return imageTk
+
+def stop_recording(cache):
+    cache["stop_event"].set()
+    
+    cache["thread_side"].join()
+    cache["thread_top"].join()
+           
         
