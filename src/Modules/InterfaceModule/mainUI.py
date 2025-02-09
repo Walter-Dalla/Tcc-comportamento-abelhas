@@ -1,7 +1,7 @@
 import threading
 import tkinter as tk
 
-from src.Modules.InterfaceModule.recordWebcamVideoUI import RecordWebcamVideoUI
+from src.Modules.InterfaceModule.recodWebCamVideo.recordWebcamVideoUI import RecordWebcamVideoUI
 from src.Modules.InterfaceModule.borderUi import BorderUi
 from src.Modules.InterfaceModule.configurationUI import MainConfigurationInterface
 from src.Modules.InterfaceModule.perspectiveUi import PerspectiveUi
