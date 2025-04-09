@@ -4,7 +4,7 @@ import tkinter as tk
 from src.Modules.InterfaceModule.recodWebCamVideo.recordWebcamVideoUI import RecordWebcamVideoUI
 from src.Modules.InterfaceModule.borderUi import BorderUi
 from src.Modules.InterfaceModule.configurationUI import MainConfigurationInterface
-from src.Modules.InterfaceModule.perspectiveUi import PerspectiveUi
+from src.Modules.InterfaceModule.perspective.perspectiveUi import PerspectiveUi
 from src.utils.interfaceUtils import show_frame
 
 class MainInterface:
@@ -28,18 +28,6 @@ class MainInterface:
         
         self.perspective_main_frame = tk.Frame(root)
         
-        self.perspective_side_frame = tk.Frame(root)
-        self.perspective_side_interface = PerspectiveUi(
-            root=self.perspective_side_frame, 
-            main_frame = self.perspective_main_frame
-        )
-        
-        self.perspective_top_frame = tk.Frame(root)
-        self.perspective_top_interface = PerspectiveUi(
-            root=self.perspective_top_frame,
-            main_frame = self.perspective_main_frame
-        )
-    
         self.border_config_top_frame = tk.Frame(root)
         self.border_config_top_interface = BorderUi(
             root=self.border_config_top_frame,
@@ -52,24 +40,28 @@ class MainInterface:
             main_frame = self.perspective_main_frame
         )
         
-        self.sla = tk.Frame(root)
         self.record_webcam_frame = tk.Frame(root)
         self.record_webcam_interface = RecordWebcamVideoUI(
             root=self.record_webcam_frame,
             main_frame = self.perspective_main_frame
         )
+        
+        self.perspective_frame = tk.Frame(root)
+        self.perspective_interface = PerspectiveUi(
+            root=self.perspective_frame,
+            main_frame = self.perspective_main_frame
+        )
     
         self.perspective_main_interface = MainConfigurationInterface(
             root= self.perspective_main_frame,
-            showSideFrame= self.showFrameSide,
-            showTopFrame= self.showFrameTop,
+            #showSideFrame= self.showFrameSide,
             showConfigBorderSide= self.showConfigBorderSide,
             showConfigBorderTop= self.showConfigBorderTop,
-            perspective_top_interface= self.perspective_top_interface,
-            perspective_side_interface= self.perspective_side_interface,
+            perspective_interface= self.perspective_interface,
             border_config_top_interface= self.border_config_top_interface,
             border_config_side_interface= self.border_config_side_interface,
-            showRecordWebcamFrame = self.showRecordWebcamFrame
+            showRecordWebcamFrame = self.showRecordWebcamFrame,
+            showPerspective = None
         )
         
         show_frame(self.perspective_main_frame)
@@ -77,14 +69,6 @@ class MainInterface:
     def showMainFrame(self):
         show_frame(self.perspective_main_frame)
     
-    def showFrameSide(self):
-        show_frame(self.perspective_side_frame)
-        self.run_background_tasks(self.perspective_side_interface, self.perspective_main_frame.side_video_path.get())
-        
-    def showFrameTop(self):
-        show_frame(self.perspective_top_frame)
-        self.run_background_tasks(self.perspective_top_interface, self.perspective_main_frame.top_video_path.get())
-        
     def showConfigBorderTop(self):
         show_frame(self.border_config_top_frame)
         self.run_background_tasks(self.border_config_top_interface, self.perspective_main_frame.top_video_path.get())
@@ -96,7 +80,12 @@ class MainInterface:
     def showRecordWebcamFrame(self):
         self.record_webcam_interface.initial_screen_state()
         show_frame(self.record_webcam_frame)
-    
+        
+    def showFrameSide(self):
+        self.perspective_interface.initial_screen_state()
+        show_frame(self.perspective_frame)
+        
+        
     def run_background_tasks(self, screen, videoPath):
         background_thread = threading.Thread(target=screen.startUp, args=[videoPath])
         background_thread.daemon = True

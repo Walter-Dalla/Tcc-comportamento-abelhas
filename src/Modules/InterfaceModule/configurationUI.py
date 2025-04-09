@@ -12,9 +12,7 @@ from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_
 class MainConfigurationInterface:
     new_analises_profile = "Novo perfil de analise"
     
-    def __init__(self, root, showSideFrame, showTopFrame, perspective_top_interface, perspective_side_interface, border_config_top_interface, border_config_side_interface, showConfigBorderSide, showConfigBorderTop, showRecordWebcamFrame):
-        self.perspective_top_interface = perspective_top_interface
-        self.perspective_side_interface = perspective_side_interface
+    def __init__(self, root, showPerspective, perspective_interface, border_config_top_interface, border_config_side_interface, showConfigBorderSide, showConfigBorderTop, showRecordWebcamFrame):
         self.border_config_top_interface = border_config_top_interface
         self.border_config_side_interface = border_config_side_interface
         
@@ -44,7 +42,7 @@ class MainConfigurationInterface:
         self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
         self.btn_select_top_video.pack(pady=5, anchor="center")
         
-        self.btn_config_top_edges = tk.Button(root, text="Configurar perspectiva (topo)", command=showTopFrame)
+        self.btn_config_top_edges = tk.Button(root, text="Configurar perspectiva (topo)", command=lambda: showPerspective(self.root.top_video_path))
         self.btn_config_top_edges.pack(pady=5, anchor="center")
         
         self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (topo)", command=showConfigBorderTop)
@@ -53,7 +51,7 @@ class MainConfigurationInterface:
         self.btn_select_side_video = tk.Button(root, text="Selecione o local do arquivo de video lado", command=self.select_side_video)
         self.btn_select_side_video.pack(pady=5, anchor="center")
         
-        self.btn_config_side_edges = tk.Button(root, text="Configurar perspectiva (lado)", command=showSideFrame)
+        self.btn_config_side_edges = tk.Button(root, text="Configurar perspectiva (lado)", command=lambda: showPerspective(self.root.side_video_path))
         self.btn_config_side_edges.pack(pady=5, anchor="center")
         
         self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (lado)", command=showConfigBorderSide)
@@ -208,7 +206,7 @@ class MainConfigurationInterface:
         data_location = "./cache/outputs/"+self.selected_config.get()+".json"
         data = import_data_from_file(data_location)
         
-        width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
+        width, depth =  (0,0) #TODO -> get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
         _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
         xlim = (0, width)
         ylim = (0, depth)
