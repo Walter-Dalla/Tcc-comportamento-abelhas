@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 def remove_background(raw_warpped_frames, debug_mode, is_side):
-    global clicked_position
     resume_debug_mode = False
     selected_random_frames = []
     

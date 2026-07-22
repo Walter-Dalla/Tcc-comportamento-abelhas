@@ -24,35 +24,10 @@ def updateAnimation(frame, points, pointAnimationObj, lineAnimationObj):
     
     return pointAnimationObj, lineAnimationObj
 
-# Essa função limita o angulo da elevação e do Azimuth por pura estetica.
-# Não há motivos para fazer essa limitação
-# Fiz porque acho estranho o comportamento do grafico 
-# Com elev e azim menor que 0 e maior que 89
-
-# az -180 até -90
-# ele 0 até 180
-
-def limitAngleAzimuthAndElevation(event):
-    return
-    ax = event.inaxes
-    if ax and ax.name == '3d':
-        elev = ax.elev
-        azim = ax.azim
-        if elev > 89:
-            ax.elev = 89
-        elif elev < 0:
-            ax.elev = 0
-        if azim > -90:
-            ax.azim = -89
-        elif azim < -180:
-            ax.azim = -179
-        fig.canvas.draw_idle()
-
 def plot_insect_route_on_graph_animated(data, xlim, ylim, zlim):
-    
+
     positionsForInsectOnFrame = getInsectPositionFromFile(data)
-    
-    global fig
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     
@@ -74,17 +49,14 @@ def plot_insect_route_on_graph_animated(data, xlim, ylim, zlim):
     
     
     ani = FuncAnimation(fig, updateAnimation, frames=len(positionsForInsectOnFrame), fargs=(positionsForInsectOnFrame, pointAnimationObj, lineAnimationObj), interval=0.1)
-    
-    fig.canvas.mpl_connect('motion_notify_event', limitAngleAzimuthAndElevation)
-    
+
     plt.show()
 
 
 
 def plot_insect_route_on_graph_without_animation(jsonFilePath, xlim, ylim, zlim):
     positionsForInsectOnFrame = getInsectPositionFromFile(jsonFilePath)
-    
-    global fig
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     

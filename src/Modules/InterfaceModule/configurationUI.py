@@ -135,8 +135,6 @@ class MainConfigurationInterface:
             return
         
         config_name = self.selected_config.get()
-        if not isinstance(self.root.top_video_path.get(), str) or not isinstance(self.root.side_video_path.get(), str) or not isinstance(self.perspective_top_interface.frame_perspective_points, list) or not isinstance(self.perspective_side_interface.frame_perspective_points, list):
-            messagebox.showinfo("Configurações salvas", f"Configuração '{config_name}' salva com sucesso.")
 
         if config_name == self.new_analises_profile:
             config_name = tk.simpledialog.askstring("Salvar o perfil de analise", "Digite o nome para o novo perfil de analise:")
