@@ -2,7 +2,7 @@ import threading
 from tkinter import ttk
 from PIL import Image, ImageTk
 
-from src.Modules.InterfaceModule.recodWebCamVideo.recordWebcamController import get_image_from_frame_queue, prepare_recording, stop_recording
+from src.Modules.InterfaceModule.recodWebCamVideo.recordWebcamController import get_image_from_frame_queue, prepare_recording as controller_prepare_recording, stop_recording as controller_stop_recording
 from src.Modules.ExportModule.folderUtils import assert_dir_exists
 from src.Modules.ExportModule.recordVideo import start_webcams
 from src.utils.interfaceUtils import show_frame
@@ -27,7 +27,7 @@ class RecordWebcamVideoUI:
 
     
     def prepare_recording(self):
-        prepare_recording(self.cache, self.entry)
+        controller_prepare_recording(self.cache, self.entry)
         
         self.init_waiting_for_webcams_screen_state()
         
@@ -95,7 +95,7 @@ class RecordWebcamVideoUI:
             print("erro esperado")
         
     def stop_recording(self):
-        stop_recording(self.cache)
+        controller_stop_recording(self.cache)
         self.close_screen()
         
     def run_loop(self):
