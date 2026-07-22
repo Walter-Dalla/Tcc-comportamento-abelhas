@@ -25,40 +25,40 @@ class MainConfigurationInterface:
         
         self.configs = self.load_configs()
         
-        self.btn_select_top_video = tk.Button(root, text="Capturar videos", command=showRecordWebcamFrame)
-        self.btn_select_top_video.pack(pady=5, anchor="center")
-        
+        btn_capture_videos = tk.Button(root, text="Capturar videos", command=showRecordWebcamFrame)
+        btn_capture_videos.pack(pady=5, anchor="center")
+
         # Seleção de configurações
         self.label_config = tk.Label(root, text="Selecione o perfil de analise")
         self.label_config.pack(pady=5, anchor="center")
-        
+
         self.selected_config = tk.StringVar(value=self.new_analises_profile)
         self.config_combobox = ttk.Combobox(root, textvariable=self.selected_config, values=[self.new_analises_profile] + list(self.configs.keys()))
         self.config_combobox.pack(pady=5, anchor="center")
         self.config_combobox.bind("<<ComboboxSelected>>", self.load_selected_config)
-        
+
         # Seleção de arquivos de vídeo
         self.root.top_video_path = tk.StringVar()
         self.root.side_video_path = tk.StringVar()
-        
-        self.btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
-        self.btn_select_top_video.pack(pady=5, anchor="center")
-        
-        self.btn_config_top_edges = tk.Button(root, text="Configurar perspectiva (topo)", command=showTopFrame)
-        self.btn_config_top_edges.pack(pady=5, anchor="center")
-        
-        self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (topo)", command=showConfigBorderTop)
-        self.btn_config_top_edges.pack(pady=5, anchor="center")
-        
-        self.btn_select_side_video = tk.Button(root, text="Selecione o local do arquivo de video lado", command=self.select_side_video)
-        self.btn_select_side_video.pack(pady=5, anchor="center")
-        
-        self.btn_config_side_edges = tk.Button(root, text="Configurar perspectiva (lado)", command=showSideFrame)
-        self.btn_config_side_edges.pack(pady=5, anchor="center")
-        
-        self.btn_config_top_edges = tk.Button(root, text="Configurar bordas (lado)", command=showConfigBorderSide)
-        self.btn_config_top_edges.pack(pady=5, anchor="center")
-        
+
+        btn_select_top_video = tk.Button(root, text="Selecione o local do arquivo de video topo", command=self.select_top_video)
+        btn_select_top_video.pack(pady=5, anchor="center")
+
+        btn_perspective_top = tk.Button(root, text="Configurar perspectiva (topo)", command=showTopFrame)
+        btn_perspective_top.pack(pady=5, anchor="center")
+
+        btn_border_top = tk.Button(root, text="Configurar bordas (topo)", command=showConfigBorderTop)
+        btn_border_top.pack(pady=5, anchor="center")
+
+        btn_select_side_video = tk.Button(root, text="Selecione o local do arquivo de video lado", command=self.select_side_video)
+        btn_select_side_video.pack(pady=5, anchor="center")
+
+        btn_perspective_side = tk.Button(root, text="Configurar perspectiva (lado)", command=showSideFrame)
+        btn_perspective_side.pack(pady=5, anchor="center")
+
+        btn_border_side = tk.Button(root, text="Configurar bordas (lado)", command=showConfigBorderSide)
+        btn_border_side.pack(pady=5, anchor="center")
+
         self.label_height = tk.Label(root, text="Altura (cm)")
         self.label_height.pack(pady=5, anchor="center")
         
@@ -78,20 +78,20 @@ class MainConfigurationInterface:
         self.depth_box_cm.pack(pady=5, anchor="center")
         
         # Salvar configurações
-        self.btn_save_config = tk.Button(root, text="Salvar configurações", command=self.save_config)
-        self.btn_save_config.pack(pady=20)
-        
-        self.btn_config_side_edges = tk.Button(root, text="Processar video (Módulos Basicos)", command=self.process_video)
-        self.btn_config_side_edges.pack(pady=5, anchor="center")
-        
-        self.btn_config_side_edges = tk.Button(root, text="Executar módulos de metadados", command=self.process_metadata_modules)
-        self.btn_config_side_edges.pack(pady=5, anchor="center")
-        
-        self.btn_config_side_edges = tk.Button(root, text="Exibir grafico de rota", command=self.process_output_data)
-        self.btn_config_side_edges.pack(pady=5, anchor="center")
-    
-        self.btn_config_side_edges = tk.Button(root, text="Exportar para PDF", command=self.process_pdf)
-        self.btn_config_side_edges.pack(pady=5, anchor="center")
+        btn_save_config = tk.Button(root, text="Salvar configurações", command=self.save_config)
+        btn_save_config.pack(pady=20)
+
+        btn_process_video = tk.Button(root, text="Processar video (Módulos Basicos)", command=self.process_video)
+        btn_process_video.pack(pady=5, anchor="center")
+
+        btn_process_metadata = tk.Button(root, text="Executar módulos de metadados", command=self.process_metadata_modules)
+        btn_process_metadata.pack(pady=5, anchor="center")
+
+        btn_show_route_graph = tk.Button(root, text="Exibir grafico de rota", command=self.process_output_data)
+        btn_show_route_graph.pack(pady=5, anchor="center")
+
+        btn_export_pdf = tk.Button(root, text="Exportar para PDF", command=self.process_pdf)
+        btn_export_pdf.pack(pady=5, anchor="center")
         
     def load_configs(self):
         return import_data_from_file(self.configsPath)
