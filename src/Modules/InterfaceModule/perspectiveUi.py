@@ -40,7 +40,7 @@ class PerspectiveUi:
         while not finished_perspective:
             finished_perspective, perspective_frame = fix_perspective(frame, self.frame_perspective_points)
             time.sleep(0.01)
-            if perspective_frame is not 0:
+            if perspective_frame is not None:
                 self.load_image_on_ui_from_cv2(perspective_frame)
 
                 self.show_finish_perspective_btn()
@@ -166,7 +166,7 @@ def fix_perspective(frame, frame_points):
     if len(frame_points) == 4:
         return True, perspective(frame, frame_points)
 
-    return False, 0
+    return False, None
 
 def get_frame_points(event, frame_points):
     x, y = event.x, event.y
