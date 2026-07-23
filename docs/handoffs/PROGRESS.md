@@ -10,7 +10,7 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 |---|---|---|---|
 | 0 | Ferramental e fundação de pacote | ✅ done | [fase0-pacote-handoff.md](fase0-pacote-handoff.md) |
 | 1 | Primitivas core: schema + workspace + store | ✅ done | [fase1-schema-store-handoff.md](fase1-schema-store-handoff.md) |
-| 2 | Sistema de plugin + esqueleto de orquestração | ⬜ não iniciada | — |
+| 2 | Sistema de plugin + esqueleto de orquestração | ✅ done | [fase2-plugin-orquestracao-handoff.md](fase2-plugin-orquestracao-handoff.md) |
 | 3 | Porta pipeline de cálculo pra estágios streaming | ⬜ não iniciada | — |
 | 4 | Interface dupla: CLI + GUI na mesma orquestração | ⬜ não iniciada | — |
 | 5 | Backends GPU (plugins puros) | ⬜ não iniciada | — |
@@ -18,12 +18,14 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 
 ## Próxima ação
 
-Iniciar **Fase 2** (sistema de plugin + esqueleto de orquestração): `src/core/plugin.py`,
-`plugin_registry.py`, `pipeline.py`, `stages.py`, `errors.py`, + plugins `speed`/`border`
-(adapters finos) e `gpu.py` (stub, paralelo). Ver `ARCHITECTURE.md` seção "Fase 2" e
-`docs/plans/fase2-detalhado.md`. O schema da Fase 1 (`AnalysisContext`, `AnalysisResult`,
-`Metric`, `BorderRegion`, `Calibration`, `Route3D`, `Workspace`, `ResultStore`,
-`SCHEMA_VERSION`) já está exposto e consumível — ver handoff da Fase 1.
+Iniciar **Fase 3** (a grande refatoração: pipeline de cálculo → estágios streaming
+Capture/Rectify/Detect/Track/Fuse). Ver `ARCHITECTURE.md` seção "Fase 3" e
+`docs/plans/fase3-detalhado.md`. Esta é a única refatoração grande inevitável;
+guard-rail principal é o teste golden-file. Pré-requisitos já prontos: as bases
+`Detector`/`Tracker`/`MetadataPlugin` (`src/core/stages.py`), o `PluginRegistry`/
+`Pipeline`, o schema (Fase 1) e os plugins `speed`/`border` (Fase 2). A Fase 3
+corrige aqui os bugs #2/#3/#6 (fórmula de velocidade e `px_per_cm` por eixo via
+`axis_mapping()`) — ver "Como retomar" no handoff da Fase 2.
 
 ## Notas de acompanhamento abertas
 
