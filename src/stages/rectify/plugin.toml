@@ -1,0 +1,17 @@
+[plugin]
+name        = "cpu-perspective-rectifier"
+version     = "1.0.0"
+kind        = "rectify"
+entry       = "plugin:CpuPerspectiveRectifier"
+api_version = "1.0"
+schema      = ">=1.0,<2.0"
+
+[requires]
+python   = ">=3.11"
+packages = ["opencv-python>=4.9", "numpy>=1.26"]
+plugins  = []
+
+[ordering]
+before = []
+after  = []
+priority = 100

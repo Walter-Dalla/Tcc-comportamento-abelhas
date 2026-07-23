@@ -22,12 +22,10 @@ from src.core.schema.result import AnalysisContext
 from src.core.schema.track import Track
 
 if TYPE_CHECKING:
-    # `RectifiedFrame` só existe a partir da Fase 3 (estágio Rectify). Em runtime
-    # `Detector` nunca é instanciado nesta fase e, com `from __future__ import
-    # annotations`, a anotação nunca é avaliada. Mas o mypy reprovaria uma
-    # referência a um nome inexistente — este alias temporário o satisfaz e será
-    # trocado pelo tipo real quando Rectify chegar (Fase 3).
-    RectifiedFrame = object
+    # `RectifiedFrame` passa a existir de verdade na Fase 3 (`src/core/frames.py`).
+    # Import só-de-tipo: com `from __future__ import annotations` a anotação de
+    # `detect` nunca é avaliada em runtime, mas o mypy resolve o nome real aqui.
+    from src.core.frames import RectifiedFrame
 
 
 class Detector(Plugin):

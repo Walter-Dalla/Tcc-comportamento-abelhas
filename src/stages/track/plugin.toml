@@ -1,0 +1,17 @@
+[plugin]
+name        = "single-entity-tracker"
+version     = "1.0.0"
+kind        = "tracker"
+entry       = "plugin:SingleEntityTracker"
+api_version = "1.0"
+schema      = ">=1.0,<2.0"
+
+[requires]
+python   = ">=3.11"
+packages = []
+plugins  = []
+
+[ordering]
+before = []
+after  = []
+priority = 100
