@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "animaltrack"
+version = "0.1.0"
+requires-python = ">=3.11"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Walter Dalla Torre Neto" }]
+dependencies = [
+    "numpy==1.26.3",
+    "opencv-python==4.9.0.80",
+    "pillow==10.2.0",
+    "pydantic>=2,<3",
+    "typer>=0.9",
+    "matplotlib>=3.8",
+    "xhtml2pdf>=0.2.13",
+    "pandas>=2.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.4", "mypy>=1.8"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src", "src.*"]
+exclude = ["tests", "tests.*", "MetadataModule", "MetadataModule.*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+# Código legado nunca foi lintado (Fase 0, R6/T6): um `ruff check .` a frio acusa
+# 72 violações, todas em código que será reescrito/tipado nas Fases 3-4. Por ora o
+# lint fica restrito a `tests/` e código novo (src/core, src/stages, src/app).
+# TODO(Fase 3-4): remover cada entrada abaixo conforme o módulo correspondente é reescrito.
+extend-exclude = ["src/Modules", "MetadataModule"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+# `src` e o launcher `__init__.py` da raiz ambos têm __init__.py; sem isto o mypy tenta
+# tratar o diretório-raiz (nome com hífen) como pacote e aborta. Fixa a base em `.`.
+explicit_package_bases = true
+mypy_path = "."
+
+[[tool.mypy.overrides]]
+module = ["src.Modules.*"]
+ignore_errors = true
