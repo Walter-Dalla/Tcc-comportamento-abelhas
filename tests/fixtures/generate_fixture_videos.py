@@ -62,7 +62,7 @@ def _draw(cx_px: float, cy_from_top: float) -> np.ndarray:
 def _writer(path: Path, fps: int) -> cv2.VideoWriter:
     # FFV1 = lossless -> decode pixel-exato entre versões de OpenCV (evita drift de
     # centroide que um codec lossy introduziria no golden).
-    fourcc = cv2.VideoWriter_fourcc(*"FFV1")
+    fourcc = cv2.VideoWriter_fourcc(*"FFV1")  # type: ignore[attr-defined]  # existe em runtime (4.9/5.0); stub varia
     writer = cv2.VideoWriter(str(path), fourcc, fps, (WIDTH, HEIGHT))
     if not writer.isOpened():
         raise RuntimeError(f"VideoWriter FFV1 não abriu para {path} — codec indisponível")

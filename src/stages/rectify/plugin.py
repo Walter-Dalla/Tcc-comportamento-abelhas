@@ -50,9 +50,10 @@ class CpuPerspectiveRectifier(Plugin):
                 [video_width, video_height],
             ]
         self._width, self._height = self._get_perspective_size(points)
-        points1 = np.float32(points[0:4])
-        points2 = np.float32(
-            [(0, 0), (self._width, 0), (0, self._height), (self._width, self._height)]
+        points1 = np.array(points[0:4], dtype=np.float32)
+        points2 = np.array(
+            [(0, 0), (self._width, 0), (0, self._height), (self._width, self._height)],
+            dtype=np.float32,
         )
         self._matrix = cv2.getPerspectiveTransform(points1, points2)
         self._role = role
