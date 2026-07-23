@@ -20,7 +20,10 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from src.core.schema.geometry import Point2D, Point3D
 
 
-class BoxFace(str, Enum):
+# NOTA: `str, Enum` (não `enum.StrEnum`) é a forma mandada explicitamente pelo plano
+# da Fase 1 (seção 2) e por ARCHITECTURE.md — garante serialização como string simples
+# em JSON. UP042 é suprimido por classe abaixo por esse motivo deliberado.
+class BoxFace(str, Enum):  # noqa: UP042
     TOP = "top"
     BOTTOM = "bottom"
     LEFT = "left"
@@ -29,7 +32,7 @@ class BoxFace(str, Enum):
     BACK = "back"
 
 
-class BoxVertex(str, Enum):
+class BoxVertex(str, Enum):  # noqa: UP042
     """Um dos 8 vértices da caixa, como combinação de 3 componentes binários.
 
     Convenção de eixo fixada aqui (documentada porque nenhum outro lugar do
@@ -69,7 +72,7 @@ _AXIS_ORDER: dict[str, tuple[str, str]] = {
 }
 
 
-class CameraRole(str, Enum):
+class CameraRole(str, Enum):  # noqa: UP042
     TOP = "top"
     SIDE = "side"
 
@@ -91,12 +94,12 @@ class CameraOrientation(BaseModel):
         return self
 
 
-class ImageAxis(str, Enum):
+class ImageAxis(str, Enum):  # noqa: UP042
     U = "u"  # eixo horizontal de pixel (largura da imagem)
     V = "v"  # eixo vertical de pixel (altura da imagem)
 
 
-class BoxAxis(str, Enum):
+class BoxAxis(str, Enum):  # noqa: UP042
     X = "x"
     Y = "y"
     Z = "z"

@@ -15,7 +15,6 @@ from src.core.schema.orientation import (
     ImageAxis,
 )
 
-
 # ---- fixture canônica (exemplo calculado à mão na seção 1 do plano) ----------
 
 def _canonical_config() -> BoxOrientationConfig:

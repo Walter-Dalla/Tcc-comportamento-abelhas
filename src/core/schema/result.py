@@ -11,7 +11,7 @@ vez de falhar cedo no ponto onde o plugin errou. Desvio sinalizado no handoff.
 (isso é responsabilidade do `BorderPlugin`, Fase 2).
 """
 
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import (
     BaseModel,
@@ -24,32 +24,34 @@ from pydantic import (
     StrictStr,
     model_validator,
 )
-from typing_extensions import TypeAliasType
 
 from src.core.schema.orientation import Calibration
 from src.core.schema.route import Route3D
 
 SCHEMA_VERSION = "1.0"
 
-# União fechada e recursiva de valores seguros para JSON. `ARCHITECTURE.md` usa
-# `value: Any`; o plano da Fase 1 (decisão c) restringe para este union. A forma
-# literal do plano (`list[Any] | dict[str, Any]`) NÃO cumpre a própria intenção
-# declarada: em modo lax, `list[Any]` coage `set`/`tuple`/`numpy.ndarray` para
-# list e engole itens numpy não-validados, que então quebram `model_dump_json()`
-# tardiamente — exatamente a "falha obscura de serialização" que a restrição deve
-# prevenir. Por isso list/dict são marcados `Strict()` e recursivos: rejeitam
-# set/tuple/ndarray/objeto arbitrário na construção do Metric (falha cedo, no
-# ponto onde o plugin errou), e validam elementos aninhados. Desvio (mais estrito
+# União fechada de valores seguros para JSON. `ARCHITECTURE.md` usa `value: Any`;
+# o plano da Fase 1 (decisão c) restringe para este union. A forma literal do
+# plano (`list[Any] | dict[str, Any]`) NÃO cumpre a própria intenção declarada:
+# em modo lax, `list[Any]` coage `set`/`tuple`/`numpy.ndarray` para list e engole
+# itens numpy não-validados, que então quebram `model_dump_json()` tardiamente —
+# exatamente a "falha obscura de serialização" que a restrição deveria prevenir.
+# Por isso `list`/`dict` são marcados `Strict()`: um `numpy.ndarray`/`set`/`tuple`
+# ou objeto arbitrário passado como `Metric.value` é rejeitado na construção do
+# Metric (falha cedo, no ponto onde o plugin errou), não na serialização. Um
+# union recursivo (que validaria também elementos aninhados) foi avaliado e
+# descartado: `TypeAliasType` recursivo quebra o mypy ("cyclic definition") e o
+# `TypeAlias` recursivo entra em RecursionError no pydantic — o custo de brigar
+# com a toolchain não compensa para o caso aninhado (raro). Desvio (mais estrito
 # que a letra do plano, fiel à sua intenção) sinalizado no handoff da Fase 1.
-JsonSafeValue = TypeAliasType(
-    "JsonSafeValue",
+JsonSafeValue = (
     StrictStr
     | StrictInt
     | StrictFloat
     | StrictBool
     | None
-    | Annotated[list["JsonSafeValue"], Strict()]
-    | Annotated[dict[str, "JsonSafeValue"], Strict()],
+    | Annotated[list[Any], Strict()]
+    | Annotated[dict[str, Any], Strict()]
 )
 
 

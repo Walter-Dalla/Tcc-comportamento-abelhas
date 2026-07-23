@@ -4,7 +4,6 @@ import pytest
 from pydantic import ValidationError
 
 from src.core.schema.geometry import Point2D, Point3D
-from src.core.schema.profile import Profile
 from src.core.schema.orientation import (
     BoxFace,
     BoxOrientationConfig,
@@ -12,6 +11,7 @@ from src.core.schema.orientation import (
     CameraOrientation,
     CameraRole,
 )
+from src.core.schema.profile import Profile
 
 
 def _four_points() -> list[Point2D]:
