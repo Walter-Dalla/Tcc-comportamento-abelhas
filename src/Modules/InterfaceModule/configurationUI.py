@@ -2,12 +2,20 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
 from src.Modules.ExportModule.folderUtils import assert_dir_exists
-from src.Modules.BasicModule.processVideoModule import process_basic_modules
-from src.Modules.BasicModule.perspectiveModule import get_perspective_size
 from src.Modules.ExportModule import pdfFactory
 from src.Modules.MetadataModule.modulesInvoker import execute_metadata_module_calls
 from src.Modules.ExportModule.plotRoute import plot_insect_route_on_graph_animated, plot_insect_route_on_graph_without_animation
 from src.Modules.ExportModule.jsonUtils import export_data_to_file, import_data_from_file
+
+
+def _get_perspective_size(frame_points):
+    # Inlined do antigo perspectiveModule.get_perspective_size (apagado na Fase 3).
+    # Ainda usado só pelos limites do gráfico 3D; o warp real vive em
+    # src/stages/rectify. Removido de vez quando a GUI migrar (Fase 4).
+    width = frame_points[1][0] - frame_points[0][0]
+    height = frame_points[2][1] - frame_points[0][1]
+    return width, height
+
 
 class MainConfigurationInterface:
     new_analises_profile = "Novo perfil de analise"
@@ -179,24 +187,17 @@ class MainConfigurationInterface:
         return False
 
     def process_video(self):
-        if(self.is_video_valid()):
-            return
-        
-        sucess = process_basic_modules(self.perspective_top_interface.frame_perspective_points, 
-                      self.perspective_side_interface.frame_perspective_points, 
-                      self.root.top_video_path.get(), 
-                      self.root.side_video_path.get(), 
-                      self.width_box_cm.get(), 
-                      self.height_box_cm.get(), 
-                      self.depth_box_cm.get(), 
-                      self.selected_config.get(),
-                      self.border_config_top_interface.frame_border_points,
-                      self.border_config_side_interface.frame_border_points
-                      )
-        if(not sucess):
-            messagebox.showerror("Erro!", f"Erro na execução dos modulos basicos.")
-        
-        messagebox.showinfo("Sucesso!", "Modulos básicos executados!")
+        # Fase 3: o pipeline de cálculo antigo (processVideoModule/perspectiveModule/
+        # backgroundRemoveModule/routeAnalizer/getData) foi apagado e reescrito como
+        # estágios streaming em `src/stages/*` (orquestrados por
+        # `src.stages.orchestration.run_cpu_analysis`). A ligação da GUI a esse novo
+        # pipeline depende da tela de Orientação de câmera/caixa (pré-requisito de
+        # dado), que só chega na Fase 4 — até lá este botão fica desativado.
+        messagebox.showinfo(
+            "Migração em andamento",
+            "O processamento foi migrado para o novo pipeline streaming (Fase 3).\n"
+            "A ligação da interface a ele chega na Fase 4 (tela de orientação de câmera).",
+        )
     
     def process_metadata_modules(self):
         data = execute_metadata_module_calls(self.selected_config.get())
@@ -206,8 +207,8 @@ class MainConfigurationInterface:
         data_location = "./cache/outputs/"+self.selected_config.get()+".json"
         data = import_data_from_file(data_location)
         
-        width, depth =  get_perspective_size(frame_points=self.perspective_top_interface.frame_perspective_points)
-        _, height =  get_perspective_size(frame_points=self.perspective_side_interface.frame_perspective_points)
+        width, depth =  _get_perspective_size(self.perspective_top_interface.frame_perspective_points)
+        _, height =  _get_perspective_size(self.perspective_side_interface.frame_perspective_points)
         xlim = (0, width)
         ylim = (0, depth)
         zlim = (0, height)

@@ -3,10 +3,22 @@ import time
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageOps, ImageDraw
 import cv2
+import numpy as np
 
-from src.Modules.BasicModule.perspectiveModule import perspective
 from src.Modules.ExportModule.videoUtils import open_video
 from src.utils.interfaceUtils import show_frame
+
+
+def perspective(frame, frame_points):
+    # Inlined do antigo perspectiveModule.perspective (apagado na Fase 3; o warp de
+    # produção vive em src/stages/rectify). Ainda usado só pelo preview desta tela;
+    # removido de vez quando a GUI migrar (Fase 4).
+    width = frame_points[1][0] - frame_points[0][0]
+    height = frame_points[2][1] - frame_points[0][1]
+    points1 = np.float32(frame_points[0:4])
+    points2 = np.float32([(0, 0), (width, 0), (0, height), (width, height)])
+    matrix = cv2.getPerspectiveTransform(points1, points2)
+    return cv2.warpPerspective(frame, matrix, (width, height))
 
 class PerspectiveUi:
     def __init__(self, root, main_frame):
