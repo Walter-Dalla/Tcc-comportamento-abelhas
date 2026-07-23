@@ -35,6 +35,11 @@ addopts = "-ra"
 [tool.ruff]
 target-version = "py311"
 line-length = 120
+# Código legado nunca foi lintado (Fase 0, R6/T6): um `ruff check .` a frio acusa
+# 72 violações, todas em código que será reescrito/tipado nas Fases 3-4. Por ora o
+# lint fica restrito a `tests/` e código novo (src/core, src/stages, src/app).
+# TODO(Fase 3-4): remover cada entrada abaixo conforme o módulo correspondente é reescrito.
+extend-exclude = ["src/Modules", "MetadataModule"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
@@ -42,6 +47,10 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.mypy]
 python_version = "3.11"
 ignore_missing_imports = true
+# `src` e o launcher `__init__.py` da raiz ambos têm __init__.py; sem isto o mypy tenta
+# tratar o diretório-raiz (nome com hífen) como pacote e aborta. Fixa a base em `.`.
+explicit_package_bases = true
+mypy_path = "."
 
 [[tool.mypy.overrides]]
 module = ["src.Modules.*"]

@@ -13,5 +13,8 @@ jobs:
           python-version: "3.11"
       - run: pip install -e ".[dev]"
       - run: ruff check .
-      - run: mypy .
+      # `mypy .` aborta: o launcher __init__.py na raiz + nome de diretório com hífen
+      # fazem o mypy tentar tratar a raiz como pacote. Usa-se o fallback previsto no
+      # plano (fase0-detalhado, verificação passo 4): checar src e tests explicitamente.
+      - run: mypy src tests
       - run: pytest
