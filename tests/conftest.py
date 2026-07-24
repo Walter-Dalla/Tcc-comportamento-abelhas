@@ -9,7 +9,8 @@ persistir um `AnalysisResult` num workspace temporário via `ResultStore`.
 from __future__ import annotations
 
 import textwrap
-from collections.abc import Callable
+import tkinter as tk
+from collections.abc import Callable, Iterator
 from pathlib import Path
 
 import pytest
@@ -32,6 +33,20 @@ from src.core.workspace import Workspace
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PLUGINS_DIR = REPO_ROOT / "plugins"
+
+
+@pytest.fixture(scope="session")
+def tk_root() -> Iterator[tk.Tk]:
+    """Um ÚNICO root Tk por sessão. Criar/destruir vários `tk.Tk()` na mesma sessão
+    pytest é flaky no Windows (TclError intermitente). As telas dos testes de GUI
+    constroem seus frames sob este root compartilhado."""
+    try:
+        root = tk.Tk()
+    except tk.TclError:
+        pytest.skip("sem display Tk disponível")
+    root.withdraw()
+    yield root
+    root.destroy()
 
 
 def make_calibration(px_per_cm: Point3D | None = None) -> Calibration:
