@@ -35,6 +35,35 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PLUGINS_DIR = REPO_ROOT / "plugins"
 
 
+# --- marcador `gpu` + skip automático sem CUDA (Fase 5, plano seção 5) ----------
+def _cuda_available() -> bool:
+    """Reusa o probe não-lançante de `core.gpu`. Sem CUDA (caso desta máquina de dev
+    e dos runners padrão do GitHub Actions), retorna False e os testes `gpu` são
+    pulados — nunca falham vermelho por falta de hardware."""
+    from src.core.gpu import cuda_device_count
+
+    return cuda_device_count() > 0
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    config.addinivalue_line(
+        "markers", "gpu: requer build de OpenCV com CUDA e GPU física disponível"
+    )
+
+
+def pytest_collection_modifyitems(
+    config: pytest.Config, items: list[pytest.Item]
+) -> None:
+    if _cuda_available():
+        return
+    skip_gpu = pytest.mark.skip(
+        reason="Nenhum dispositivo CUDA disponível / OpenCV sem módulo cuda"
+    )
+    for item in items:
+        if "gpu" in item.keywords:
+            item.add_marker(skip_gpu)
+
+
 @pytest.fixture(scope="session")
 def tk_root() -> Iterator[tk.Tk]:
     """Um ÚNICO root Tk por sessão. Criar/destruir vários `tk.Tk()` na mesma sessão
