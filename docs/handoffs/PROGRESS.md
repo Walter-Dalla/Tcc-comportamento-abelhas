@@ -12,26 +12,25 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 | 1 | Primitivas core: schema + workspace + store | ✅ done | [fase1-schema-store-handoff.md](fase1-schema-store-handoff.md) |
 | 2 | Sistema de plugin + esqueleto de orquestração | ✅ done | [fase2-plugin-orquestracao-handoff.md](fase2-plugin-orquestracao-handoff.md) |
 | 3 | Porta pipeline de cálculo pra estágios streaming | ✅ done | [fase3-integracao-handoff.md](fase3-integracao-handoff.md) |
-| 4 | Interface dupla: CLI + GUI na mesma orquestração | ⬜ não iniciada | — |
+| 4 | Interface dupla: CLI + GUI na mesma orquestração | ✅ done | [fase4-integracao-handoff.md](fase4-integracao-handoff.md) |
 | 5 | Backends GPU (plugins puros) | ⬜ não iniciada | — |
 | 6 | Pesquisa e prontidão de marketplace | ⬜ não iniciada | — |
 
 ## Próxima ação
 
-Iniciar **Fase 4** (Interface dupla: CLI + GUI na mesma orquestração). Ver
-`ARCHITECTURE.md` seção "Fase 4" e `docs/plans/fase4-detalhado.md`. Ponto de entrada
-único já pronto: `src.stages.orchestration.run_cpu_analysis(profile)` — a CLI
-(`animaltrack run`) e o botão "Processar vídeo" da GUI devem chamá-lo. Pré-requisito
-que falta e é o cerne da Fase 4: a tela **OrientationUi** que popula
-`profile.orientation` (sem ela `run_cpu_analysis` levanta `ValueError`). Também na
-Fase 4: refatorar `plotRoute`/`pdfFactory` p/ ler `AnalysisResult` novo, corrigir
-bugs #4/#5, novo launcher `__init__.py`. Ver detalhes em
-[fase3-integracao-handoff.md](fase3-integracao-handoff.md) → "Como retomar".
+Iniciar **Fase 5** (backends GPU) e/ou **Fase 6** (marketplace + tracker multi-animal)
+— podem rodar em paralelo (ARCHITECTURE.md: 5 e 6 são plugins aditivos sobre o
+esqueleto já estável). Fase 5: `CudaPerspectiveRectifier`/`CudaMOG2Detector` +
+`ArrayBackend` + `gpu.py` com gate obrigatório (probe só em `Pipeline.run`, nunca no
+boot da GUI). Fase 6: spike de tracker multi-animal atrás da interface `Tracker` já
+fixada, plugin de exemplo (peixe), `docs/PLUGIN_CONTRACT.md` + `animaltrack plugin install`.
 
-Fase 3 concluída: 5 estágios streaming (Capture/Rectify/Detect/Track/Fuse) +
-orquestração, bugs #2/#3/#6 corrigidos, #1 obsoleto. Guard-rail golden-file
-executado e verde (`tests/test_golden_pipeline.py`, 8/8). Legado de cálculo apagado.
-`pytest` 175 passed, `ruff`/`mypy` limpos.
+Fase 4 concluída: CLI Typer (`run`/`list-plugins`/`validate-config`) headless +
+GUI refatorada (protocolo `Screen` único, dispatcher, marshalling via `after()` —
+bug de thread-safety corrigido), nova `OrientationUi`, plugins exporter
+(`route-plot`/`pdf-report`) com acesso defensivo, bugs #4/#5 corrigidos, launcher
+fino. Botão "Processar vídeo" religado a `run_cpu_analysis` (mesmo caminho da CLI).
+`pytest` 204 passed, `ruff`/`mypy` limpos, GUI abre sem erro de import.
 
 ## Notas de acompanhamento abertas
 
@@ -52,3 +51,16 @@ executado e verde (`tests/test_golden_pipeline.py`, 8/8). Legado de cálculo apa
   `moments` entre versões do OpenCV, regenerar `tests/fixtures/golden/expected_result.json`
   sob o OpenCV do CI (reexecutar o pipeline e reserializar; os vídeos FFV1 não mudam).
   Detalhe no [handoff da Fase 3](fase3-integracao-handoff.md).
+- **Fase 4 — 3 decisões a confirmar com o dono** (detalhe no
+  [handoff da Fase 4](fase4-integracao-handoff.md)): (a) rotulagem PT no PDF segue a
+  convenção real do schema (`Altura=box_cm.y`, `Profundidade=box_cm.z`), não o exemplo do
+  plano que trocava y/z; (b) CLI/GUI chamam `run_cpu_analysis` (análise completa), com
+  `Pipeline.run` mantido só para metadata como Fase 2/3 deixaram; (c) `SessionState` no
+  `AppService` centraliza o estado antes espalhado entre telas. Todas seguem a recomendação
+  do plano/schema; falta o "ok" do dono.
+- **Fase 4 — `--config pipeline.toml` do CLI é aceito mas não parseado** (reservado para
+  quando o `pipeline.toml` por perfil existir). A `OrientationScreen` implementa a forma
+  técnica mínima (sem a miniatura de vídeo com pontos numerados da UX 2.1 — incremento
+  opcional não bloqueante).
+- **Fase 4 — deps `typer` e `xhtml2pdf`** já pinadas no `pyproject.toml` mas podem faltar em
+  ambientes que só tinham as deps das fases anteriores; `pip install -e .[dev]` resolve.
