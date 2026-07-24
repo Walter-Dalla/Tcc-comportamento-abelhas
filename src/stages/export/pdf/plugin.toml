@@ -1,0 +1,17 @@
+[plugin]
+name        = "pdf-report"
+version     = "1.0.0"
+kind        = "exporter"
+entry       = "plugin:PdfReportExporter"
+api_version = "1.0"
+schema      = ">=1.0,<2.0"
+
+[requires]
+python   = ">=3.11"
+packages = ["xhtml2pdf>=2.0"]
+plugins  = []
+
+[ordering]
+before = []
+after  = []
+priority = 100

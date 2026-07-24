@@ -80,6 +80,16 @@ class PluginRegistry:
 
                 self._specs[key] = PluginSpec(manifest=manifest, source_dir=manifest_path.parent)
 
+    def manifests(self, kind: PluginKind | None = None) -> list[PluginManifest]:
+        """Manifests descobertos (sem instanciar/importar `plugin.py`).
+
+        Read-only, seguro para listagem (`animaltrack list-plugins`): não dispara
+        o import do entry point, então um plugin com dependência de pacote ausente
+        ainda aparece na lista em vez de derrubá-la. Ordenado por (kind, name)."""
+        specs = self._specs.values()
+        chosen = [s.manifest for s in specs if kind is None or s.manifest.kind == kind]
+        return sorted(chosen, key=lambda m: (m.kind.value, m.name))
+
     def register_instance(self, instance: Plugin) -> None:
         """Registra uma instância já construída diretamente (sem passar por disco).
 
