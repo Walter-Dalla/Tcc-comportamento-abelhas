@@ -17,4 +17,8 @@ jobs:
       # fazem o mypy tentar tratar a raiz como pacote. Usa-se o fallback previsto no
       # plano (fase0-detalhado, verificação passo 4): checar src e tests explicitamente.
       - run: mypy src tests
-      - run: pytest
+      # `-m "not gpu"` (Fase 5): reforço explícito. Os testes `gpu` já são pulados
+      # automaticamente por tests/conftest.py quando não há device CUDA (runner padrão
+      # do GH Actions não tem GPU), mas declarar a intenção aqui documenta que a suíte
+      # de CI é a CPU-only. GPU real roda só na máquina do dev via `pytest -m gpu`.
+      - run: pytest -m "not gpu"

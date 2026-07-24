@@ -19,7 +19,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from src.app.plugins import default_search_paths
-from src.core.gpu import probe_cuda_devices
+from src.core.gpu import GpuNotAvailableError, require_cuda
 from src.core.plugin import PluginKind
 from src.core.plugin_registry import PluginRegistry
 from src.core.schema.result import AnalysisContext, AnalysisResult
@@ -28,8 +28,13 @@ from src.core.workspace import Workspace
 from src.stages.orchestration import run_cpu_analysis
 
 
-class GpuRequiredError(RuntimeError):
-    """`--gpu` pedido mas nenhum device CUDA disponível (GPU é requisito, não fallback)."""
+class GpuRequiredError(GpuNotAvailableError):
+    """`--gpu` pedido mas nenhum device CUDA disponível (GPU é requisito, não fallback).
+
+    Subclasse de `GpuNotAvailableError` (Fase 5): o gate central mora em
+    `src.core.gpu.require_cuda()`; este erro é a fachada da camada de app, mantida
+    para o comando `run` da CLI que já a captura. Como é subclasse, qualquer código
+    que capture `GpuNotAvailableError` também pega este."""
 
 
 class ExporterNotFoundError(RuntimeError):
@@ -53,10 +58,13 @@ def execute_analysis(
     Levanta `GpuRequiredError` se `require_gpu` e não houver device CUDA;
     `ProfileNotFoundError` se o perfil não existir; `ValueError` se o perfil não
     tiver `orientation` (pré-requisito de dado da Fase 3)."""
-    if require_gpu and not probe_cuda_devices().available:
-        raise GpuRequiredError(
-            "backend GPU exigido (--gpu) mas nenhum device CUDA foi detectado"
-        )
+    if require_gpu:
+        # Delega ao gate central (`require_cuda`); re-embrulha na fachada de app
+        # `GpuRequiredError` (que a CLI já captura) preservando a mensagem clara.
+        try:
+            require_cuda()
+        except GpuNotAvailableError as exc:
+            raise GpuRequiredError(str(exc)) from exc
     profile = ProfileStore(workspace).get(profile_name)
     result = run_cpu_analysis(profile)
     ResultStore(workspace).save(result)

@@ -21,6 +21,7 @@ from typing import Any, Literal, cast
 from pydantic import BaseModel, Field
 
 from src.core.errors import PluginOrderingCycleError
+from src.core.gpu import require_cuda
 from src.core.plugin import PluginKind
 from src.core.plugin_registry import PluginRegistry
 from src.core.schema.result import AnalysisContext, AnalysisResult
@@ -96,6 +97,15 @@ class Pipeline:
 
     def run(self, request: RunRequest) -> RunResult:
         start = time.monotonic()
+
+        # Gate obrigatório de GPU (Fase 5): quando o run pede GPU, exige um device
+        # CUDA utilizável ANTES de tocar em disco/plugins — falha alta e cedo, com
+        # `GpuNotAvailableError` (mensagem clara), não um traceback fundo do OpenCV.
+        # Decisão de produto fechada: o probe gate SÓ o `Pipeline.run`, nunca o boot
+        # da GUI ou as telas de configuração (ver `src/core/gpu.py`).
+        if request.gpu:
+            require_cuda()
+
         workspace = Workspace(root=Path(request.workspace))
         store = ResultStore(workspace)
         result = store.load(request.profile)

@@ -35,6 +35,13 @@ exclude = ["tests", "tests.*", "MetadataModule", "MetadataModule.*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+# Marcador `gpu` (Fase 5): testes que exigem OpenCV+CUDA e GPU física real. Pulados
+# automaticamente por `tests/conftest.py` quando nenhum device CUDA é detectado
+# (máquina de dev sem CUDA, runners padrão do CI). Rodar só na máquina do dev com
+# GPU via `pytest -m gpu`; a suíte principal usa `pytest -m "not gpu"`.
+markers = [
+    "gpu: requer build de OpenCV com CUDA e GPU física disponível",
+]
 
 [tool.ruff]
 target-version = "py311"
