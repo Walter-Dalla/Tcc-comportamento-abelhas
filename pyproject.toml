@@ -24,6 +24,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.4", "mypy>=1.8"]
 
+[project.scripts]
+animaltrack = "src.app.cli:app"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src", "src.*"]
@@ -44,6 +47,11 @@ extend-exclude = ["src/Modules", "MetadataModule"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.flake8-bugbear]
+# Typer EXIGE typer.Option/Argument como default no parâmetro — não é o antipadrão
+# de default mutável que o B008 mira. Tratados como chamadas imutáveis.
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
 
 [tool.mypy]
 python_version = "3.11"
