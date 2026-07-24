@@ -13,17 +13,26 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 | 2 | Sistema de plugin + esqueleto de orquestração | ✅ done | [fase2-plugin-orquestracao-handoff.md](fase2-plugin-orquestracao-handoff.md) |
 | 3 | Porta pipeline de cálculo pra estágios streaming | ✅ done | [fase3-integracao-handoff.md](fase3-integracao-handoff.md) |
 | 4 | Interface dupla: CLI + GUI na mesma orquestração | ✅ done | [fase4-integracao-handoff.md](fase4-integracao-handoff.md) |
-| 5 | Backends GPU (plugins puros) | ⬜ não iniciada | — |
+| 5 | Backends GPU (plugins puros) | 🟨 código feito, packaging CUDA pendente | [fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md) |
 | 6 | Pesquisa e prontidão de marketplace | ⬜ não iniciada | — |
 
 ## Próxima ação
 
-Iniciar **Fase 5** (backends GPU) e/ou **Fase 6** (marketplace + tracker multi-animal)
-— podem rodar em paralelo (ARCHITECTURE.md: 5 e 6 são plugins aditivos sobre o
-esqueleto já estável). Fase 5: `CudaPerspectiveRectifier`/`CudaMOG2Detector` +
-`ArrayBackend` + `gpu.py` com gate obrigatório (probe só em `Pipeline.run`, nunca no
-boot da GUI). Fase 6: spike de tracker multi-animal atrás da interface `Tracker` já
-fixada, plugin de exemplo (peixe), `docs/PLUGIN_CONTRACT.md` + `animaltrack plugin install`.
+**Fase 5 — código completo e verificado sem CUDA; falta o milestone de
+empacotamento OpenCV+CUDA** (o item de maior risco do roadmap, fora de código). Ver
+[fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md), seção "O que falta":
+montar `Dockerfile.cuda` + `docs/gpu-setup.md`, obter um `cv2` com módulo cuda, então
+rodar `pytest -m gpu` de verdade e estruturar o Teste 2 (paridade comportamental do
+detector completo, hoje `skip` rastreável). **Só marcar Fase 5 como `done` depois
+disso** (plano seção 6: não fechar a fase enquanto os testes de paridade reais não
+puderem rodar). Já entregue e verde (`pytest -m "not gpu"`): `gpu.py` com
+`require_cuda()` (gate só em `Pipeline.run`/análise, nunca no boot da GUI),
+`ArrayBackend` (Cpu/Cuda), `CudaPerspectiveRectifier`, `CudaMOG2Detector`, ambos com
+`plugin.toml` descobríveis, marcador `gpu` com skip automático.
+
+**Fase 6** (paralela, workstream separado): spike de tracker multi-animal atrás da
+interface `Tracker` já fixada, plugin de exemplo (peixe), `docs/PLUGIN_CONTRACT.md` +
+`animaltrack plugin install`.
 
 Fase 4 concluída: CLI Typer (`run`/`list-plugins`/`validate-config`) headless +
 GUI refatorada (protocolo `Screen` único, dispatcher, marshalling via `after()` —
@@ -64,3 +73,15 @@ fino. Botão "Processar vídeo" religado a `run_cpu_analysis` (mesmo caminho da 
   opcional não bloqueante).
 - **Fase 4 — deps `typer` e `xhtml2pdf`** já pinadas no `pyproject.toml` mas podem faltar em
   ambientes que só tinham as deps das fases anteriores; `pip install -e .[dev]` resolve.
+- **Fase 5 — BLOQUEIO de empacotamento (não é código, é infra)**: o caminho CUDA foi escrito
+  e verificado estruturalmente, mas NUNCA executado — nenhuma máquina/CI disponível tem um
+  OpenCV com módulo `cuda` (o PyPI `opencv-python`/`opencv-contrib-python` não traz CUDA;
+  confirmado: `cv2 5.0.0` local tem `cuda_GpuMat` mas não `cuda.warpPerspective`/
+  `createBackgroundSubtractorMOG2`, e `getCudaEnabledDeviceCount()==0`). Próximo passo:
+  `Dockerfile.cuda` + `docs/gpu-setup.md` (ver handoff Fase 5). Testes `gpu` pulam limpo até lá.
+- **Fase 5 — débito de manifest**: `PluginRequires` (`extra="forbid"`) não expressa "precisa
+  de build com CUDA". Não foi adicionado `requires.capabilities` para não mexer no schema/
+  discovery da Fase 2 nesta fase; a exigência está nos comentários dos `plugin.toml` CUDA e no
+  handoff. Confirmar com o dono se/quando formalizar o campo.
+- **Fase 5 — decisão de produto JÁ confirmada (não reabrir)**: `require_cuda()` gate apenas
+  `Pipeline.run`/caminho de análise, nunca boot da GUI ou telas de configuração.

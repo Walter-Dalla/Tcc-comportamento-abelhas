@@ -539,10 +539,18 @@ adiciona teste do que constrói. CI via GitHub Actions.
 
 ### Fase 5 — Backends GPU (plugins puros, sem mudar esqueleto)
 - `CudaPerspectiveRectifier`, `CudaMOG2Detector`, `ArrayBackend` (numpy/GpuMat), probe de GPU obrigatório
-  no startup.
-- **Arquivos**: `src/stages/rectify/cuda/*`, `src/stages/detect/cuda/*`, `src/core/gpu.py`.
+  (`require_cuda()`) chamado só no `Pipeline.run`/caminho de análise (nunca no boot da GUI).
+- **Arquivos**: `src/stages/rectify/cuda/*`, `src/stages/detect/cuda/*`, `src/core/gpu.py`,
+  `src/core/array_backend.py`.
 - **Verificação**: teste de paridade (CUDA vs CPU produzem detecções equivalentes na fixture, dentro de
   tolerância); startup falha limpo sem device CUDA.
+- **Status (2026-07): código completo e verde sem CUDA** (`pytest -m "not gpu"`, `ruff`, `mypy
+  --python-version 3.13`). Testes de paridade que exigem hardware são `@pytest.mark.gpu`, pulados
+  automaticamente sem device. **Pendente: empacotamento OpenCV+CUDA** — a wheel PyPI não traz o módulo
+  `cuda` (confirmado local: `cv2 5.0.0` sem `cuda.warpPerspective`/`createBackgroundSubtractorMOG2`), então
+  o caminho CUDA ainda não foi executado de verdade. Ver `docs/handoffs/fase5-backends-gpu-handoff.md`.
+  Nota de ambiente: máquina de dev usa Python 3.13 com cv2 5.0.0/numpy 2.5.1 (substitutos dos pins
+  4.9.0.80/1.26.3 sem wheel 3.13); CI fixa 3.11.
 
 ### Fase 6 — Pesquisa e prontidão de marketplace (interface já estável)
 - **Spike de tracker multi-animal**: segundo plugin `tracker` (ex: Kalman + Hungarian) atrás da interface
