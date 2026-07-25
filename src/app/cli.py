@@ -14,6 +14,12 @@ from pathlib import Path
 import typer
 
 from src.app.orientation_util import validate_orientation
+from src.app.plugin_install import (
+    PluginInstallError,
+    install_plugin,
+    list_installed,
+    remove_plugin,
+)
 from src.app.plugins import default_search_paths
 from src.app.runner import GpuRequiredError, execute_analysis, run_exporter
 from src.core.plugin import PluginKind
@@ -24,6 +30,12 @@ from src.core.workspace import Workspace
 logger = logging.getLogger("animaltrack.cli")
 
 app = typer.Typer(name="animaltrack", no_args_is_help=True, add_completion=False)
+
+# Grupo `animaltrack plugin ...` (Fase 6, workstream C).
+plugin_app = typer.Typer(
+    name="plugin", no_args_is_help=True, add_completion=False, help="Gerencia plugins instalados."
+)
+app.add_typer(plugin_app)
 
 # Exporters rodados por padrão pelo comando `run` (mesma dupla da GUI legada).
 _DEFAULT_EXPORTERS = ("route-plot", "pdf-report")
@@ -122,3 +134,65 @@ def _validate_profile(store: ProfileStore, name: str) -> list[str]:
     except StoreError as exc:
         return [str(exc)]
     return validate_orientation(profile.orientation)
+
+
+# --- grupo `plugin` (Fase 6, workstream C) ----------------------------------
+@plugin_app.command("install")
+def plugin_install(
+    source: str = typer.Argument(
+        ..., help="Caminho local do plugin OU URL git literal (não há índice/backend)"
+    ),
+    workspace: Path | None = typer.Option(None, "--workspace", help="Raiz do workspace"),
+    force: bool = typer.Option(
+        False, "--force", help="Sobrescreve um plugin já instalado com o mesmo nome"
+    ),
+) -> None:
+    """Instala um plugin em `<workspace>/plugins/<nome>/`, validando o manifest antes.
+
+    Curadoria é manual (estilo git-tap): não existe servidor de marketplace que
+    resolva nome → pacote. Ver `docs/PLUGIN_CONTRACT.md`.
+    """
+    ws = Workspace.resolve(workspace)
+    try:
+        installed = install_plugin(source, ws, force=force)
+    except PluginInstallError as exc:
+        # imprime TODAS as falhas encontradas, não só a primeira (saída scriptável)
+        for error in exc.errors:
+            typer.echo(f"erro: {error}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(f"instalado: {installed.name} v{installed.version} ({installed.kind.value})")
+    typer.echo(f"destino: {installed.path}")
+
+
+@plugin_app.command("list")
+def plugin_list(
+    workspace: Path | None = typer.Option(None, "--workspace", help="Raiz do workspace"),
+) -> None:
+    """Lista os plugins instalados no workspace (não os built-in do repo)."""
+    ws = Workspace.resolve(workspace)
+    manifests = list_installed(ws)
+    if not manifests:
+        typer.echo(f"nenhum plugin instalado em {ws.plugins}")
+        return
+    for manifest in manifests:
+        typer.echo(f"{manifest.kind.value:10s} {manifest.name:30s} v{manifest.version}")
+
+
+@plugin_app.command("remove")
+def plugin_remove(
+    name: str = typer.Argument(..., help="Nome do plugin (campo [plugin].name do manifest)"),
+    workspace: Path | None = typer.Option(None, "--workspace", help="Raiz do workspace"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Não pedir confirmação"),
+) -> None:
+    """Remove `<workspace>/plugins/<nome>/`."""
+    ws = Workspace.resolve(workspace)
+    if not yes:
+        typer.confirm(f"remover o plugin '{name}' de {ws.plugins}?", abort=True)
+    try:
+        removed = remove_plugin(name, ws)
+    except PluginInstallError as exc:
+        for error in exc.errors:
+            typer.echo(f"erro: {error}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"removido: {removed}")

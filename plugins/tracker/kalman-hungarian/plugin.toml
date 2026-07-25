@@ -1,0 +1,22 @@
+[plugin]
+name        = "kalman-hungarian-tracker"
+version     = "0.1.0"
+kind        = "tracker"
+entry       = "plugin:KalmanHungarianTracker"
+api_version = "1.0"
+schema      = ">=1.0,<2.0"
+
+# Spike de tracker multi-animal (Fase 6, workstream A). Candidato 2: filtro de
+# Kalman por entidade (predição como referência de custo) + assignment ótimo pelo
+# algoritmo HÚNGARO. NÃO é a escolha de algoritmo definitiva do produto — a escolha
+# continua pesquisa aberta (decisão do dono). Ver
+# docs/handoffs/fase6-tracker-spike-handoff.md.
+[requires]
+python   = ">=3.11"
+packages = []
+plugins  = []
+
+[ordering]
+before = []
+after  = []
+priority = 50

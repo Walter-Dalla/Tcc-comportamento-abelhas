@@ -138,6 +138,11 @@ existentes. Ver `docs/plans/ux-design-detalhado.md` para o desenho completo.
 
 ## Contrato de plugin (generalizado de `module_call(data)->data`)
 
+> **Contrato público para autores de plugin de terceiros: [`docs/PLUGIN_CONTRACT.md`](docs/PLUGIN_CONTRACT.md)**
+> (Fase 6). Esta seção cobre o *porquê* arquitetural; o documento dedicado cobre o
+> formato do `plugin.toml`, as regras por `kind`, instalação (`animaltrack plugin
+> install`) e as limitações conhecidas.
+
 Único ponto de extensão hoje é `modulesInvoker.py`: scan flat de `os.listdir`,
 `importlib.util.spec_from_file_location`, contrato duck-typed `module_call`. Mantemos o espírito
 (descoberta dinâmica, arquivo solto) mas adicionamos manifest, classe base tipada, ordenação, versionamento

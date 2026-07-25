@@ -1,0 +1,21 @@
+[plugin]
+name        = "kalman-greedy-tracker"
+version     = "0.1.0"
+kind        = "tracker"
+entry       = "plugin:KalmanGreedyTracker"
+api_version = "1.0"
+schema      = ">=1.0,<2.0"
+
+# Spike de tracker multi-animal (Fase 6, workstream A). Candidato 1: filtro de
+# Kalman por entidade + associação GREEDY por proximidade. NÃO é a escolha de
+# algoritmo definitiva do produto — a escolha continua pesquisa aberta (decisão do
+# dono). Ver docs/handoffs/fase6-tracker-spike-handoff.md.
+[requires]
+python   = ">=3.11"
+packages = []
+plugins  = []
+
+[ordering]
+before = []
+after  = []
+priority = 50
