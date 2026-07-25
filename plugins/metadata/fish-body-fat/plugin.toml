@@ -1,0 +1,23 @@
+[plugin]
+name        = "fish-body-fat-estimator"
+version     = "0.1.0"
+kind        = "metadata"
+entry       = "plugin:FishBodyFatEstimator"
+api_version = "1.0"
+schema      = ">=1.0,<2.0"
+
+# Plugin de EXEMPLO/REFERÊNCIA (Fase 6, workstream B) — demonstra que o contrato
+# `metadata` generaliza para outra espécie (peixe, não abelha) e serve de template
+# para autores terceiros. A FÓRMULA DE GORDURA É ILUSTRATIVA, NÃO VALIDADA
+# CIENTIFICAMENTE. Ver README.md ao lado.
+[requires]
+python   = ">=3.11"
+packages = []
+plugins  = []
+
+# Depende da métrica `average_speed`, produzida pelo plugin `speed` — por isso
+# roda DEPOIS dele. `after` referencia o `name` de outro plugin do mesmo kind.
+[ordering]
+before   = []
+after    = ["speed"]
+priority = 200
