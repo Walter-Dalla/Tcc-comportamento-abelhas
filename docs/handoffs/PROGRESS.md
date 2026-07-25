@@ -14,25 +14,39 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 | 3 | Porta pipeline de cálculo pra estágios streaming | ✅ done | [fase3-integracao-handoff.md](fase3-integracao-handoff.md) |
 | 4 | Interface dupla: CLI + GUI na mesma orquestração | ✅ done | [fase4-integracao-handoff.md](fase4-integracao-handoff.md) |
 | 5 | Backends GPU (plugins puros) | 🟨 código feito, packaging CUDA pendente | [fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md) |
-| 6 | Pesquisa e prontidão de marketplace | ⬜ não iniciada | — |
+| 6 | Pesquisa e prontidão de marketplace | ✅ done | [A](fase6-tracker-spike-handoff.md) · [B](fase6-plugin-exemplo-handoff.md) · [C](fase6-marketplace-handoff.md) |
 
 ## Próxima ação
 
-**Fase 5 — código completo e verificado sem CUDA; falta o milestone de
-empacotamento OpenCV+CUDA** (o item de maior risco do roadmap, fora de código). Ver
-[fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md), seção "O que falta":
-montar `Dockerfile.cuda` + `docs/gpu-setup.md`, obter um `cv2` com módulo cuda, então
-rodar `pytest -m gpu` de verdade e estruturar o Teste 2 (paridade comportamental do
-detector completo, hoje `skip` rastreável). **Só marcar Fase 5 como `done` depois
-disso** (plano seção 6: não fechar a fase enquanto os testes de paridade reais não
-puderem rodar). Já entregue e verde (`pytest -m "not gpu"`): `gpu.py` com
-`require_cuda()` (gate só em `Pipeline.run`/análise, nunca no boot da GUI),
-`ArrayBackend` (Cpu/Cuda), `CudaPerspectiveRectifier`, `CudaMOG2Detector`, ambos com
-`plugin.toml` descobríveis, marcador `gpu` com skip automático.
+**A rearquitetura 0→6 está COMPLETA em código.** Todas as sete fases foram
+entregues e verificadas (`pytest -m "not gpu"`: 279 passed; `ruff`/`mypy` limpos).
+Não há próxima fase — o que resta são follow-ups pontuais, listados abaixo em ordem
+de importância. Nenhum deles bloqueia o uso do sistema.
 
-**Fase 6** (paralela, workstream separado): spike de tracker multi-animal atrás da
-interface `Tracker` já fixada, plugin de exemplo (peixe), `docs/PLUGIN_CONTRACT.md` +
-`animaltrack plugin install`.
+1. **Fase 5 — validação de CUDA em hardware real (única lacuna de execução do
+   roadmap).** O caminho GPU foi escrito e verificado estruturalmente, mas **nunca
+   executado**: nenhuma máquina/CI disponível tem OpenCV com módulo `cuda`. Falta
+   montar `Dockerfile.cuda` + `docs/gpu-setup.md`, obter um `cv2` com CUDA e rodar
+   `pytest -m gpu` de verdade (hoje pulam limpo). Ver
+   [fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md). **É por isso que
+   a Fase 5 segue marcada 🟨 e não `done`.**
+2. **Decisões pendentes do dono, acumuladas** (nenhuma bloqueia código; todas já
+   implementadas conforme a recomendação, faltando só o "ok"): 3 da Fase 1, 3 da
+   Fase 4, o débito de manifest da Fase 5, e as 2 da Fase 6 (abaixo).
+3. **Escolha do algoritmo de tracking de produção** — o spike da Fase 6 provou que a
+   interface admite multi-entidade e comparou 2 candidatos, mas **não escolhe**
+   (decisão explicitamente do dono). Ver
+   [fase6-tracker-spike-handoff.md](fase6-tracker-spike-handoff.md).
+
+Fase 6 concluída: spike de tracker multi-animal (`kalman-greedy` e
+`kalman-hungarian` como plugins reais atrás da MESMA interface `Tracker`, ambos
+produzindo 2 `entity_id`s estáveis com 0 ID-switches através de uma oclusão real;
+baseline colapsa em 1 id), plugin de exemplo `fish-body-fat-estimator`
+(generalização de espécie + template para terceiros), `docs/PLUGIN_CONTRACT.md`
+(contrato público) e `animaltrack plugin install/list/remove` com validação de
+manifest antes de aceitar. Verificação da fase atendida: plugin externo criado fora
+das raízes built-in é instalado, descoberto e **roda dentro de um `Pipeline.run`
+real**, com sua métrica no `AnalysisResult`.
 
 Fase 4 concluída: CLI Typer (`run`/`list-plugins`/`validate-config`) headless +
 GUI refatorada (protocolo `Screen` único, dispatcher, marshalling via `after()` —
@@ -85,3 +99,27 @@ fino. Botão "Processar vídeo" religado a `run_cpu_analysis` (mesmo caminho da 
   handoff. Confirmar com o dono se/quando formalizar o campo.
 - **Fase 5 — decisão de produto JÁ confirmada (não reabrir)**: `require_cuda()` gate apenas
   `Pipeline.run`/caminho de análise, nunca boot da GUI ou telas de configuração.
+- **Fase 6 — 2 decisões a confirmar com o dono**: (a) formalizar ou não a seção `[config]`
+  no `plugin.toml` — NÃO foi implementada nesta fase para não mexer no schema/discovery de
+  manifest da Fase 2 (mesmo critério do débito da Fase 5); o plugin de peixe usa o mecanismo
+  já existente `setup(PipelineContext)` → `request.overrides`, com fallback por env var.
+  (b) dar default ao parâmetro `view` do `SingleEntityTracker` (Fase 3) para ficar
+  consistente com os candidatos novos — ver item abaixo.
+- **Fase 6 — lacuna de contrato encontrada**: `PluginRegistry.instantiate()` constrói todo
+  plugin com **zero argumentos**. O `SingleEntityTracker` exige `view` posicional e por isso
+  **não é carregável pelo registry** (nunca apareceu porque `run_cpu_analysis` o importa
+  direto). Os candidatos da Fase 6 dão default a `view` para contornar. Correção sugerida: 1
+  linha no baseline. Documentado em `docs/PLUGIN_CONTRACT.md` seção 6.
+- **Fase 6 — `pipeline.toml` ainda não existe**, então "trocar o tracker ativo via
+  `pipeline.toml`" (tarefa 11 do plano da fase) NÃO foi cumprido na letra. O que foi provado
+  é a forma mais forte que o código atual permite: os candidatos são carregados pelo registry
+  e são drop-in por substituição direta do objeto, com teste travando isso. `run_cpu_analysis`
+  segue construindo `SingleEntityTracker` hardcoded.
+- **Fase 6 — fixture de vídeo (nível-integração) não gerada**: o critério "≥2 `entity_id`s
+  estáveis" é atendido pela fixture de nível-unidade (`FrameDetections` sintéticas com oclusão
+  real). Gerar o par de vídeos top/side exercitaria Detect+Track juntos; deixado de fora por
+  custo de repo/tempo, sem prejuízo do critério de verificação da fase.
+- **Fase 6 — candidato 3 (correspondência cross-câmera) não implementado** (era explicitamente
+  *time-boxed* no plano). A premissa dele foi medida e confirmada (a view lateral distingue as
+  duas entidades durante a oclusão do topo), mas implementá-lo **exigiria mudar a interface
+  `Tracker`** — `update()` recebe uma view por vez. Achado arquitetural registrado no handoff A.
