@@ -1,0 +1,2118 @@
+{
+  "view": "top",
+  "n_frames": 150,
+  "radius": 12.0,
+  "occlusion_dist": 24.0,
+  "occlusion_frames": [
+    63,
+    64,
+    65,
+    66
+  ],
+  "entity_names": [
+    "entity_A",
+    "entity_B"
+  ],
+  "frames": [
+    {
+      "frame_index": 0,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 40.0,
+          "y": 100.0
+        },
+        "entity_B": {
+          "x": 560.0,
+          "y": 100.0
+        }
+      }
+    },
+    {
+      "frame_index": 1,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 44.0,
+          "y": 101.5679269490148
+        },
+        "entity_B": {
+          "x": 556.0,
+          "y": 98.4320730509852
+        }
+      }
+    },
+    {
+      "frame_index": 2,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 48.0,
+          "y": 103.11867536226639
+        },
+        "entity_B": {
+          "x": 552.0,
+          "y": 96.88132463773361
+        }
+      }
+    },
+    {
+      "frame_index": 3,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 52.0,
+          "y": 104.63525491562422
+        },
+        "entity_B": {
+          "x": 548.0,
+          "y": 95.36474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 4,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 56.0,
+          "y": 106.101049646137
+        },
+        "entity_B": {
+          "x": 544.0,
+          "y": 93.898950353863
+        }
+      }
+    },
+    {
+      "frame_index": 5,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 60.0,
+          "y": 107.5
+        },
+        "entity_B": {
+          "x": 540.0,
+          "y": 92.5
+        }
+      }
+    },
+    {
+      "frame_index": 6,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 64.0,
+          "y": 108.8167787843871
+        },
+        "entity_B": {
+          "x": 536.0,
+          "y": 91.1832212156129
+        }
+      }
+    },
+    {
+      "frame_index": 7,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 68.0,
+          "y": 110.03695909538287
+        },
+        "entity_B": {
+          "x": 532.0,
+          "y": 89.96304090461713
+        }
+      }
+    },
+    {
+      "frame_index": 8,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 72.0,
+          "y": 111.14717238216092
+        },
+        "entity_B": {
+          "x": 528.0,
+          "y": 88.85282761783908
+        }
+      }
+    },
+    {
+      "frame_index": 9,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 76.0,
+          "y": 112.13525491562422
+        },
+        "entity_B": {
+          "x": 524.0,
+          "y": 87.86474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 10,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 80.0,
+          "y": 112.99038105676658
+        },
+        "entity_B": {
+          "x": 520.0,
+          "y": 87.00961894323342
+        }
+      }
+    },
+    {
+      "frame_index": 11,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 84.0,
+          "y": 113.70318186463902
+        },
+        "entity_B": {
+          "x": 516.0,
+          "y": 86.29681813536098
+        }
+      }
+    },
+    {
+      "frame_index": 12,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 88.0,
+          "y": 114.2658477444273
+        },
+        "entity_B": {
+          "x": 512.0,
+          "y": 85.7341522555727
+        }
+      }
+    },
+    {
+      "frame_index": 13,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 92.0,
+          "y": 114.67221401100709
+        },
+        "entity_B": {
+          "x": 508.0,
+          "y": 85.32778598899291
+        }
+      }
+    },
+    {
+      "frame_index": 14,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 96.0,
+          "y": 114.9178284305241
+        },
+        "entity_B": {
+          "x": 504.0,
+          "y": 85.0821715694759
+        }
+      }
+    },
+    {
+      "frame_index": 15,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 100.0,
+          "y": 115.0
+        },
+        "entity_B": {
+          "x": 500.0,
+          "y": 85.0
+        }
+      }
+    },
+    {
+      "frame_index": 16,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 104.0,
+          "y": 114.9178284305241
+        },
+        "entity_B": {
+          "x": 496.0,
+          "y": 85.0821715694759
+        }
+      }
+    },
+    {
+      "frame_index": 17,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 108.0,
+          "y": 114.67221401100709
+        },
+        "entity_B": {
+          "x": 492.0,
+          "y": 85.32778598899291
+        }
+      }
+    },
+    {
+      "frame_index": 18,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 112.0,
+          "y": 114.2658477444273
+        },
+        "entity_B": {
+          "x": 488.0,
+          "y": 85.7341522555727
+        }
+      }
+    },
+    {
+      "frame_index": 19,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 116.0,
+          "y": 113.70318186463902
+        },
+        "entity_B": {
+          "x": 484.0,
+          "y": 86.29681813536098
+        }
+      }
+    },
+    {
+      "frame_index": 20,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 120.0,
+          "y": 112.99038105676658
+        },
+        "entity_B": {
+          "x": 480.0,
+          "y": 87.00961894323342
+        }
+      }
+    },
+    {
+      "frame_index": 21,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 124.0,
+          "y": 112.13525491562422
+        },
+        "entity_B": {
+          "x": 476.0,
+          "y": 87.86474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 22,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 128.0,
+          "y": 111.14717238216092
+        },
+        "entity_B": {
+          "x": 472.0,
+          "y": 88.85282761783908
+        }
+      }
+    },
+    {
+      "frame_index": 23,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 132.0,
+          "y": 110.03695909538287
+        },
+        "entity_B": {
+          "x": 468.0,
+          "y": 89.96304090461713
+        }
+      }
+    },
+    {
+      "frame_index": 24,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 136.0,
+          "y": 108.8167787843871
+        },
+        "entity_B": {
+          "x": 464.0,
+          "y": 91.1832212156129
+        }
+      }
+    },
+    {
+      "frame_index": 25,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 140.0,
+          "y": 107.5
+        },
+        "entity_B": {
+          "x": 460.0,
+          "y": 92.5
+        }
+      }
+    },
+    {
+      "frame_index": 26,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 144.0,
+          "y": 106.101049646137
+        },
+        "entity_B": {
+          "x": 456.0,
+          "y": 93.898950353863
+        }
+      }
+    },
+    {
+      "frame_index": 27,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 148.0,
+          "y": 104.63525491562422
+        },
+        "entity_B": {
+          "x": 452.0,
+          "y": 95.36474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 28,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 152.0,
+          "y": 103.11867536226639
+        },
+        "entity_B": {
+          "x": 448.0,
+          "y": 96.88132463773361
+        }
+      }
+    },
+    {
+      "frame_index": 29,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 156.0,
+          "y": 101.5679269490148
+        },
+        "entity_B": {
+          "x": 444.0,
+          "y": 98.4320730509852
+        }
+      }
+    },
+    {
+      "frame_index": 30,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 160.0,
+          "y": 100.00000000000001
+        },
+        "entity_B": {
+          "x": 440.0,
+          "y": 99.99999999999999
+        }
+      }
+    },
+    {
+      "frame_index": 31,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 164.0,
+          "y": 98.43207305098521
+        },
+        "entity_B": {
+          "x": 436.0,
+          "y": 101.56792694901479
+        }
+      }
+    },
+    {
+      "frame_index": 32,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 168.0,
+          "y": 96.88132463773361
+        },
+        "entity_B": {
+          "x": 432.0,
+          "y": 103.11867536226639
+        }
+      }
+    },
+    {
+      "frame_index": 33,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 172.0,
+          "y": 95.36474508437578
+        },
+        "entity_B": {
+          "x": 428.0,
+          "y": 104.63525491562422
+        }
+      }
+    },
+    {
+      "frame_index": 34,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 176.0,
+          "y": 93.898950353863
+        },
+        "entity_B": {
+          "x": 424.0,
+          "y": 106.101049646137
+        }
+      }
+    },
+    {
+      "frame_index": 35,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 180.0,
+          "y": 92.5
+        },
+        "entity_B": {
+          "x": 420.0,
+          "y": 107.5
+        }
+      }
+    },
+    {
+      "frame_index": 36,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 184.0,
+          "y": 91.1832212156129
+        },
+        "entity_B": {
+          "x": 416.0,
+          "y": 108.8167787843871
+        }
+      }
+    },
+    {
+      "frame_index": 37,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 188.0,
+          "y": 89.96304090461713
+        },
+        "entity_B": {
+          "x": 412.0,
+          "y": 110.03695909538287
+        }
+      }
+    },
+    {
+      "frame_index": 38,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 192.0,
+          "y": 88.8528276178391
+        },
+        "entity_B": {
+          "x": 408.0,
+          "y": 111.1471723821609
+        }
+      }
+    },
+    {
+      "frame_index": 39,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 196.0,
+          "y": 87.86474508437578
+        },
+        "entity_B": {
+          "x": 404.0,
+          "y": 112.13525491562422
+        }
+      }
+    },
+    {
+      "frame_index": 40,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 200.0,
+          "y": 87.00961894323342
+        },
+        "entity_B": {
+          "x": 400.0,
+          "y": 112.99038105676658
+        }
+      }
+    },
+    {
+      "frame_index": 41,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 204.0,
+          "y": 86.296818135361
+        },
+        "entity_B": {
+          "x": 396.0,
+          "y": 113.703181864639
+        }
+      }
+    },
+    {
+      "frame_index": 42,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 208.0,
+          "y": 85.7341522555727
+        },
+        "entity_B": {
+          "x": 392.0,
+          "y": 114.2658477444273
+        }
+      }
+    },
+    {
+      "frame_index": 43,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 212.0,
+          "y": 85.32778598899291
+        },
+        "entity_B": {
+          "x": 388.0,
+          "y": 114.67221401100709
+        }
+      }
+    },
+    {
+      "frame_index": 44,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 216.0,
+          "y": 85.0821715694759
+        },
+        "entity_B": {
+          "x": 384.0,
+          "y": 114.9178284305241
+        }
+      }
+    },
+    {
+      "frame_index": 45,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 220.0,
+          "y": 85.0
+        },
+        "entity_B": {
+          "x": 380.0,
+          "y": 115.0
+        }
+      }
+    },
+    {
+      "frame_index": 46,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 224.0,
+          "y": 85.0821715694759
+        },
+        "entity_B": {
+          "x": 376.0,
+          "y": 114.9178284305241
+        }
+      }
+    },
+    {
+      "frame_index": 47,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 228.0,
+          "y": 85.32778598899291
+        },
+        "entity_B": {
+          "x": 372.0,
+          "y": 114.67221401100709
+        }
+      }
+    },
+    {
+      "frame_index": 48,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 232.0,
+          "y": 85.7341522555727
+        },
+        "entity_B": {
+          "x": 368.0,
+          "y": 114.2658477444273
+        }
+      }
+    },
+    {
+      "frame_index": 49,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 236.0,
+          "y": 86.29681813536098
+        },
+        "entity_B": {
+          "x": 364.0,
+          "y": 113.70318186463902
+        }
+      }
+    },
+    {
+      "frame_index": 50,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 240.0,
+          "y": 87.00961894323342
+        },
+        "entity_B": {
+          "x": 360.0,
+          "y": 112.99038105676658
+        }
+      }
+    },
+    {
+      "frame_index": 51,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 244.0,
+          "y": 87.86474508437578
+        },
+        "entity_B": {
+          "x": 356.0,
+          "y": 112.13525491562422
+        }
+      }
+    },
+    {
+      "frame_index": 52,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 248.0,
+          "y": 88.8528276178391
+        },
+        "entity_B": {
+          "x": 352.0,
+          "y": 111.1471723821609
+        }
+      }
+    },
+    {
+      "frame_index": 53,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 252.0,
+          "y": 89.96304090461713
+        },
+        "entity_B": {
+          "x": 348.0,
+          "y": 110.03695909538287
+        }
+      }
+    },
+    {
+      "frame_index": 54,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 256.0,
+          "y": 91.1832212156129
+        },
+        "entity_B": {
+          "x": 344.0,
+          "y": 108.8167787843871
+        }
+      }
+    },
+    {
+      "frame_index": 55,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 260.0,
+          "y": 92.5
+        },
+        "entity_B": {
+          "x": 340.0,
+          "y": 107.5
+        }
+      }
+    },
+    {
+      "frame_index": 56,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 264.0,
+          "y": 93.898950353863
+        },
+        "entity_B": {
+          "x": 336.0,
+          "y": 106.101049646137
+        }
+      }
+    },
+    {
+      "frame_index": 57,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 268.0,
+          "y": 95.36474508437578
+        },
+        "entity_B": {
+          "x": 332.0,
+          "y": 104.63525491562422
+        }
+      }
+    },
+    {
+      "frame_index": 58,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 272.0,
+          "y": 96.88132463773361
+        },
+        "entity_B": {
+          "x": 328.0,
+          "y": 103.11867536226639
+        }
+      }
+    },
+    {
+      "frame_index": 59,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 276.0,
+          "y": 98.4320730509852
+        },
+        "entity_B": {
+          "x": 324.0,
+          "y": 101.5679269490148
+        }
+      }
+    },
+    {
+      "frame_index": 60,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 280.0,
+          "y": 99.99999999999999
+        },
+        "entity_B": {
+          "x": 320.0,
+          "y": 100.00000000000001
+        }
+      }
+    },
+    {
+      "frame_index": 61,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 284.0,
+          "y": 101.56792694901479
+        },
+        "entity_B": {
+          "x": 316.0,
+          "y": 98.43207305098521
+        }
+      }
+    },
+    {
+      "frame_index": 62,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 288.0,
+          "y": 103.11867536226637
+        },
+        "entity_B": {
+          "x": 312.0,
+          "y": 96.88132463773363
+        }
+      }
+    },
+    {
+      "frame_index": 63,
+      "occluded": true,
+      "entities": {
+        "entity_A": {
+          "x": 292.0,
+          "y": 104.6352549156242
+        },
+        "entity_B": {
+          "x": 308.0,
+          "y": 95.3647450843758
+        }
+      }
+    },
+    {
+      "frame_index": 64,
+      "occluded": true,
+      "entities": {
+        "entity_A": {
+          "x": 296.0,
+          "y": 106.101049646137
+        },
+        "entity_B": {
+          "x": 304.0,
+          "y": 93.898950353863
+        }
+      }
+    },
+    {
+      "frame_index": 65,
+      "occluded": true,
+      "entities": {
+        "entity_A": {
+          "x": 300.0,
+          "y": 107.49999999999999
+        },
+        "entity_B": {
+          "x": 300.0,
+          "y": 92.50000000000001
+        }
+      }
+    },
+    {
+      "frame_index": 66,
+      "occluded": true,
+      "entities": {
+        "entity_A": {
+          "x": 304.0,
+          "y": 108.8167787843871
+        },
+        "entity_B": {
+          "x": 296.0,
+          "y": 91.1832212156129
+        }
+      }
+    },
+    {
+      "frame_index": 67,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 308.0,
+          "y": 110.03695909538287
+        },
+        "entity_B": {
+          "x": 292.0,
+          "y": 89.96304090461713
+        }
+      }
+    },
+    {
+      "frame_index": 68,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 312.0,
+          "y": 111.14717238216092
+        },
+        "entity_B": {
+          "x": 288.0,
+          "y": 88.85282761783908
+        }
+      }
+    },
+    {
+      "frame_index": 69,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 316.0,
+          "y": 112.13525491562422
+        },
+        "entity_B": {
+          "x": 284.0,
+          "y": 87.86474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 70,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 320.0,
+          "y": 112.99038105676658
+        },
+        "entity_B": {
+          "x": 280.0,
+          "y": 87.00961894323342
+        }
+      }
+    },
+    {
+      "frame_index": 71,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 324.0,
+          "y": 113.70318186463902
+        },
+        "entity_B": {
+          "x": 276.0,
+          "y": 86.29681813536098
+        }
+      }
+    },
+    {
+      "frame_index": 72,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 328.0,
+          "y": 114.2658477444273
+        },
+        "entity_B": {
+          "x": 272.0,
+          "y": 85.7341522555727
+        }
+      }
+    },
+    {
+      "frame_index": 73,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 332.0,
+          "y": 114.67221401100709
+        },
+        "entity_B": {
+          "x": 268.0,
+          "y": 85.32778598899291
+        }
+      }
+    },
+    {
+      "frame_index": 74,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 336.0,
+          "y": 114.9178284305241
+        },
+        "entity_B": {
+          "x": 264.0,
+          "y": 85.0821715694759
+        }
+      }
+    },
+    {
+      "frame_index": 75,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 340.0,
+          "y": 115.0
+        },
+        "entity_B": {
+          "x": 260.0,
+          "y": 85.0
+        }
+      }
+    },
+    {
+      "frame_index": 76,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 344.0,
+          "y": 114.9178284305241
+        },
+        "entity_B": {
+          "x": 256.0,
+          "y": 85.0821715694759
+        }
+      }
+    },
+    {
+      "frame_index": 77,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 348.0,
+          "y": 114.67221401100709
+        },
+        "entity_B": {
+          "x": 252.0,
+          "y": 85.32778598899291
+        }
+      }
+    },
+    {
+      "frame_index": 78,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 352.0,
+          "y": 114.2658477444273
+        },
+        "entity_B": {
+          "x": 248.0,
+          "y": 85.7341522555727
+        }
+      }
+    },
+    {
+      "frame_index": 79,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 356.0,
+          "y": 113.703181864639
+        },
+        "entity_B": {
+          "x": 244.0,
+          "y": 86.296818135361
+        }
+      }
+    },
+    {
+      "frame_index": 80,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 360.0,
+          "y": 112.99038105676658
+        },
+        "entity_B": {
+          "x": 240.0,
+          "y": 87.00961894323342
+        }
+      }
+    },
+    {
+      "frame_index": 81,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 364.0,
+          "y": 112.13525491562422
+        },
+        "entity_B": {
+          "x": 236.0,
+          "y": 87.86474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 82,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 368.0,
+          "y": 111.14717238216093
+        },
+        "entity_B": {
+          "x": 232.0,
+          "y": 88.85282761783907
+        }
+      }
+    },
+    {
+      "frame_index": 83,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 372.0,
+          "y": 110.03695909538287
+        },
+        "entity_B": {
+          "x": 228.0,
+          "y": 89.96304090461713
+        }
+      }
+    },
+    {
+      "frame_index": 84,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 376.0,
+          "y": 108.8167787843871
+        },
+        "entity_B": {
+          "x": 224.0,
+          "y": 91.1832212156129
+        }
+      }
+    },
+    {
+      "frame_index": 85,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 380.0,
+          "y": 107.5
+        },
+        "entity_B": {
+          "x": 220.0,
+          "y": 92.5
+        }
+      }
+    },
+    {
+      "frame_index": 86,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 384.0,
+          "y": 106.10104964613701
+        },
+        "entity_B": {
+          "x": 216.0,
+          "y": 93.89895035386299
+        }
+      }
+    },
+    {
+      "frame_index": 87,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 388.0,
+          "y": 104.63525491562422
+        },
+        "entity_B": {
+          "x": 212.0,
+          "y": 95.36474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 88,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 392.0,
+          "y": 103.11867536226642
+        },
+        "entity_B": {
+          "x": 208.0,
+          "y": 96.88132463773358
+        }
+      }
+    },
+    {
+      "frame_index": 89,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 396.0,
+          "y": 101.56792694901479
+        },
+        "entity_B": {
+          "x": 204.0,
+          "y": 98.43207305098521
+        }
+      }
+    },
+    {
+      "frame_index": 90,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 400.0,
+          "y": 100.0
+        },
+        "entity_B": {
+          "x": 200.0,
+          "y": 100.0
+        }
+      }
+    },
+    {
+      "frame_index": 91,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 404.0,
+          "y": 98.4320730509852
+        },
+        "entity_B": {
+          "x": 196.0,
+          "y": 101.5679269490148
+        }
+      }
+    },
+    {
+      "frame_index": 92,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 408.0,
+          "y": 96.88132463773363
+        },
+        "entity_B": {
+          "x": 192.0,
+          "y": 103.11867536226637
+        }
+      }
+    },
+    {
+      "frame_index": 93,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 412.0,
+          "y": 95.3647450843758
+        },
+        "entity_B": {
+          "x": 188.0,
+          "y": 104.6352549156242
+        }
+      }
+    },
+    {
+      "frame_index": 94,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 416.0,
+          "y": 93.898950353863
+        },
+        "entity_B": {
+          "x": 184.0,
+          "y": 106.101049646137
+        }
+      }
+    },
+    {
+      "frame_index": 95,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 420.0,
+          "y": 92.49999999999999
+        },
+        "entity_B": {
+          "x": 180.0,
+          "y": 107.50000000000001
+        }
+      }
+    },
+    {
+      "frame_index": 96,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 424.0,
+          "y": 91.1832212156129
+        },
+        "entity_B": {
+          "x": 176.0,
+          "y": 108.8167787843871
+        }
+      }
+    },
+    {
+      "frame_index": 97,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 428.0,
+          "y": 89.96304090461715
+        },
+        "entity_B": {
+          "x": 172.0,
+          "y": 110.03695909538285
+        }
+      }
+    },
+    {
+      "frame_index": 98,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 432.0,
+          "y": 88.8528276178391
+        },
+        "entity_B": {
+          "x": 168.0,
+          "y": 111.1471723821609
+        }
+      }
+    },
+    {
+      "frame_index": 99,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 436.0,
+          "y": 87.86474508437578
+        },
+        "entity_B": {
+          "x": 164.0,
+          "y": 112.13525491562422
+        }
+      }
+    },
+    {
+      "frame_index": 100,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 440.0,
+          "y": 87.00961894323342
+        },
+        "entity_B": {
+          "x": 160.0,
+          "y": 112.99038105676658
+        }
+      }
+    },
+    {
+      "frame_index": 101,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 444.0,
+          "y": 86.296818135361
+        },
+        "entity_B": {
+          "x": 156.0,
+          "y": 113.703181864639
+        }
+      }
+    },
+    {
+      "frame_index": 102,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 448.0,
+          "y": 85.7341522555727
+        },
+        "entity_B": {
+          "x": 152.0,
+          "y": 114.2658477444273
+        }
+      }
+    },
+    {
+      "frame_index": 103,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 452.0,
+          "y": 85.32778598899291
+        },
+        "entity_B": {
+          "x": 148.0,
+          "y": 114.67221401100709
+        }
+      }
+    },
+    {
+      "frame_index": 104,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 456.0,
+          "y": 85.0821715694759
+        },
+        "entity_B": {
+          "x": 144.0,
+          "y": 114.9178284305241
+        }
+      }
+    },
+    {
+      "frame_index": 105,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 460.0,
+          "y": 85.0
+        },
+        "entity_B": {
+          "x": 140.0,
+          "y": 115.0
+        }
+      }
+    },
+    {
+      "frame_index": 106,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 464.0,
+          "y": 85.0821715694759
+        },
+        "entity_B": {
+          "x": 136.0,
+          "y": 114.9178284305241
+        }
+      }
+    },
+    {
+      "frame_index": 107,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 468.0,
+          "y": 85.32778598899291
+        },
+        "entity_B": {
+          "x": 132.0,
+          "y": 114.67221401100709
+        }
+      }
+    },
+    {
+      "frame_index": 108,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 472.0,
+          "y": 85.7341522555727
+        },
+        "entity_B": {
+          "x": 128.0,
+          "y": 114.2658477444273
+        }
+      }
+    },
+    {
+      "frame_index": 109,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 476.0,
+          "y": 86.29681813536098
+        },
+        "entity_B": {
+          "x": 124.0,
+          "y": 113.70318186463902
+        }
+      }
+    },
+    {
+      "frame_index": 110,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 480.0,
+          "y": 87.00961894323342
+        },
+        "entity_B": {
+          "x": 120.0,
+          "y": 112.99038105676658
+        }
+      }
+    },
+    {
+      "frame_index": 111,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 484.0,
+          "y": 87.86474508437578
+        },
+        "entity_B": {
+          "x": 116.0,
+          "y": 112.13525491562422
+        }
+      }
+    },
+    {
+      "frame_index": 112,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 488.0,
+          "y": 88.85282761783908
+        },
+        "entity_B": {
+          "x": 112.0,
+          "y": 111.14717238216092
+        }
+      }
+    },
+    {
+      "frame_index": 113,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 492.0,
+          "y": 89.96304090461712
+        },
+        "entity_B": {
+          "x": 108.0,
+          "y": 110.03695909538288
+        }
+      }
+    },
+    {
+      "frame_index": 114,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 496.0,
+          "y": 91.1832212156129
+        },
+        "entity_B": {
+          "x": 104.0,
+          "y": 108.8167787843871
+        }
+      }
+    },
+    {
+      "frame_index": 115,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 500.0,
+          "y": 92.5
+        },
+        "entity_B": {
+          "x": 100.0,
+          "y": 107.5
+        }
+      }
+    },
+    {
+      "frame_index": 116,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 504.0,
+          "y": 93.898950353863
+        },
+        "entity_B": {
+          "x": 96.0,
+          "y": 106.101049646137
+        }
+      }
+    },
+    {
+      "frame_index": 117,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 508.0,
+          "y": 95.36474508437578
+        },
+        "entity_B": {
+          "x": 92.0,
+          "y": 104.63525491562422
+        }
+      }
+    },
+    {
+      "frame_index": 118,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 512.0,
+          "y": 96.88132463773361
+        },
+        "entity_B": {
+          "x": 88.0,
+          "y": 103.11867536226639
+        }
+      }
+    },
+    {
+      "frame_index": 119,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 516.0,
+          "y": 98.43207305098518
+        },
+        "entity_B": {
+          "x": 84.0,
+          "y": 101.56792694901482
+        }
+      }
+    },
+    {
+      "frame_index": 120,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 520.0,
+          "y": 99.99999999999997
+        },
+        "entity_B": {
+          "x": 80.0,
+          "y": 100.00000000000003
+        }
+      }
+    },
+    {
+      "frame_index": 121,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 524.0,
+          "y": 101.5679269490148
+        },
+        "entity_B": {
+          "x": 76.0,
+          "y": 98.4320730509852
+        }
+      }
+    },
+    {
+      "frame_index": 122,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 528.0,
+          "y": 103.11867536226637
+        },
+        "entity_B": {
+          "x": 72.0,
+          "y": 96.88132463773363
+        }
+      }
+    },
+    {
+      "frame_index": 123,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 532.0,
+          "y": 104.6352549156242
+        },
+        "entity_B": {
+          "x": 68.0,
+          "y": 95.3647450843758
+        }
+      }
+    },
+    {
+      "frame_index": 124,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 536.0,
+          "y": 106.10104964613699
+        },
+        "entity_B": {
+          "x": 64.0,
+          "y": 93.89895035386301
+        }
+      }
+    },
+    {
+      "frame_index": 125,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 540.0,
+          "y": 107.49999999999999
+        },
+        "entity_B": {
+          "x": 60.0,
+          "y": 92.50000000000001
+        }
+      }
+    },
+    {
+      "frame_index": 126,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 544.0,
+          "y": 108.81677878438708
+        },
+        "entity_B": {
+          "x": 56.0,
+          "y": 91.18322121561292
+        }
+      }
+    },
+    {
+      "frame_index": 127,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 548.0,
+          "y": 110.03695909538287
+        },
+        "entity_B": {
+          "x": 52.0,
+          "y": 89.96304090461713
+        }
+      }
+    },
+    {
+      "frame_index": 128,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 552.0,
+          "y": 111.1471723821609
+        },
+        "entity_B": {
+          "x": 48.0,
+          "y": 88.8528276178391
+        }
+      }
+    },
+    {
+      "frame_index": 129,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 556.0,
+          "y": 112.1352549156242
+        },
+        "entity_B": {
+          "x": 44.0,
+          "y": 87.8647450843758
+        }
+      }
+    },
+    {
+      "frame_index": 130,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 560.0,
+          "y": 112.99038105676657
+        },
+        "entity_B": {
+          "x": 40.0,
+          "y": 87.00961894323343
+        }
+      }
+    },
+    {
+      "frame_index": 131,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 564.0,
+          "y": 113.70318186463902
+        },
+        "entity_B": {
+          "x": 36.0,
+          "y": 86.29681813536098
+        }
+      }
+    },
+    {
+      "frame_index": 132,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 568.0,
+          "y": 114.2658477444273
+        },
+        "entity_B": {
+          "x": 32.0,
+          "y": 85.7341522555727
+        }
+      }
+    },
+    {
+      "frame_index": 133,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 572.0,
+          "y": 114.67221401100709
+        },
+        "entity_B": {
+          "x": 28.0,
+          "y": 85.32778598899291
+        }
+      }
+    },
+    {
+      "frame_index": 134,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 576.0,
+          "y": 114.9178284305241
+        },
+        "entity_B": {
+          "x": 24.0,
+          "y": 85.0821715694759
+        }
+      }
+    },
+    {
+      "frame_index": 135,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 580.0,
+          "y": 115.0
+        },
+        "entity_B": {
+          "x": 20.0,
+          "y": 85.0
+        }
+      }
+    },
+    {
+      "frame_index": 136,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 584.0,
+          "y": 114.9178284305241
+        },
+        "entity_B": {
+          "x": 16.0,
+          "y": 85.0821715694759
+        }
+      }
+    },
+    {
+      "frame_index": 137,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 588.0,
+          "y": 114.67221401100709
+        },
+        "entity_B": {
+          "x": 12.0,
+          "y": 85.32778598899291
+        }
+      }
+    },
+    {
+      "frame_index": 138,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 592.0,
+          "y": 114.2658477444273
+        },
+        "entity_B": {
+          "x": 8.0,
+          "y": 85.7341522555727
+        }
+      }
+    },
+    {
+      "frame_index": 139,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 596.0,
+          "y": 113.70318186463902
+        },
+        "entity_B": {
+          "x": 4.0,
+          "y": 86.29681813536098
+        }
+      }
+    },
+    {
+      "frame_index": 140,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 600.0,
+          "y": 112.9903810567666
+        },
+        "entity_B": {
+          "x": 0.0,
+          "y": 87.0096189432334
+        }
+      }
+    },
+    {
+      "frame_index": 141,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 604.0,
+          "y": 112.13525491562422
+        },
+        "entity_B": {
+          "x": -4.0,
+          "y": 87.86474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 142,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 608.0,
+          "y": 111.14717238216092
+        },
+        "entity_B": {
+          "x": -8.0,
+          "y": 88.85282761783908
+        }
+      }
+    },
+    {
+      "frame_index": 143,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 612.0,
+          "y": 110.03695909538287
+        },
+        "entity_B": {
+          "x": -12.0,
+          "y": 89.96304090461713
+        }
+      }
+    },
+    {
+      "frame_index": 144,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 616.0,
+          "y": 108.81677878438711
+        },
+        "entity_B": {
+          "x": -16.0,
+          "y": 91.18322121561289
+        }
+      }
+    },
+    {
+      "frame_index": 145,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 620.0,
+          "y": 107.50000000000003
+        },
+        "entity_B": {
+          "x": -20.0,
+          "y": 92.49999999999997
+        }
+      }
+    },
+    {
+      "frame_index": 146,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 624.0,
+          "y": 106.10104964613701
+        },
+        "entity_B": {
+          "x": -24.0,
+          "y": 93.89895035386299
+        }
+      }
+    },
+    {
+      "frame_index": 147,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 628.0,
+          "y": 104.63525491562422
+        },
+        "entity_B": {
+          "x": -28.0,
+          "y": 95.36474508437578
+        }
+      }
+    },
+    {
+      "frame_index": 148,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 632.0,
+          "y": 103.11867536226639
+        },
+        "entity_B": {
+          "x": -32.0,
+          "y": 96.88132463773361
+        }
+      }
+    },
+    {
+      "frame_index": 149,
+      "occluded": false,
+      "entities": {
+        "entity_A": {
+          "x": 636.0,
+          "y": 101.56792694901482
+        },
+        "entity_B": {
+          "x": -36.0,
+          "y": 98.43207305098518
+        }
+      }
+    }
+  ]
+}
