@@ -16,6 +16,7 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 | 5 | Backends GPU (plugins puros) | 🟨 código feito, packaging CUDA pendente | [fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md) |
 | 6 | Pesquisa e prontidão de marketplace | ✅ done | [A](fase6-tracker-spike-handoff.md) · [B](fase6-plugin-exemplo-handoff.md) · [C](fase6-marketplace-handoff.md) |
 | — | UX audit (GUI real × `ux-design-detalhado.md`) | ✅ done | [ux-audit-gui-handoff.md](ux-audit-gui-handoff.md) |
+| — | Otimização O1+O4+O5+O10 + bugs fps/speed/PDF | ✅ done | [otimizacao-bugs-handoff.md](otimizacao-bugs-handoff.md) |
 
 ## Próxima ação
 
@@ -39,6 +40,12 @@ de importância. Nenhum deles bloqueia o uso do sistema.
    interface admite multi-entidade e comparou 2 candidatos, mas **não escolhe**
    (decisão explicitamente do dono). Ver
    [fase6-tracker-spike-handoff.md](fase6-tracker-spike-handoff.md).
+4. **Restante do doc de pesquisa de otimização/metadados** (ver
+   `docs/handoffs/next-agent-handout.md`): O1/O4/O5/O10 + bugs fps/speed/PDF já
+   feitos ([handoff](otimizacao-bugs-handoff.md)). Falta: O9 (muda golden-file,
+   precisa regeneração consciente), gap `setup(pctx)` nunca chamado em
+   `run_cpu_analysis`, plugin de metadados `kinematics` (shortlist #1 do doc de
+   metadados).
 
 Fase 6 concluída: spike de tracker multi-animal (`kalman-greedy` e
 `kalman-hungarian` como plugins reais atrás da MESMA interface `Tracker`, ambos

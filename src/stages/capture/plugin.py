@@ -64,7 +64,7 @@ class DualVideoFileCapture(Plugin):
             cap.release()
         return width, height
 
-    def open(self) -> tuple[int, Iterator[FramePair]]:
+    def open(self) -> tuple[float, Iterator[FramePair]]:
         """Abre os dois vídeos e devolve `(fps, generator)`. Cada chamada abre do
         zero (reabertura é necessária: o Detect faz uma pré-passada por câmera antes
         da passada pareada — ver Detect.setup). O generator para no vídeo mais curto."""
@@ -76,7 +76,7 @@ class DualVideoFileCapture(Plugin):
             top_cap.release()
             raise CaptureError(f"Falha ao abrir vídeo lateral: {self._side_path}")
 
-        fps = int(top_cap.get(cv2.CAP_PROP_FPS))  # fps do topo, como no legado
+        fps = top_cap.get(cv2.CAP_PROP_FPS)  # fps do topo, como no legado — sem truncar (bug: 29.97->29)
 
         def _generator() -> Iterator[FramePair]:
             index = 0

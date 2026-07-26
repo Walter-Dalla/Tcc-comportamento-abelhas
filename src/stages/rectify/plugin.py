@@ -56,6 +56,11 @@ class CpuPerspectiveRectifier(Plugin):
             dtype=np.float32,
         )
         self._matrix = cv2.getPerspectiveTransform(points1, points2)
+        self._is_identity = bool(
+            np.allclose(self._matrix, np.eye(3), atol=1e-3)
+            and self._width == video_width
+            and self._height == video_height
+        )
         self._role = role
         self._orientation = orientation
 
@@ -75,7 +80,12 @@ class CpuPerspectiveRectifier(Plugin):
         return self._height, self._width
 
     def rectify(self, frame: np.ndarray, frame_index: int) -> RectifiedFrame:
-        warped = cv2.warpPerspective(frame, self._matrix, (self._width, self._height))
+        # pula warpPerspective quando a matriz é identidade (sem pontos reais de perspectiva)
+        warped = (
+            frame
+            if self._is_identity
+            else cv2.warpPerspective(frame, self._matrix, (self._width, self._height))
+        )
         gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
         return RectifiedFrame(
             image=gray,

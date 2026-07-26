@@ -54,7 +54,6 @@ if TYPE_CHECKING:
 
 FRAME_BLOCK = 500
 _MIN_THRESHOLD = 80
-_BINARY_THRESHOLD = 127
 
 
 class DetectError(Exception):
@@ -91,19 +90,22 @@ class BackgroundSubtractionDetector(Detector):
 
     def setup(self, ctx: PipelineContext | None = None) -> None:
         """Passe 1: constrói o modelo de fundo lendo SÓ a view deste detector, até
-        o fim do seu próprio vídeo. Retém apenas ~`frame_count/frame_block` frames."""
-        sampled: list[np.ndarray] = []
+        o fim do seu próprio vídeo. Retém um único acumulador de max corrente, sem lista."""
+        accumulator: np.ndarray | None = None
         counter = 0
         for raw in self._capture.open_single(self._role):
-            rectified = self._rectifier.rectify(raw, counter)
             if counter % self._frame_block == 0:
-                sampled.append(rectified.image)
+                rectified = self._rectifier.rectify(raw, counter)
+                if accumulator is None:
+                    accumulator = rectified.image.astype(np.uint8).copy()
+                else:
+                    np.maximum(accumulator, rectified.image, out=accumulator)
             counter += 1
-        if not sampled:
+        if accumulator is None:
             raise DetectError(
                 f"nenhum frame lido para a view {self._role.value} — vídeo vazio ou ilegível"
             )
-        self._max_frame = np.max(sampled, axis=0).astype(np.uint8)
+        self._max_frame = accumulator
 
     def detect(self, frame: RectifiedFrame) -> FrameDetections:
         """Passe 2: detecta o inseto num frame retificado usando o `max_frame` do passe 1."""
@@ -112,8 +114,7 @@ class BackgroundSubtractionDetector(Detector):
 
         view: Literal["top", "side"] = "top" if frame.role is CameraRole.TOP else "side"
         dif_frame = cv2.absdiff(self._max_frame, frame.image)
-        _, diff = cv2.threshold(dif_frame, _MIN_THRESHOLD, 255, cv2.THRESH_BINARY)
-        _, binarizada = cv2.threshold(diff, _BINARY_THRESHOLD, 255, cv2.THRESH_BINARY)
+        _, binarizada = cv2.threshold(dif_frame, _MIN_THRESHOLD, 255, cv2.THRESH_BINARY)
 
         detections = self._detections_from_mask(binarizada, frame.image.shape[0])
         self._emit_debug(view, frame.frame_index, binarizada, detected=bool(detections))

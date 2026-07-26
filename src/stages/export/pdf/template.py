@@ -30,7 +30,7 @@ def render_html(ctx: AnalysisContext, title: str) -> str:
     calib = result.calibration
     frame_count = str(len(result.routes[0].points)) if result.routes else "N/D"
     rows = [
-        ("Quantidade de frames", frame_count),
+        ("Quadros com posição reconstruída", frame_count),
         ("Largura da Caixa (cm)", str(calib.box_cm.x)),
         ("Altura da Caixa (cm)", str(calib.box_cm.y)),
         ("Profundidade da Caixa (cm)", str(calib.box_cm.z)),

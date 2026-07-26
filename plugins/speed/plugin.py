@@ -39,6 +39,9 @@ class SpeedPlugin(MetadataPlugin):
         sample_count = 0
 
         for prev_idx, idx in zip(indices, indices[1:], strict=False):
+            if idx - prev_idx != 1:
+                # gap por detecção falha entre frames: não é passo de 1 frame, pula.
+                continue
             p1 = route.points[prev_idx]
             p2 = route.points[idx]
             distance_cm = math.dist((p1.x, p1.y, p1.z), (p2.x, p2.y, p2.z))  # já em cm
