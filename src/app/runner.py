@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from src.app.plugins import default_search_paths
 from src.core.gpu import GpuNotAvailableError, require_cuda
@@ -53,6 +54,7 @@ def execute_analysis(
     *,
     require_gpu: bool = False,
     debug_frames: bool = False,
+    overrides: dict[str, Any] | None = None,
 ) -> AnalysisResult:
     """Roda a pipeline CPU completa para um perfil e persiste o resultado.
 
@@ -63,7 +65,11 @@ def execute_analysis(
     `debug_frames=True` liga o export de frames de debug do Detect em
     `<workspace>/debug/<perfil>/` (UX seção 6, Opção 2) — inspeção pós-hoc, sem
     preview bloqueante. Mesma opção nos dois pontos de entrada: `--debug-frames`
-    na CLI, caixa "Exportar frames de debug" na GUI."""
+    na CLI, caixa "Exportar frames de debug" na GUI.
+
+    `overrides` (opcional) chega até `plugin.setup(PipelineContext)` de cada
+    plugin de metadata — repassado direto para `run_cpu_analysis`; nenhuma CLI
+    ou GUI expõe isso ainda, é plumbing para futuros callers (testes, API)."""
     if require_gpu:
         # Delega ao gate central (`require_cuda`); re-embrulha na fachada de app
         # `GpuRequiredError` (que a CLI já captura) preservando a mensagem clara.
@@ -73,7 +79,7 @@ def execute_analysis(
             raise GpuRequiredError(str(exc)) from exc
     profile = ProfileStore(workspace).get(profile_name)
     debug_dir = workspace.debug_dir(profile_name) if debug_frames else None
-    result = run_cpu_analysis(profile, debug_dir=debug_dir)
+    result = run_cpu_analysis(profile, debug_dir=debug_dir, overrides=overrides, workspace=workspace)
     ResultStore(workspace).save(result)
     return result
 

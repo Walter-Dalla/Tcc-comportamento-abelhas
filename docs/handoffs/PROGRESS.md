@@ -17,6 +17,7 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 | 6 | Pesquisa e prontidão de marketplace | ✅ done | [A](fase6-tracker-spike-handoff.md) · [B](fase6-plugin-exemplo-handoff.md) · [C](fase6-marketplace-handoff.md) |
 | — | UX audit (GUI real × `ux-design-detalhado.md`) | ✅ done | [ux-audit-gui-handoff.md](ux-audit-gui-handoff.md) |
 | — | Otimização O1+O4+O5+O10 + bugs fps/speed/PDF | ✅ done | [otimizacao-bugs-handoff.md](otimizacao-bugs-handoff.md) |
+| — | O9 + gap setup(pctx) + plugin kinematics | ✅ done | [o9-pctx-kinematics-handoff.md](o9-pctx-kinematics-handoff.md) |
 
 ## Próxima ação
 
@@ -41,11 +42,12 @@ de importância. Nenhum deles bloqueia o uso do sistema.
    (decisão explicitamente do dono). Ver
    [fase6-tracker-spike-handoff.md](fase6-tracker-spike-handoff.md).
 4. **Restante do doc de pesquisa de otimização/metadados** (ver
-   `docs/handoffs/next-agent-handout.md`): O1/O4/O5/O10 + bugs fps/speed/PDF já
-   feitos ([handoff](otimizacao-bugs-handoff.md)). Falta: O9 (muda golden-file,
-   precisa regeneração consciente), gap `setup(pctx)` nunca chamado em
-   `run_cpu_analysis`, plugin de metadados `kinematics` (shortlist #1 do doc de
-   metadados).
+   `docs/handoffs/next-agent-handout.md`): toda a seção B (trabalho que não
+   exige decisão do dono) está feita — O1/O4/O5/O10/O9 + bugs fps/speed/PDF
+   ([handoff 1](otimizacao-bugs-handoff.md)) e gap `setup(pctx)` + plugin
+   `kinematics` ([handoff 2](o9-pctx-kinematics-handoff.md)). Falta só o resto
+   dos grupos B/C/D do doc de metadados (mudam schema/estágio, risco médio) e
+   o resto do doc de otimização além dos itens já feitos.
 
 Fase 6 concluída: spike de tracker multi-animal (`kalman-greedy` e
 `kalman-hungarian` como plugins reais atrás da MESMA interface `Tracker`, ambos

@@ -20,7 +20,9 @@ houver `border_region` (pontos de borda configurados no perfil).
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
+from src.core.pipeline import PipelineContext, RunRequest
 from src.core.plugin import PluginKind
 from src.core.plugin_registry import PluginRegistry
 from src.core.schema.geometry import Point2D
@@ -28,6 +30,7 @@ from src.core.schema.orientation import CameraRole
 from src.core.schema.profile import Profile
 from src.core.schema.result import AnalysisContext, AnalysisResult
 from src.core.stages import MetadataPlugin
+from src.core.workspace import Workspace
 from src.stages.capture.plugin import DualVideoFileCapture
 from src.stages.detect.debug import DebugFrameWriter
 from src.stages.detect.plugin import BackgroundSubtractionDetector
@@ -50,6 +53,8 @@ def run_cpu_analysis(
     plugins_dir: Path | None = None,
     frame_block: int = 500,
     debug_dir: Path | None = None,
+    overrides: dict[str, Any] | None = None,
+    workspace: Workspace | None = None,
 ) -> AnalysisResult:
     """Roda a pipeline CPU completa sobre um perfil e devolve o `AnalysisResult`.
 
@@ -60,6 +65,10 @@ def run_cpu_analysis(
     máscaras de diferença amostradas + toda falha de detecção vão para
     `<debug_dir>/<view>/`, gravadas por uma thread própria que nunca segura o
     pipeline. `None` (padrão) = custo zero.
+
+    `overrides`/`workspace` (opcionais) chegam até `plugin.setup(PipelineContext)`
+    de cada plugin de metadata — mesmo contrato que `Pipeline.run` (Fase 2) já
+    honra.
     """
     if profile.orientation is None:
         raise ValueError(
@@ -145,19 +154,38 @@ def run_cpu_analysis(
     )
 
     if run_metadata:
-        _run_metadata_plugins(result, plugins_dir or _DEFAULT_PLUGINS_DIR)
+        _run_metadata_plugins(
+            result, plugins_dir or _DEFAULT_PLUGINS_DIR, overrides=overrides, workspace=workspace
+        )
 
     return result
 
 
-def _run_metadata_plugins(result: AnalysisResult, plugins_dir: Path) -> None:
+def _run_metadata_plugins(
+    result: AnalysisResult,
+    plugins_dir: Path,
+    *,
+    overrides: dict[str, Any] | None = None,
+    workspace: Workspace | None = None,
+) -> None:
     registry = PluginRegistry()
     registry.discover([plugins_dir])
     ctx = AnalysisContext(result=result)
+
+    effective_workspace = workspace if workspace is not None else Workspace(root=Path("."))
+    request = RunRequest(
+        profile=result.profile, workspace=str(effective_workspace.root), overrides=overrides or {}
+    )
+    pctx = PipelineContext(request=request, registry=registry, workspace=effective_workspace)
+
     for plugin in registry.for_kind(PluginKind.METADATA):
         assert isinstance(plugin, MetadataPlugin)
         # border exige border_region; pula em silêncio quando ausente (perfil sem
         # pontos de borda) em vez de deixar o plugin levantar.
         if plugin.manifest.name == "border" and result.border_region is None:
             continue
-        plugin.run(ctx)
+        plugin.setup(pctx)
+        try:
+            plugin.run(ctx)
+        finally:
+            plugin.teardown()

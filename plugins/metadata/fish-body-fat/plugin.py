@@ -33,9 +33,11 @@ tipo de mudança que a Fase 5 evitou (ver "débito de manifest" no PROGRESS.md).
 
 Em vez disso o plugin usa o mecanismo que JÁ existe no contrato:
 `Plugin.setup(PipelineContext)` dá acesso a `request.overrides`, um `dict[str, Any]`
-livre carregado pelo `RunRequest`. Fallback para a variável de ambiente
-`ANIMALTRACK_FISH_LENGTH_CM` cobre o caminho `run_cpu_analysis` (orquestração da
-Fase 3), que roda plugins de metadata sem chamar `setup()`.
+livre carregado pelo `RunRequest`. `run_cpu_analysis` (orquestração da Fase 3)
+também chama `setup()` corretamente, então `overrides` chega até aqui sempre que
+um caller o passar — mas nem a CLI nem a GUI expõem isso hoje. Fallback para a
+variável de ambiente `ANIMALTRACK_FISH_LENGTH_CM` continua valendo como caminho
+secundário para esses callers.
 
 Formalizar `[config]` no manifest continua sendo a opção recomendada a prazo —
 decisão pendente do dono do contrato de plugin, registrada no handoff.

@@ -80,13 +80,15 @@ class CpuPerspectiveRectifier(Plugin):
         return self._height, self._width
 
     def rectify(self, frame: np.ndarray, frame_index: int) -> RectifiedFrame:
-        # pula warpPerspective quando a matriz é identidade (sem pontos reais de perspectiva)
-        warped = (
-            frame
+        # converte para grayscale primeiro: warpPerspective em 1 canal é mais barato
+        # que em 3 (BGR) — pula o warp quando a matriz é identidade (sem pontos reais
+        # de perspectiva), igual antes.
+        gray_full = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = (
+            gray_full
             if self._is_identity
-            else cv2.warpPerspective(frame, self._matrix, (self._width, self._height))
+            else cv2.warpPerspective(gray_full, self._matrix, (self._width, self._height))
         )
-        gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
         return RectifiedFrame(
             image=gray,
             role=self._role,

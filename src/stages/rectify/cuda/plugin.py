@@ -87,14 +87,16 @@ class CudaPerspectiveRectifier(Plugin):
         return self._backend
 
     def rectify(self, frame: np.ndarray, frame_index: int) -> RectifiedFrame:
+        # grayscale ANTES do warp (mesma ordem do CpuPerspectiveRectifier, O9): warpar
+        # 1 canal em vez de 3 é mais barato e mantém paridade numérica entre os dois.
         backend = self._ensure_backend()
         handle = backend.upload(frame)
-        warped = backend.warp_perspective(handle, self._matrix, (self._width, self._height))
-        gray = backend.cvt_color_gray(warped)
-        image = backend.download(gray)
+        gray_full = backend.cvt_color_gray(handle)
+        warped = backend.warp_perspective(gray_full, self._matrix, (self._width, self._height))
+        image = backend.download(warped)
         backend.release(handle)
+        backend.release(gray_full)
         backend.release(warped)
-        backend.release(gray)
         return RectifiedFrame(
             image=image,
             role=self._role,

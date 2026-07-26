@@ -63,9 +63,11 @@ def test_metadata_pipeline_e2e(
     ):
         assert key in metrics, f"métrica ausente: {key}"
 
-    # ordem topológica: border declara after=[speed]
+    # ordem topológica: border declara after=[speed]. Não exige lista exata —
+    # outros plugins metadata (ex. kinematics) podem estar descobertos em
+    # `plugins_dir` sem invalidar esta checagem de ordem relativa.
     ordered = [p.manifest.name for p in registry.for_kind(PluginKind.METADATA)]
-    assert ordered == ["speed", "border"]
+    assert ordered.index("speed") < ordered.index("border")
 
     # métricas persistidas em disco
     reloaded = ResultStore(ws).load("e2e")
