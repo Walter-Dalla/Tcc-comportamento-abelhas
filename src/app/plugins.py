@@ -43,3 +43,19 @@ def default_search_paths(workspace: Workspace | None = None) -> list[Path]:
     if workspace is not None:
         paths.append(workspace.plugins)
     return paths
+
+
+def metadata_search_paths(workspace: Workspace | None = None) -> list[Path]:
+    """Subconjunto usado por "Executar módulos de metadados" (`Pipeline.run`).
+
+    Deliberadamente MAIS estreito que `default_search_paths`: só os plugins de
+    metadata built-in (`plugins/`) + os instalados pelo usuário no workspace. Os
+    plugins de metadata de *exemplo* (`plugins/metadata/`, ex. `fish-body-fat`)
+    ficam de fora para que a re-execução de metadata da GUI produza exatamente o
+    mesmo conjunto de métricas que `run_cpu_analysis` (que só varre `plugins/`) —
+    caso contrário reprocessar metadata mudaria o resultado de um run completo.
+    """
+    paths = [METADATA_PLUGINS_DIR]
+    if workspace is not None:
+        paths.append(workspace.plugins)
+    return paths

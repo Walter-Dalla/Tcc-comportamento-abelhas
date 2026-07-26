@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from collections.abc import Callable
-from tkinter import ttk
+from tkinter import messagebox, ttk
 
 import cv2
 import numpy as np
@@ -46,6 +46,7 @@ class PerspectiveScreen(ScreenBase):
         self.frame: tk.Frame
         self._video: cv2.VideoCapture | None = None
         self._first_frame: np.ndarray | None = None
+        self._video_path: str = ""
         self.finished = False
 
     @property
@@ -80,6 +81,7 @@ class PerspectiveScreen(ScreenBase):
     # --- ciclo de vida ---------------------------------------------------------
     def on_show(self, **kwargs: object) -> None:
         video_path = str(kwargs.get("video_path", ""))
+        self._video_path = video_path
         if not video_path:
             return
         self.finished = False
@@ -128,8 +130,6 @@ class PerspectiveScreen(ScreenBase):
         self._show_finish_buttons()
 
     def _show_error(self, exc: Exception) -> None:
-        from tkinter import messagebox
-
         messagebox.showerror("Erro!", str(exc))
 
     # --- render (main thread) --------------------------------------------------
@@ -201,6 +201,18 @@ class PerspectiveScreen(ScreenBase):
 
     # --- ações -----------------------------------------------------------------
     def _finish(self) -> None:
+        """Auto-avanço OPCIONAL para a orientação da mesma câmera (UX seção 1.2).
+
+        A tela oferece o próximo passo lógico enquanto o usuário ainda tem os 4
+        pontos frescos na cabeça ("Configurar agora" = Sim / "Depois" = Não, que só
+        volta ao hub como antes). Nada é forçado: a sequência continua revisitável
+        pelos botões do hub.
+        """
+        if messagebox.askyesno(
+            "Perspectiva salva", "Perspectiva salva. Configurar orientação desta câmera agora?"
+        ):
+            self.show("orientation", role=self.role, video_path=self._video_path)
+            return
         self.show("hub")
 
     def _finish_without_config(self) -> None:

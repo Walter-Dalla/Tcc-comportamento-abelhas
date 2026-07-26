@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from src.app.runner import execute_analysis, run_exporter
+from src.core.pipeline import Pipeline, RunRequest, RunResult
 from src.core.plugin import PluginKind, PluginManifest
 from src.core.plugin_registry import PluginRegistry
 from src.core.schema.geometry import Point2D, Point3D
@@ -179,6 +180,22 @@ class AppService:
         if on_progress is not None:
             on_progress(ProgressEvent(stage="done", fraction=1.0, message="Concluído"))
         return result
+
+    def run_metadata(self, profile: str) -> RunResult:
+        """Reexecuta SÓ os plugins de metadata sobre o `AnalysisResult` já persistido.
+
+        É o botão "Executar módulos de metadados" do hub (o mesmo papel do antigo
+        `execute_metadata_module_calls`): permite testar um módulo de metadata novo
+        sem refazer Capture→Fuse, no mesmo espírito do fluxo "reprocessar sem refazer
+        etapas anteriores" (ux-design-detalhado.md seção 5). Delega ao
+        `Pipeline.run`, que é exatamente o estágio de metadata isolado (Fase 2).
+        """
+        from src.app.plugins import metadata_search_paths
+
+        registry = PluginRegistry()
+        registry.discover(metadata_search_paths(self._workspace))
+        request = RunRequest(profile=profile, workspace=str(self._workspace.root))
+        return Pipeline(registry).run(request)
 
     # --- plugins (delega ao PluginRegistry) ---
     def list_plugins(self, kind: PluginKind | None = None) -> list[PluginManifest]:

@@ -9,6 +9,8 @@ Diferenças-chave vs. legado:
   `run_cpu_analysis`), marshalled para fora do main thread via `run_async`. Nenhuma
   chamada direta a estágios/plugins a partir da tela.
 - Botões "Configurar orientação (topo)/(lado)" novos, com guarda de pré-condição.
+- "Processar vídeo" tem as guardas do legado (`is_video_valid`) MAIS a guarda de
+  orientação das duas câmeras (ux-design-detalhado.md seção 1.2).
 """
 
 from __future__ import annotations
@@ -18,6 +20,7 @@ from collections.abc import Callable
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
 from src.app.gui.screen import ScreenBase
+from src.app.orientation_util import validate_orientation
 from src.app.service import AppService, ProgressEvent
 
 
@@ -86,6 +89,9 @@ class ConfigHubScreen(ScreenBase):
         tk.Button(frame, text="Processar video (Módulos Basicos)", command=self._on_process_video).pack(
             pady=5, anchor="center"
         )
+        tk.Button(
+            frame, text="Executar módulos de metadados", command=self._on_process_metadata
+        ).pack(pady=5, anchor="center")
         tk.Button(frame, text="Exibir grafico de rota", command=self._on_show_route_graph).pack(
             pady=5, anchor="center"
         )
@@ -190,12 +196,38 @@ class ConfigHubScreen(ScreenBase):
         self.selected_profile.set(name)
         messagebox.showinfo("Configurações salvas", f"Configuração '{name}' salva com sucesso.")
 
+    # --- guardas de pré-condição -----------------------------------------------
+    def _processing_error(self) -> str | None:
+        """Pré-condições de "Processar vídeo", na ordem em que o legado as checava.
+
+        Espelha `MainConfigurationInterface.is_video_valid()` (vídeo + 4 pontos de
+        perspectiva por câmera, mensagens telegráficas preservadas verbatim — o
+        texto "Bordas não configuradas." para pontos de perspectiva é do legado e a
+        seção 5 do UX manda não retrabalhar copy existente) e ACRESCENTA a guarda
+        de orientação exigida pela seção 1.2: processar exige orientação válida das
+        duas câmeras. A validação de orientação vem de `orientation_util`, a mesma
+        fonte usada pela `OrientationScreen` e pelo `animaltrack validate-config`.
+        """
+        session = self.service.session
+        if not session.top_video_path or not session.side_video_path:
+            return "Video não configurado."
+        if len(session.perspective_points_top) != 4 or len(session.perspective_points_side) != 4:
+            return "Bordas não configuradas."
+        errors = validate_orientation(session.build_orientation())
+        if errors:
+            return errors[0]
+        return None
+
     # --- execução (mesmo caminho da CLI) ---------------------------------------
     def _on_process_video(self) -> object:
         self._sync_session_from_ui()
         profile = self.service.session.profile_name or self.selected_profile.get()
         if not profile or profile == self.service.new_profile_placeholder_name():
             messagebox.showerror("Erro!", "Salve o perfil antes de processar.")
+            return None
+        error = self._processing_error()
+        if error is not None:
+            messagebox.showerror("Erro!", error)
             return None
         return self.run_async(
             work=lambda: self.service.run_pipeline(profile, on_progress=self._log_progress),
@@ -210,6 +242,20 @@ class ConfigHubScreen(ScreenBase):
         import logging
 
         logging.getLogger("animaltrack.gui").info("progresso: %s %s", event.stage, event.message)
+
+    def _on_process_metadata(self) -> object:
+        """Reexecuta só os módulos de metadata sobre o resultado já persistido."""
+        profile = self.service.session.profile_name or self.selected_profile.get()
+        if not profile or profile == self.service.new_profile_placeholder_name():
+            messagebox.showerror("Erro!", "Salve e processe o perfil antes de executar metadata.")
+            return None
+        return self.run_async(
+            work=lambda: self.service.run_metadata(profile),
+            on_done=lambda _result: messagebox.showinfo(
+                "Sucesso!", "Modulos de metadata executados!"
+            ),
+            on_error=lambda exc: messagebox.showerror("Erro!", f"Falha na metadata: {exc}"),
+        )
 
     def _on_show_route_graph(self) -> object:
         return self._export_async("route-plot", "Gráfico de rota gerado")

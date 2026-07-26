@@ -9,6 +9,7 @@ import pytest
 
 from src.app.service import AppService
 from src.core.workspace import Workspace
+from tests.fixtures.golden_config import golden_orientation
 from tests.gui_helpers import has_display
 
 pytestmark = pytest.mark.skipif(not has_display(), reason="precisa de display Tk")
@@ -62,7 +63,17 @@ def test_hub_process_video_calls_same_pipeline_as_cli(
 
         hub = config_hub.ConfigHubScreen(service, show=lambda *a, **k: None)
         hub.frame = hub.build(container)
-        service.session.profile_name = "fixture01"
+        # sessão completa: "Processar vídeo" só chama a pipeline com vídeo + 4 pontos
+        # de perspectiva por câmera + orientação das duas (guardas da UX seção 1.2).
+        session = service.session
+        session.profile_name = "fixture01"
+        session.top_video_path = "top.avi"
+        session.side_video_path = "side.avi"
+        session.perspective_points_top = [[0, 0], [10, 0], [0, 10], [10, 10]]
+        session.perspective_points_side = [[0, 0], [10, 0], [0, 10], [10, 10]]
+        orientation = golden_orientation()
+        session.orientation_top = orientation.top_camera
+        session.orientation_side = orientation.side_camera
 
         thread = hub._on_process_video()
         assert thread is not None
