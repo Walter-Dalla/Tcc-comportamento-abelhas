@@ -41,6 +41,21 @@ def test_run_generates_json_and_pdf_headless(tmp_path: Path) -> None:
     assert (tmp_path / "outputs" / "fixture01" / "route.png").exists()
 
 
+@requires_videos
+def test_run_with_debug_frames_writes_debug_folder(tmp_path: Path) -> None:
+    """Paridade CLI da Opção 2 da seção 6 do UX: mesma pasta que a GUI abre."""
+    ws = _seed_workspace(tmp_path)
+    result = runner.invoke(
+        app,
+        ["run", "--workspace", str(tmp_path), "--profile", "fixture01", "--debug-frames"],
+    )
+    assert result.exit_code == 0, result.output
+    debug_dir = ws.debug_dir("fixture01")
+    assert debug_dir.is_dir()
+    assert list(debug_dir.rglob("*.png")), "nenhum frame de debug gravado"
+    assert str(debug_dir) in result.output
+
+
 def test_run_missing_profile_exits_nonzero(tmp_path: Path) -> None:
     ws = Workspace(root=tmp_path)
     ws.ensure_dirs()

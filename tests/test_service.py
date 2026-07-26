@@ -42,18 +42,20 @@ def test_save_profile_forces_name_consistency(tmp_path: Path) -> None:
 
 def test_run_pipeline_delegates_to_runner(tmp_path: Path, monkeypatch) -> None:
     svc = AppService(_workspace(tmp_path))
-    calls: list[tuple[str, bool]] = []
+    calls: list[tuple[str, bool, bool]] = []
     sentinel = object()
 
-    def fake_execute(workspace, profile_name, *, require_gpu=False):
-        calls.append((profile_name, require_gpu))
+    def fake_execute(workspace, profile_name, *, require_gpu=False, debug_frames=False):
+        calls.append((profile_name, require_gpu, debug_frames))
         return sentinel
 
     monkeypatch.setattr(service_module, "execute_analysis", fake_execute)
 
     result = svc.run_pipeline("fixture01")
     assert result is sentinel
-    assert calls == [("fixture01", False)]
+    # o flag de frames de debug (UX seção 6) é repassado, default desligado
+    svc.run_pipeline("fixture01", debug_frames=True)
+    assert calls == [("fixture01", False, False), ("fixture01", False, True)]
 
 
 def test_list_plugins_returns_manifests(tmp_path: Path) -> None:

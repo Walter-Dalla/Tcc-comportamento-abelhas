@@ -29,6 +29,18 @@ class Workspace(BaseModel):
     def plugins(self) -> Path:
         return self.root / "plugins"
 
+    @property
+    def debug(self) -> Path:
+        """Raiz dos artefatos de inspeção pós-hoc (frames de debug do Detect).
+
+        Resolve a "pergunta em aberto" da seção 6 do `ux-design-detalhado.md` pela
+        Opção 2: nada de preview bloqueante (`cv2.imshow`/`waitKey`) — o Detect
+        grava frames em `<ws>/debug/<perfil>/` e a GUI só abre a pasta."""
+        return self.root / "debug"
+
+    def debug_dir(self, profile: str) -> Path:
+        return self.debug / profile
+
     def profiles_file(self) -> Path:
         return self.config_path / "profiles.json"
 

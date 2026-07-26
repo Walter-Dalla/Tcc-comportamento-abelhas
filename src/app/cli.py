@@ -53,11 +53,16 @@ def run(
     gpu: bool = typer.Option(
         False, "--gpu", help="Força backend GPU; falha alto se indisponível (GPU é requisito, não fallback)"
     ),
+    debug_frames: bool = typer.Option(
+        False,
+        "--debug-frames",
+        help="Grava frames de debug do Detect em <workspace>/debug/<perfil>/ (inspeção pós-hoc)",
+    ),
 ) -> None:
     """Roda a pipeline CPU completa sobre um perfil e exporta JSON + gráfico + PDF."""
     ws = Workspace.resolve(workspace)
     try:
-        result = execute_analysis(ws, profile, require_gpu=gpu)
+        result = execute_analysis(ws, profile, require_gpu=gpu, debug_frames=debug_frames)
     except GpuRequiredError as exc:
         typer.echo(f"erro: {exc}", err=True)
         logger.error("GPU exigida e ausente", exc_info=True)
@@ -75,6 +80,8 @@ def run(
             typer.echo(f"aviso: exporter '{exporter_name}' falhou: {exc}", err=True)
             logger.warning("exporter %s falhou", exporter_name, exc_info=True)
 
+    if debug_frames:
+        typer.echo(f"frames de debug em: {ws.debug_dir(profile)}")
     typer.echo(f"OK: resultado salvo em {ws.result_file(profile)}")
 
 
