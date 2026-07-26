@@ -15,11 +15,13 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 | 4 | Interface dupla: CLI + GUI na mesma orquestração | ✅ done | [fase4-integracao-handoff.md](fase4-integracao-handoff.md) |
 | 5 | Backends GPU (plugins puros) | 🟨 código feito, packaging CUDA pendente | [fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md) |
 | 6 | Pesquisa e prontidão de marketplace | ✅ done | [A](fase6-tracker-spike-handoff.md) · [B](fase6-plugin-exemplo-handoff.md) · [C](fase6-marketplace-handoff.md) |
+| — | UX audit (GUI real × `ux-design-detalhado.md`) | ✅ done | [ux-audit-gui-handoff.md](ux-audit-gui-handoff.md) |
 
 ## Próxima ação
 
-**A rearquitetura 0→6 está COMPLETA em código.** Todas as sete fases foram
-entregues e verificadas (`pytest -m "not gpu"`: 279 passed; `ruff`/`mypy` limpos).
+**A rearquitetura 0→6 está COMPLETA em código** (mais a auditoria de UX pós-Fase 4,
+seção abaixo). Todas as sete fases foram entregues e verificadas
+(`pytest -m "not gpu"`: 311 passed após a auditoria; `ruff`/`mypy` limpos).
 Não há próxima fase — o que resta são follow-ups pontuais, listados abaixo em ordem
 de importância. Nenhum deles bloqueia o uso do sistema.
 
@@ -54,6 +56,30 @@ bug de thread-safety corrigido), nova `OrientationUi`, plugins exporter
 (`route-plot`/`pdf-report`) com acesso defensivo, bugs #4/#5 corrigidos, launcher
 fino. Botão "Processar vídeo" religado a `run_cpu_analysis` (mesmo caminho da CLI).
 `pytest` 204 passed, `ruff`/`mypy` limpos, GUI abre sem erro de import.
+
+## UX audit (pós-Fase 4)
+
+Auditoria da GUI implementada contra `docs/plans/ux-design-detalhado.md` (escrito
+ANTES da implementação da Fase 4), com correção das lacunas reais e **resolução da
+pergunta em aberto da seção 6**. Detalhe em
+[ux-audit-gui-handoff.md](ux-audit-gui-handoff.md). Resumo:
+
+- Fluxo (seção 1.2): "Processar vídeo" ganhou as guardas do legado + a guarda de
+  orientação das duas câmeras; "Finalizar perspectiva" passou a oferecer o
+  auto-avanço opcional para a orientação daquela câmera; botão "Executar módulos de
+  metadados" restaurado no hub (ligado a `Pipeline.run`).
+- `OrientationScreen` (seção 2): as 6 faces do wireframe viraram **polígonos
+  clicáveis** com nome PT (antes só havia combobox de face), a miniatura do 1º frame
+  com os 4 pontos numerados foi implementada (era o incremento pendente da Fase 4),
+  mais placeholder dos comboboxes, aviso de troca de face corrigido e o bug de
+  layout (rótulo e combobox na mesma célula do grid).
+- Seção 6 resolvida pela **Opção 2**: `DebugFrameWriter` grava frames amostrados do
+  Detect em `<workspace>/debug/<perfil>/` a partir de uma thread própria com fila
+  limitada (descarta em vez de bloquear), exposto por `animaltrack run
+  --debug-frames` e pelos controles "Exportar frames de debug" / "Abrir pasta de
+  debug" no hub. Nenhum `cv2.imshow`/`waitKey` reintroduzido.
+- Verificação: `pytest` **311 passed, 3 skipped** (+32 testes), `ruff`/`mypy` limpos,
+  smoke manual da GUI real feito (janela abre, `OrientationUi` navega e não quebra).
 
 ## Notas de acompanhamento abertas
 
