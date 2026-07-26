@@ -20,6 +20,7 @@ from collections.abc import Callable
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
 from src.app.gui.screen import ScreenBase
+from src.app.open_folder import OpenFolderError, open_folder
 from src.app.orientation_util import validate_orientation
 from src.app.service import AppService, ProgressEvent
 
@@ -86,7 +87,16 @@ class ConfigHubScreen(ScreenBase):
         self.depth_entry.pack(pady=5, anchor="center")
 
         tk.Button(frame, text="Salvar configurações", command=self._save_config).pack(pady=20)
+        # UX seção 6, Opção 2: sem preview ao vivo bloqueante; o Detect grava frames
+        # amostrados em <workspace>/debug/<perfil>/ e o usuário inspeciona depois.
+        self.debug_frames = tk.BooleanVar(value=False)
+        tk.Checkbutton(
+            frame, text="Exportar frames de debug", variable=self.debug_frames
+        ).pack(pady=5, anchor="center")
         tk.Button(frame, text="Processar video (Módulos Basicos)", command=self._on_process_video).pack(
+            pady=5, anchor="center"
+        )
+        tk.Button(frame, text="Abrir pasta de debug", command=self._on_open_debug_folder).pack(
             pady=5, anchor="center"
         )
         tk.Button(
@@ -229,8 +239,11 @@ class ConfigHubScreen(ScreenBase):
         if error is not None:
             messagebox.showerror("Erro!", error)
             return None
+        debug_frames = bool(self.debug_frames.get())
         return self.run_async(
-            work=lambda: self.service.run_pipeline(profile, on_progress=self._log_progress),
+            work=lambda: self.service.run_pipeline(
+                profile, on_progress=self._log_progress, debug_frames=debug_frames
+            ),
             on_done=lambda _result: messagebox.showinfo(
                 "Sucesso!", "Processamento concluído!"
             ),
@@ -256,6 +269,21 @@ class ConfigHubScreen(ScreenBase):
             ),
             on_error=lambda exc: messagebox.showerror("Erro!", f"Falha na metadata: {exc}"),
         )
+
+    def _on_open_debug_folder(self) -> None:
+        """Abre `<workspace>/debug/<perfil>/` no explorador do SO (UX seção 6).
+
+        `open_folder` só dispara o processo do SO (`startfile`/`Popen`) e volta na
+        hora — a main thread do Tk não fica esperando o explorador.
+        """
+        profile = self.service.session.profile_name or self.selected_profile.get()
+        if not profile or profile == self.service.new_profile_placeholder_name():
+            messagebox.showerror("Erro!", "Selecione um perfil para abrir a pasta de debug.")
+            return
+        try:
+            open_folder(self.service.debug_dir(profile))
+        except (OpenFolderError, OSError) as exc:
+            messagebox.showerror("Erro!", f"Não foi possível abrir a pasta de debug: {exc}")
 
     def _on_show_route_graph(self) -> object:
         return self._export_async("route-plot", "Gráfico de rota gerado")

@@ -52,7 +52,7 @@ def test_hub_process_video_calls_same_pipeline_as_cli(
         service = _service(tmp_path)
         calls: list[str] = []
 
-        def fake_run_pipeline(profile, on_progress=None, *, require_gpu=False):
+        def fake_run_pipeline(profile, on_progress=None, *, require_gpu=False, debug_frames=False):
             calls.append(profile)
             return object()
 

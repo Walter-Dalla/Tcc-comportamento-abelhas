@@ -52,12 +52,18 @@ def execute_analysis(
     profile_name: str,
     *,
     require_gpu: bool = False,
+    debug_frames: bool = False,
 ) -> AnalysisResult:
     """Roda a pipeline CPU completa para um perfil e persiste o resultado.
 
     Levanta `GpuRequiredError` se `require_gpu` e não houver device CUDA;
     `ProfileNotFoundError` se o perfil não existir; `ValueError` se o perfil não
-    tiver `orientation` (pré-requisito de dado da Fase 3)."""
+    tiver `orientation` (pré-requisito de dado da Fase 3).
+
+    `debug_frames=True` liga o export de frames de debug do Detect em
+    `<workspace>/debug/<perfil>/` (UX seção 6, Opção 2) — inspeção pós-hoc, sem
+    preview bloqueante. Mesma opção nos dois pontos de entrada: `--debug-frames`
+    na CLI, caixa "Exportar frames de debug" na GUI."""
     if require_gpu:
         # Delega ao gate central (`require_cuda`); re-embrulha na fachada de app
         # `GpuRequiredError` (que a CLI já captura) preservando a mensagem clara.
@@ -66,7 +72,8 @@ def execute_analysis(
         except GpuNotAvailableError as exc:
             raise GpuRequiredError(str(exc)) from exc
     profile = ProfileStore(workspace).get(profile_name)
-    result = run_cpu_analysis(profile)
+    debug_dir = workspace.debug_dir(profile_name) if debug_frames else None
+    result = run_cpu_analysis(profile, debug_dir=debug_dir)
     ResultStore(workspace).save(result)
     return result
 

@@ -157,6 +157,10 @@ class AppService:
     def new_profile_placeholder_name(self) -> str:
         return NEW_PROFILE_PLACEHOLDER
 
+    def debug_dir(self, profile: str) -> Path:
+        """Pasta de frames de debug daquele perfil (botão "Abrir pasta de debug")."""
+        return self._workspace.debug_dir(profile)
+
     def save_orientation(self, name: str, orientation: BoxOrientationConfig) -> None:
         """Persiste a orientação dentro do perfil nomeado, preservando o resto."""
         try:
@@ -173,10 +177,13 @@ class AppService:
         on_progress: Callable[[ProgressEvent], None] | None = None,
         *,
         require_gpu: bool = False,
+        debug_frames: bool = False,
     ) -> AnalysisResult:
         if on_progress is not None:
             on_progress(ProgressEvent(stage="start", message=f"Processando '{profile}'..."))
-        result = execute_analysis(self._workspace, profile, require_gpu=require_gpu)
+        result = execute_analysis(
+            self._workspace, profile, require_gpu=require_gpu, debug_frames=debug_frames
+        )
         if on_progress is not None:
             on_progress(ProgressEvent(stage="done", fraction=1.0, message="Concluído"))
         return result

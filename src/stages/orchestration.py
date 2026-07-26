@@ -29,6 +29,7 @@ from src.core.schema.profile import Profile
 from src.core.schema.result import AnalysisContext, AnalysisResult
 from src.core.stages import MetadataPlugin
 from src.stages.capture.plugin import DualVideoFileCapture
+from src.stages.detect.debug import DebugFrameWriter
 from src.stages.detect.plugin import BackgroundSubtractionDetector
 from src.stages.fuse.plugin import Fusion, build_border_region
 from src.stages.rectify.plugin import CpuPerspectiveRectifier
@@ -48,11 +49,17 @@ def run_cpu_analysis(
     run_metadata: bool = True,
     plugins_dir: Path | None = None,
     frame_block: int = 500,
+    debug_dir: Path | None = None,
 ) -> AnalysisResult:
     """Roda a pipeline CPU completa sobre um perfil e devolve o `AnalysisResult`.
 
     Requer `profile.orientation` (a feature de Orientação é pré-requisito de dado
     desta fase; a UI que a popula é Fase 4).
+
+    `debug_dir` liga o export de frames de debug do Detect (UX seção 6, Opção 2):
+    máscaras de diferença amostradas + toda falha de detecção vão para
+    `<debug_dir>/<view>/`, gravadas por uma thread própria que nunca segura o
+    pipeline. `None` (padrão) = custo zero.
     """
     if profile.orientation is None:
         raise ValueError(
@@ -80,22 +87,31 @@ def run_cpu_analysis(
         side_h,
     )
 
-    det_top = BackgroundSubtractionDetector(capture, rect_top, CameraRole.TOP, frame_block)
-    det_side = BackgroundSubtractionDetector(capture, rect_side, CameraRole.SIDE, frame_block)
-    # passe 1 (modelo de fundo), por câmera, cada um lendo o vídeo inteiro da SUA view
-    det_top.setup()
-    det_side.setup()
+    debug_writer = DebugFrameWriter(debug_dir) if debug_dir is not None else None
+    det_top = BackgroundSubtractionDetector(
+        capture, rect_top, CameraRole.TOP, frame_block, debug_writer
+    )
+    det_side = BackgroundSubtractionDetector(
+        capture, rect_side, CameraRole.SIDE, frame_block, debug_writer
+    )
+    try:
+        # passe 1 (modelo de fundo), por câmera, cada um lendo o vídeo inteiro da SUA view
+        det_top.setup()
+        det_side.setup()
 
-    trk_top = SingleEntityTracker("top")
-    trk_side = SingleEntityTracker("side")
+        trk_top = SingleEntityTracker("top")
+        trk_side = SingleEntityTracker("side")
 
-    # passe 2 (pareado): streaming, O(1) frame por vez
-    fps, frames = capture.open()
-    for pair in frames:
-        rt = rect_top.rectify(pair.top, pair.frame_index)
-        rs = rect_side.rectify(pair.side, pair.frame_index)
-        trk_top.update(det_top.detect(rt))
-        trk_side.update(det_side.detect(rs))
+        # passe 2 (pareado): streaming, O(1) frame por vez
+        fps, frames = capture.open()
+        for pair in frames:
+            rt = rect_top.rectify(pair.top, pair.frame_index)
+            rs = rect_side.rectify(pair.side, pair.frame_index)
+            trk_top.update(det_top.detect(rt))
+            trk_side.update(det_side.detect(rs))
+    finally:
+        if debug_writer is not None:
+            debug_writer.close()
 
     top_track = trk_top.tracks()[0]
     side_track = trk_side.tracks()[0]

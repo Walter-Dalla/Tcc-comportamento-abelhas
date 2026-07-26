@@ -19,7 +19,11 @@ Duas mudanças estruturais (ver `docs/plans/fase3-detalhado.md` seção 3):
 2. **Sem sentinela `(-1, -1)`**: nenhuma detecção → `FrameDetections(..., detections=[])`.
 
 O modo debug (`cv2.imshow`/`waitKey(0)`) do legado NÃO é portado — um generator
-streaming não pode bloquear em `waitKey(0)`.
+streaming não pode bloquear em `waitKey(0)`. Em seu lugar, o `DebugFrameWriter`
+opcional (`debug=`, ver `src/stages/detect/debug.py`) grava frames amostrados em
+disco a partir de uma thread própria: é a Opção 2 da seção 6 do
+`docs/plans/ux-design-detalhado.md`, que substitui o preview bloqueante por
+inspeção pós-hoc sem travar nem o pipeline nem a UI.
 
 Ponto de acoplamento (seção 3.4): o passe 1 precisa instanciar Capture+Rectify.
 Em vez do `ctx.capture_factory`/`ctx.rectifier_factory` do rascunho do plano (que
@@ -41,6 +45,7 @@ from src.core.schema.detection import Detection, FrameDetections
 from src.core.schema.geometry import Point2D
 from src.core.schema.orientation import CameraRole
 from src.core.stages import Detector
+from src.stages.detect.debug import DebugFrameWriter
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -71,11 +76,13 @@ class BackgroundSubtractionDetector(Detector):
         rectifier: _RectifierLike,
         role: CameraRole,
         frame_block: int = FRAME_BLOCK,
+        debug: DebugFrameWriter | None = None,
     ) -> None:
         self._capture = capture
         self._rectifier = rectifier
         self._role = role
         self._frame_block = frame_block
+        self._debug = debug
         self._max_frame: np.ndarray | None = None
 
     @property
@@ -108,24 +115,35 @@ class BackgroundSubtractionDetector(Detector):
         _, diff = cv2.threshold(dif_frame, _MIN_THRESHOLD, 255, cv2.THRESH_BINARY)
         _, binarizada = cv2.threshold(diff, _BINARY_THRESHOLD, 255, cv2.THRESH_BINARY)
 
-        contours, _ = cv2.findContours(
-            binarizada, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        detections = self._detections_from_mask(binarizada, frame.image.shape[0])
+        self._emit_debug(view, frame.frame_index, binarizada, detected=bool(detections))
+        return FrameDetections(
+            frame_index=frame.frame_index, view=view, detections=detections
         )
-        if not contours:
-            return FrameDetections(frame_index=frame.frame_index, view=view, detections=[])
 
+    @staticmethod
+    def _detections_from_mask(mask: np.ndarray, frame_height: int) -> list[Detection]:
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not contours:
+            return []
         max_contour = max(contours, key=cv2.contourArea)
         moments = cv2.moments(max_contour)
         if moments["m00"] == 0:
-            return FrameDetections(frame_index=frame.frame_index, view=view, detections=[])
-
+            return []
         cx = int(moments["m10"] / moments["m00"])
         cy_from_top = int(moments["m01"] / moments["m00"])
-        frame_height = frame.image.shape[0]
         cy_from_bottom = frame_height - cy_from_top
         area = float(cv2.contourArea(max_contour))
+        return [Detection(centroid=Point2D(x=float(cx), y=float(cy_from_bottom)), area=area)]
 
-        detection = Detection(centroid=Point2D(x=float(cx), y=float(cy_from_bottom)), area=area)
-        return FrameDetections(
-            frame_index=frame.frame_index, view=view, detections=[detection]
-        )
+    def _emit_debug(
+        self, view: str, frame_index: int, mask: np.ndarray, *, detected: bool
+    ) -> None:
+        """Amostra frames para inspeção pós-hoc (UX seção 6, Opção 2).
+
+        Nunca bloqueia: o writer enfileira e descarta se não acompanhar. Sem
+        writer configurado (caso padrão) o custo é um `if`."""
+        debug = self._debug
+        if debug is None or not debug.should_capture(frame_index, detected=detected):
+            return
+        debug.submit(view, frame_index, mask, detected=detected)
