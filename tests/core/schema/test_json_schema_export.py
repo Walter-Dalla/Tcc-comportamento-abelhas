@@ -12,7 +12,6 @@ from pydantic import BaseModel, TypeAdapter
 from src.core.schema.detection import Detection, FrameDetections
 from src.core.schema.geometry import BBox, Point2D, Point3D
 from src.core.schema.orientation import (
-    AxisMapping,
     AxisSource,
     BoxAxis,
     BoxFace,
@@ -42,7 +41,6 @@ MODELS = [
     Track,
     Route3D,
     AxisSource,
-    AxisMapping,
     CameraOrientation,
     BoxOrientationConfig,
     Calibration,

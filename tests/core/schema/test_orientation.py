@@ -1,11 +1,11 @@
-"""Testes de orientation.py (Fase 1), incluindo o algoritmo axis_mapping()."""
+"""Testes de orientation.py (Fase 1), incluindo o algoritmo axis_sources()."""
 
 import pytest
 
-from src.core.schema.geometry import Point2D, Point3D
+from src.core.schema.geometry import Point3D
 from src.core.schema.orientation import (
-    AxisMapping,
     AxisSource,
+    BoxAxis,
     BoxFace,
     BoxOrientationConfig,
     BoxVertex,
@@ -116,13 +116,24 @@ def test_swapped_roles_rejected():
         BoxOrientationConfig(top_camera=good_top, side_camera=side_as_top)
 
 
-# ---- axis_mapping() ----------------------------------------------------------
+# ---- axis_sources() -----------------------------------------------------------
 
 def test_axis_mapping_canonical():
-    mapping = _canonical_config().axis_mapping()
-    assert mapping.x == AxisSource(camera=CameraRole.TOP, image_axis=ImageAxis.U, sign=1)
-    assert mapping.y == AxisSource(camera=CameraRole.SIDE, image_axis=ImageAxis.V, sign=1)
-    assert mapping.z == AxisSource(camera=CameraRole.TOP, image_axis=ImageAxis.V, sign=-1)
+    # X é um empate genuíno: TOP.u e SIDE.u observam ambos X (verificado empiricamente
+    # via _derive_candidate_axes em cima e embaixo). TOP vem primeiro na lista só por
+    # determinismo (ver docstring de axis_sources()) — não implica mais prioridade,
+    # `Fusion.fuse()` é quem faz a média das duas. Y e Z têm fonte única.
+    sources = _canonical_config().axis_sources()
+    assert sources[BoxAxis.X] == [
+        AxisSource(camera=CameraRole.TOP, image_axis=ImageAxis.U, sign=1),
+        AxisSource(camera=CameraRole.SIDE, image_axis=ImageAxis.U, sign=1),
+    ]
+    assert sources[BoxAxis.Y] == [
+        AxisSource(camera=CameraRole.SIDE, image_axis=ImageAxis.V, sign=1)
+    ]
+    assert sources[BoxAxis.Z] == [
+        AxisSource(camera=CameraRole.TOP, image_axis=ImageAxis.V, sign=-1)
+    ]
 
 
 def test_axis_mapping_adjacent_vertices_must_differ_in_one_component():
@@ -139,7 +150,7 @@ def test_axis_mapping_adjacent_vertices_must_differ_in_one_component():
     )
     cfg = BoxOrientationConfig(top_camera=bad_top, side_camera=_canonical_config().side_camera)
     with pytest.raises(ValueError):
-        cfg.axis_mapping()
+        cfg.axis_sources()
 
 
 def test_axis_mapping_unobservable_axis():
@@ -166,21 +177,7 @@ def test_axis_mapping_unobservable_axis():
     )
     cfg = BoxOrientationConfig(top_camera=top, side_camera=side)
     with pytest.raises(ValueError):
-        cfg.axis_mapping()
-
-
-def test_axis_mapping_resolve():
-    mapping = _canonical_config().axis_mapping()
-    # top_point=(u=10, v=20), side_point=(u=30, v=40)
-    # x = top.u * +1 = 10 ; y = side.v * +1 = 40 ; z = top.v * -1 = -20
-    result = mapping.resolve(Point2D(x=10.0, y=20.0), Point2D(x=30.0, y=40.0))
-    assert result == Point3D(x=10.0, y=40.0, z=-20.0)
-
-
-def test_axis_mapping_distinct_sources_validator():
-    src = AxisSource(camera=CameraRole.TOP, image_axis=ImageAxis.U, sign=1)
-    with pytest.raises(ValueError):
-        AxisMapping(x=src, y=src, z=src)
+        cfg.axis_sources()
 
 
 # ---- Calibration round-trip --------------------------------------------------

@@ -13,7 +13,7 @@ import tomllib
 from abc import ABC
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -50,6 +50,18 @@ class PluginOrdering(BaseModel):
     priority: int = 0
 
 
+class PluginConfigField(BaseModel):
+    """Declaração de UM campo de config esperado por um plugin, lida da seção
+    `[config]` de `plugin.toml`. Documentação + checagem de tipo OPCIONAL — não é
+    allowlist nem gate de execução (ver `PluginManifest.validate_overrides`)."""
+
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["str", "int", "float", "bool"]
+    required: bool = False
+    default: str | int | float | bool | None = None
+    description: str = ""
+
+
 class PluginManifest(BaseModel):
     """Espelho tipado de `plugin.toml`. `from_toml` é a ÚNICA forma suportada de
     instanciar um manifest a partir de disco — mantém o `plugin.toml` como fonte
@@ -68,6 +80,11 @@ class PluginManifest(BaseModel):
     schema: str = Field()  # type: ignore[assignment]  # shadow benigno de BaseModel.schema, ver comentário acima
     requires: PluginRequires = Field(default_factory=PluginRequires)
     ordering: PluginOrdering = Field(default_factory=PluginOrdering)
+    # Documentação + checagem de tipo OPCIONAL da config esperada em
+    # `ctx.request.overrides` (ver `PluginConfigField`). Nada em `Pipeline.run`/
+    # `run_cpu_analysis` lê ou aplica isto automaticamente — é o próprio plugin,
+    # via `setup()`, que pode chamar `validate_overrides()` se quiser.
+    config: dict[str, PluginConfigField] = Field(default_factory=dict)
 
     @classmethod
     def from_toml(cls, path: Path) -> PluginManifest:
@@ -78,8 +95,46 @@ class PluginManifest(BaseModel):
             **plugin_tbl,
             "requires": raw.get("requires", {}),
             "ordering": raw.get("ordering", {}),
+            "config": raw.get("config", {}),
         }
         return cls.model_validate(flattened)
+
+    def validate_overrides(self, overrides: dict[str, Any]) -> list[str]:
+        """Retorna lista de mensagens de erro (vazia = ok). NÃO levanta — quem chama
+        decide o que fazer com os erros (log, pular, falhar). Checa: campos
+        `required=True` ausentes de `overrides`; campos presentes com tipo
+        incompatível com o declarado. Não valida campos de `overrides` que não
+        estão declarados em `config` (overrides livres continuam permitidos,
+        `[config]` é documentação/checagem, não allowlist)."""
+        errors: list[str] = []
+        for key, field in self.config.items():
+            if key not in overrides:
+                if field.required:
+                    errors.append(f"campo obrigatório '{key}' ausente em overrides")
+                continue
+            value = overrides[key]
+            if not _matches_declared_type(value, field.type):
+                errors.append(
+                    f"campo '{key}' esperava tipo '{field.type}', recebeu "
+                    f"{type(value).__name__!r} ({value!r})"
+                )
+        return errors
+
+
+def _matches_declared_type(value: Any, declared: Literal["str", "int", "float", "bool"]) -> bool:
+    """Checagem de tipo deliberadamente leniente (ver `validate_overrides`):
+    `"float"` aceita `int` também, por coerção numérica comum em JSON/TOML — mas
+    `bool` NUNCA satisfaz `"int"`/`"float"`, apesar de `bool` ser subclasse de `int`
+    em Python, porque isso trocaria silenciosamente `True`/`False` por um número."""
+    if declared == "bool":
+        return isinstance(value, bool)
+    if declared == "int":
+        return isinstance(value, int) and not isinstance(value, bool)
+    if declared == "float":
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    if declared == "str":
+        return isinstance(value, str)
+    return False
 
 
 class PluginSpec(BaseModel):

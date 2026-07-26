@@ -18,6 +18,7 @@ contexto/token, antes de reabrir qualquer código. Referências: `ARCHITECTURE.m
 | — | UX audit (GUI real × `ux-design-detalhado.md`) | ✅ done | [ux-audit-gui-handoff.md](ux-audit-gui-handoff.md) |
 | — | Otimização O1+O4+O5+O10 + bugs fps/speed/PDF | ✅ done | [otimizacao-bugs-handoff.md](otimizacao-bugs-handoff.md) |
 | — | O9 + gap setup(pctx) + plugin kinematics | ✅ done | [o9-pctx-kinematics-handoff.md](o9-pctx-kinematics-handoff.md) |
+| — | Decisões do dono: axis avg + kalman-hungarian + [config] | ✅ done | [decisoes-dono-2026-07-26-handoff.md](decisoes-dono-2026-07-26-handoff.md) |
 
 ## Próxima ação
 
@@ -34,14 +35,35 @@ de importância. Nenhum deles bloqueia o uso do sistema.
    `pytest -m gpu` de verdade (hoje pulam limpo). Ver
    [fase5-backends-gpu-handoff.md](fase5-backends-gpu-handoff.md). **É por isso que
    a Fase 5 segue marcada 🟨 e não `done`.**
-2. **Decisões pendentes do dono, acumuladas** (nenhuma bloqueia código; todas já
-   implementadas conforme a recomendação, faltando só o "ok"): 3 da Fase 1, 3 da
-   Fase 4, o débito de manifest da Fase 5, e as 2 da Fase 6 (abaixo).
-3. **Escolha do algoritmo de tracking de produção** — o spike da Fase 6 provou que a
-   interface admite multi-entidade e comparou 2 candidatos, mas **não escolhe**
-   (decisão explicitamente do dono). Ver
-   [fase6-tracker-spike-handoff.md](fase6-tracker-spike-handoff.md).
-4. **Restante do doc de pesquisa de otimização/metadados** (ver
+2. **Decisões do dono, resolvidas em 2026-07-26** (ver
+   [handoff completo](decisoes-dono-2026-07-26-handoff.md)):
+   - Fase 1 (a) `profile.py` extra: **aprovado**, sem mudança de código.
+   - Fase 1 (b) política de eixo doblemente observado: **trocada** de
+     "TOP-camera-vence-empate" pra **média das duas câmeras** (em cm, após
+     conversão independente de unidade). `BoxOrientationConfig.axis_mapping()`
+     virou `axis_sources()` (retorna 1-2 fontes por eixo em vez de escolher uma);
+     `Fusion.fuse()`/`build_border_region()` reescritos pra fazer a média.
+     Golden-file **não mudou** (a fixture sintética renderiza o mesmo valor nas
+     duas câmeras pro eixo com empate — média de 2 valores iguais = o mesmo
+     valor).
+   - Fase 1 (c) `Metric.value` strict: **aprovado**, sem mudança de código.
+   - Fase 4 (rótulo PDF, split Pipeline.run/run_cpu_analysis, SessionState):
+     **aprovados os 3**, sem mudança de código.
+   - Fase 5/6 débito de manifest `[config]`: **formalizado** — `PluginManifest`
+     ganhou `config: dict[str, PluginConfigField]` (opcional, aditivo,
+     `validate_overrides()` helper) parseado de `[config]` no `plugin.toml`.
+     `fish-body-fat` migrado a declarar `fish_length_cm`. Nenhum plugin existente
+     quebrou (é documentação/tipagem opcional, não um gate novo).
+   - Fase 6 escolha de algoritmo de tracking: **`kalman-hungarian`**.
+     `run_cpu_analysis` (`src/stages/orchestration.py`) agora constrói
+     `MultiEntityTracker(view, hungarian)` no lugar de `SingleEntityTracker`.
+     Golden **não mudou** (Kalman só influencia associação, o ponto gravado
+     continua o centróide bruto da detecção — movimento da fixture é lento
+     demais pra disparar o gating). Nenhum parâmetro de tuning precisou mudar.
+   - Fase 6 `SingleEntityTracker` sem default em `view`: já estava resolvido
+     num commit anterior (`de67528`), handoff estava desatualizado — nada feito
+     agora.
+3. **Restante do doc de pesquisa de otimização/metadados** (ver
    `docs/handoffs/next-agent-handout.md`): toda a seção B (trabalho que não
    exige decisão do dono) está feita — O1/O4/O5/O10/O9 + bugs fps/speed/PDF
    ([handoff 1](otimizacao-bugs-handoff.md)) e gap `setup(pctx)` + plugin
@@ -148,8 +170,12 @@ pergunta em aberto da seção 6**. Detalhe em
 - **Fase 6 — `pipeline.toml` ainda não existe**, então "trocar o tracker ativo via
   `pipeline.toml`" (tarefa 11 do plano da fase) NÃO foi cumprido na letra. O que foi provado
   é a forma mais forte que o código atual permite: os candidatos são carregados pelo registry
-  e são drop-in por substituição direta do objeto, com teste travando isso. `run_cpu_analysis`
-  segue construindo `SingleEntityTracker` hardcoded.
+  e são drop-in por substituição direta do objeto, com teste travando isso. **Atualização
+  2026-07-26**: `run_cpu_analysis` não constrói mais `SingleEntityTracker`; o dono decidiu
+  produção com `kalman-hungarian` e o orquestrador agora constrói
+  `MultiEntityTracker(view, hungarian)` diretamente (ver
+  [fase6-tracker-spike-handoff.md](fase6-tracker-spike-handoff.md)). `SingleEntityTracker`
+  continua existindo como plugin/baseline de controle, só não é mais o caminho de produção.
 - **Fase 6 — fixture de vídeo (nível-integração) não gerada**: o critério "≥2 `entity_id`s
   estáveis" é atendido pela fixture de nível-unidade (`FrameDetections` sintéticas com oclusão
   real). Gerar o par de vídeos top/side exercitaria Detect+Track juntos; deixado de fora por

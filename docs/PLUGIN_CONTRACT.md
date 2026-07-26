@@ -69,6 +69,29 @@ plugins  = ["speed"]         # nomes de outros plugins necessários
 **Resolução**: um plugin cujo `requires.plugins` não está presente é **pulado com
 log**, não derruba o run dos demais. Mesma política para qualquer falha de import.
 
+### `[config]` — configuração esperada (opcional, documentação + tipo)
+
+```toml
+[config]
+fish_length_cm = { type = "float", required = false, description = "Comprimento do peixe em cm, usado na fórmula placeholder de gordura corporal." }
+```
+
+Cada chave declara um campo que o plugin espera encontrar em
+`ctx.request.overrides` (seção 6): `type` (`"str"`/`"int"`/`"float"`/`"bool"`),
+`required` (default `false`), `default` e `description`. **Isto é documentação e
+checagem de tipo opcional, não uma allowlist nem um gate de execução** — nenhum
+override não declarado em `[config]` é rejeitado, e nada em `Pipeline.run`/
+`run_cpu_analysis` valida `[config]` automaticamente. Um plugin que quer checar
+seus próprios overrides pode chamar, do próprio `setup()`:
+
+```python
+errors = self.manifest.validate_overrides(ctx.request.overrides)
+if errors:
+    log.warning("config inválida: %s", "; ".join(errors))
+```
+
+Ver `plugins/metadata/fish-body-fat/plugin.toml` para um exemplo real em uso.
+
 ## 3. `[ordering]` — ordem de execução
 
 ```toml
@@ -294,13 +317,19 @@ erros em `stderr`.
 | **3** | Bases `Detector`/`Tracker` ganham implementações reais (streaming); `MetadataPlugin.run(ctx)` passa a receber rota já em cm. |
 | **4** | Kind `exporter` em uso real (`route-plot`, `pdf-report`); `<workspace>/plugins/` entra nas raízes de busca. |
 | **5** | Backends GPU como plugins puros. **Débito conhecido**: `[requires]` não expressa "precisa de build com CUDA" — a exigência está em comentário no manifest, não em campo. |
-| **6** | `docs/PLUGIN_CONTRACT.md` (este documento) + `animaltrack plugin install/list/remove`. **Proposta não implementada**: uma seção `[config]` para configuração tipada por plugin — hoje a configuração do usuário chega por `ctx.request.overrides`. |
+| **6** | `docs/PLUGIN_CONTRACT.md` (este documento) + `animaltrack plugin install/list/remove`. Seção `[config]` para configuração tipada por plugin, **implementada de forma aditiva** — documentação + checagem de tipo opcional via `PluginManifest.validate_overrides()`, sem gate automático em `Pipeline.run`/`run_cpu_analysis`; a configuração do usuário continua chegando por `ctx.request.overrides`. |
 
 ### Limitações conhecidas (estado atual, honesto)
 
 - **Sem sandboxing** — ver aviso no topo.
-- **Sem `[config]` no manifest** — configuração por plugin não é declarável nem
-  validada; chega como `dict[str, Any]` livre em `ctx.request.overrides`.
+- **`[config]` no manifest é documentação + checagem de tipo opcional, não um
+  gate de execução** — um plugin declara os campos que espera em `overrides`
+  (nome, tipo, `required`, `default`, `description`); nada em `Pipeline.run`/
+  `run_cpu_analysis` valida isso automaticamente. Um plugin pode chamar
+  `PluginManifest.validate_overrides(overrides) -> list[str]` a partir do
+  próprio `setup()` se quiser essa checagem — a configuração em si continua
+  chegando como `dict[str, Any]` livre em `ctx.request.overrides`. Ver exemplo
+  na seção 2 abaixo.
 - **`[requires].packages` é declarativo** — nada é instalado automaticamente.
 - **Sem aliasing / múltiplas versões** — um nome, uma instalação.
 - **Sem auto-update** — instalar de uma URL git é uma cópia pontual.

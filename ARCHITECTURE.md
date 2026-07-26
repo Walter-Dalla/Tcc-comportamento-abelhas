@@ -173,6 +173,12 @@ Esse manifest tem o mesmo formato que uma entrada de marketplace futura carregar
 requisitos) — pronto pra marketplace sem comprometer backend agora. Plugins locais em
 `plugins/<nome>/{plugin.toml, plugin.py}`.
 
+O manifest também aceita uma tabela opcional `[config]` (Fase 6, aditiva) para declarar campos de
+configuração esperados em `ctx.request.overrides` (nome/tipo/`required`/`default`/`description`) —
+documentação + checagem de tipo opcional via `PluginManifest.validate_overrides()`, sem gate automático
+em `Pipeline.run`/`run_cpu_analysis`; plugins sem `[config]` continuam funcionando sem qualquer mudança de
+comportamento. Ver `docs/PLUGIN_CONTRACT.md` seção 2 e `plugins/metadata/fish-body-fat/plugin.toml`.
+
 `src/core/plugin.py`:
 ```python
 class Plugin(ABC):

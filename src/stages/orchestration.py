@@ -36,7 +36,8 @@ from src.stages.detect.debug import DebugFrameWriter
 from src.stages.detect.plugin import BackgroundSubtractionDetector
 from src.stages.fuse.plugin import Fusion, build_border_region
 from src.stages.rectify.plugin import CpuPerspectiveRectifier
-from src.stages.track.plugin import SingleEntityTracker
+from src.stages.track.multi.assignment import hungarian
+from src.stages.track.multi.base import MultiEntityTracker
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _DEFAULT_PLUGINS_DIR = _REPO_ROOT / "plugins"
@@ -108,8 +109,8 @@ def run_cpu_analysis(
         det_top.setup()
         det_side.setup()
 
-        trk_top = SingleEntityTracker("top")
-        trk_side = SingleEntityTracker("side")
+        trk_top = MultiEntityTracker("top", hungarian)
+        trk_side = MultiEntityTracker("side", hungarian)
 
         # passe 2 (pareado): streaming, O(1) frame por vez
         fps, frames = capture.open()
@@ -139,7 +140,7 @@ def run_cpu_analysis(
     if profile.border_points_top and profile.border_points_side:
         border_region = build_border_region(
             orientation,
-            calibration.px_per_cm,
+            profile.box_cm,
             profile.border_points_top,
             profile.border_points_side,
             rect_top.output_shape,

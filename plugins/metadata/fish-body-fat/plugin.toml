@@ -21,3 +21,10 @@ plugins  = []
 before   = []
 after    = ["speed"]
 priority = 200
+
+# `required = false` deliberado: o plugin já tem um fallback via variável de
+# ambiente ANIMALTRACK_FISH_LENGTH_CM (ver plugin.py), então overrides não é o
+# ÚNICO caminho válido para fornecer o valor. Esta seção é documentação/tipo,
+# não um gate de execução — nada valida automaticamente contra ela hoje.
+[config]
+fish_length_cm = { type = "float", required = false, description = "Comprimento do peixe em cm, usado na fórmula placeholder de gordura corporal." }

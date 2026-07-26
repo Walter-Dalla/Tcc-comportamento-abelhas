@@ -3,13 +3,15 @@
 Resolve na raiz o bug de eixo hardcoded do sistema legado (topo -> sempre (x,z),
 lateral -> sempre y). Aqui a orientação vira configuração explícita: cada câmera
 declara qual face da caixa enxerga e qual vértice cada ponto clicado representa,
-e `BoxOrientationConfig.axis_mapping()` deriva, por eixo 3D, de qual câmera/eixo
-de imagem ele vem.
+e `BoxOrientationConfig.axis_sources()` deriva, por eixo 3D, TODAS as câmeras
+(1 ou 2) que o observam.
 
-Política de desempate (achado do plano da Fase 1): quando um eixo é observável
-pelas duas câmeras, a câmera TOP tem prioridade — reproduz o comportamento
-implícito do `routeAnalizer.py` atual (top vence, side só contribui o eixo que o
-topo não vê). Decisão de projeto sinalizada no handoff da Fase 1.
+Política de combinação: quando um eixo é observável pelas duas câmeras, as duas
+leituras são usadas — `Fusion.fuse()` faz a MÉDIA das duas (em cm, após conversão
+independente de unidade). Isso substitui a antiga política "TOP-camera-vence-
+empate" da Fase 1 (que reproduzia o comportamento implícito do `routeAnalizer.py`
+legado, top vence, side só contribui o eixo que o topo não vê) — decisão do dono
+do projeto.
 """
 
 from enum import Enum
@@ -17,7 +19,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from src.core.schema.geometry import Point2D, Point3D
+from src.core.schema.geometry import Point3D
 
 
 # NOTA: `str, Enum` (não `enum.StrEnum`) é a forma mandada explicitamente pelo plano
@@ -112,43 +114,6 @@ class AxisSource(BaseModel):
     sign: Literal[1, -1] = 1
 
 
-class AxisMapping(BaseModel):
-    """Retorno de BoxOrientationConfig.axis_mapping(): de onde vem cada eixo 3D da caixa."""
-
-    model_config = ConfigDict(extra="forbid")
-    x: AxisSource
-    y: AxisSource
-    z: AxisSource
-
-    @model_validator(mode="after")
-    def _distinct_sources(self) -> "AxisMapping":
-        keys = [
-            (self.x.camera, self.x.image_axis),
-            (self.y.camera, self.y.image_axis),
-            (self.z.camera, self.z.image_axis),
-        ]
-        if len(set(keys)) != 3:
-            raise ValueError(
-                "dois eixos 3D não podem ler o mesmo par (câmera, eixo de imagem) — "
-                f"fontes: x={keys[0]}, y={keys[1]}, z={keys[2]}"
-            )
-        return self
-
-    def resolve(self, top_point: Point2D, side_point: Point2D) -> Point3D:
-        """Aplica o mapeamento a um ponto 2D de cada câmera e retorna o Point3D combinado."""
-        raw = {
-            (CameraRole.TOP, ImageAxis.U): top_point.x,
-            (CameraRole.TOP, ImageAxis.V): top_point.y,
-            (CameraRole.SIDE, ImageAxis.U): side_point.x,
-            (CameraRole.SIDE, ImageAxis.V): side_point.y,
-        }
-
-        def _value(source: AxisSource) -> float:
-            return raw[(source.camera, source.image_axis)] * source.sign
-
-        return Point3D(x=_value(self.x), y=_value(self.y), z=_value(self.z))
-
-
 class BoxOrientationConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
     top_camera: CameraOrientation
@@ -162,8 +127,14 @@ class BoxOrientationConfig(BaseModel):
             raise ValueError("side_camera.role deve ser CameraRole.SIDE")
         return self
 
-    def axis_mapping(self) -> AxisMapping:
-        """Deriva, por câmera, qual eixo de imagem (u/v) corresponde a qual eixo 3D (x/y/z).
+    def axis_sources(self) -> dict[BoxAxis, list[AxisSource]]:
+        """Deriva, por eixo 3D da caixa, TODAS as câmeras que o observam (1 ou 2) — ver
+        docstring anterior de axis_mapping() para o algoritmo de derivação por vértice,
+        inalterado. Não escolhe mais uma vencedora: quando um eixo é observável pelas
+        duas câmeras, `Fusion.fuse()` agora faz a MÉDIA das duas leituras (em cm, após
+        conversão independente de unidade) em vez de descartar uma delas — decisão do
+        dono do projeto, substitui a antiga política 'TOP-camera-vence-empate' (Fase 1).
+        Ordem TOP-primeiro na lista é só por determinismo, não implica mais prioridade.
 
         Algoritmo (ver seção 1.5 do docs/plans/fase1-detalhado.md para o raciocínio completo):
           1. Para cada câmera, o componente que difere entre corner_vertices[0] e [1] (ambos
@@ -173,9 +144,8 @@ class BoxOrientationConfig(BaseModel):
           2. O sinal é derivado da convenção canônica menor->maior por eixo: se o componente de
              corner_vertices[0] for o lado "maior" da convenção, sign=+1, senão -1.
           3. Cada um dos 3 BoxAxis deve ser observável por pelo menos uma câmera; se um eixo for
-             observável pelas duas, a câmera TOP tem prioridade como fonte canônica (reproduz o
-             comportamento do routeAnalizer.py atual, que sempre usa a câmera do topo quando
-             disponível e só recorre à lateral para o eixo que o topo não vê).
+             observável pelas duas, ambas as fontes são retornadas (ordenadas TOP antes de SIDE
+             por determinismo).
         """
         top_axes = _derive_candidate_axes(self.top_camera)
         side_axes = _derive_candidate_axes(self.side_camera)
@@ -190,18 +160,15 @@ class BoxOrientationConfig(BaseModel):
                 AxisSource(camera=CameraRole.SIDE, image_axis=image_axis, sign=sign)
             )
 
-        chosen: dict[BoxAxis, AxisSource] = {}
         for box_axis, sources in candidates.items():
             if not sources:
                 raise ValueError(
                     f"eixo {box_axis.value} não é observável por nenhuma câmera nesta configuração "
                     "de orientação"
                 )
-            # prioridade: TOP antes de SIDE
-            sources_sorted = sorted(sources, key=lambda s: 0 if s.camera is CameraRole.TOP else 1)
-            chosen[box_axis] = sources_sorted[0]
+            sources.sort(key=lambda s: 0 if s.camera is CameraRole.TOP else 1)
 
-        return AxisMapping(x=chosen[BoxAxis.X], y=chosen[BoxAxis.Y], z=chosen[BoxAxis.Z])
+        return candidates
 
 
 def _derive_candidate_axes(

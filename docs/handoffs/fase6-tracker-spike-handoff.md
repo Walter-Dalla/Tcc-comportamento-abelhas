@@ -1,6 +1,7 @@
 # Handoff: Fase 6 — Workstream A (spike de tracker multi-animal)
-Status: done (critério de interface atingido; escolha de algoritmo segue em aberto por decisão do dono)
-Última atualização: 2026-07-25
+Status: done (critério de interface atingido; escolha de algoritmo **decidida pelo dono em
+2026-07-26 — ver seção "Decisão do dono" abaixo**)
+Última atualização: 2026-07-26
 
 Este documento acumula o **relatório comparativo** pedido na tarefa 10 do plano
 (`docs/plans/fase6-detalhado.md`, seção 1.5) além do handoff normal.
@@ -60,6 +61,35 @@ validados contra a classe-base `Tracker`.
   suas métricas de identidade são trivialmente "perfeitas" por ausência de
   capacidade, não por qualidade.
 
+## Decisão do dono (2026-07-26): `kalman-hungarian` em produção
+
+O dono decidiu: **`kalman-hungarian` (candidato 2) vai para produção**, substituindo o
+`SingleEntityTracker` hardcoded em `run_cpu_analysis` (`src/stages/orchestration.py`).
+
+Mecanismo de wiring escolhido: **NÃO** um import do diretório hifenizado
+`plugins/tracker/kalman-hungarian/` (esse caminho não é um módulo Python válido e só é
+carregado via `PluginRegistry` + `importlib.util.spec_from_file_location`, que é o caminho de
+plugin de terceiro, não de import estático em código de produção). Em vez disso,
+`orchestration.py` importa `MultiEntityTracker` (`src/stages/track/multi/base.py`) e a
+estratégia `hungarian` (`src/stages/track/multi/assignment.py`) diretamente e constrói
+`MultiEntityTracker(view, hungarian)` inline — reproduzindo exatamente o que
+`KalmanHungarianTracker.__init__` faz (`super().__init__(view, hungarian)`), sem inventar um
+mecanismo de import para um caminho que nunca foi pensado para isso.
+
+Nenhum parâmetro de tuning (`max_distance=60`, `max_age=12`, `min_hits=3`) precisou de
+override: `tests/test_golden_pipeline.py` (movimento lento, ~0.3px/frame, bem abaixo do gate) e
+`tests/test_debug_frames.py` passam sem alteração de golden — o `min_hits=3` não perde frames
+porque `MultiEntityTracker.tracks()` acumula `points` desde a criação do track (sem janela
+deslizante), então uma entidade rastreada continuamente desde o frame 0 expõe TODOS os seus
+pontos assim que cruza o limiar de 3 hits. Nenhuma regressão numérica observada: a suíte
+golden roda idêntica porque o `Detect` atual (`BackgroundSubtractionDetector`) sempre devolve no
+máximo 1 detecção por frame, e o Kalman só participa da predição de custo de associação —
+o ponto gravado em `track.points[frame]` é sempre o centróide bruto da detecção, nunca o
+estado filtrado (verificado em `src/stages/track/multi/base.py::MultiEntityTracker.update`).
+
+O item "Nenhum orquestrador usa os candidatos" na seção "O que falta" abaixo está **superado**
+por esta decisão — mantido só como registro histórico do estado do spike antes da decisão.
+
 ## Relatório comparativo (fixture de 150 frames, 2 entidades, oclusão nos frames 63–66)
 
 | Candidato | Tracks | IDs estáveis | ID-switches | Taxa | Fragmentação | Recuperação pós-oclusão | Perf. (frames/s) |
@@ -115,8 +145,8 @@ núcleo sem IA embutida.)*
 
 ## O que falta
 
-- **Decisão do dono: qual algoritmo vai para produção.** Nada aqui a escolhe. Os
-  dois candidatos são código de spike, não de produção.
+- **Decisão do dono: qual algoritmo vai para produção — RESOLVIDO em 2026-07-26**,
+  ver seção "Decisão do dono" acima. `kalman-hungarian` está em produção.
 - **Candidato 3** — não implementado (ver acima). Se for perseguido, decidir antes
   se a interface `Tracker` muda para receber as duas views.
 - **Fixture de vídeo (nível-integração, seção 1.2b do plano)** — **não gerada**. A
@@ -124,14 +154,16 @@ núcleo sem IA embutida.)*
   fixture de nível-unidade, que exercita o `Tracker` diretamente com as mesmas
   trajetórias. Gerar um par de vídeos top/side exercitaria também Detect+Track
   juntos; foi deixado de fora por custo de repo/tempo, sem prejuízo do critério.
-- **Nenhum orquestrador usa os candidatos.** `run_cpu_analysis` continua
-  construindo `SingleEntityTracker` diretamente (hardcoded). Trocar o tracker ativo
-  **via `pipeline.toml` ainda não é possível** — esse arquivo não existe (a Fase 4
-  deixou `--config pipeline.toml` aceito mas não parseado). A tarefa 11 do plano,
-  na letra ("trocar o plugin ativo apenas via `pipeline.toml`"), **não foi
-  cumprida**; o que foi provado é a forma mais forte que o código atual permite:
-  os candidatos são carregados **pelo registry** e são drop-in por substituição
-  direta do objeto, com teste que trava isso.
+- ~~Nenhum orquestrador usa os candidatos.~~ **Superado em 2026-07-26**:
+  `run_cpu_analysis` agora constrói `MultiEntityTracker(view, hungarian)` (ver
+  "Decisão do dono" acima) em vez de `SingleEntityTracker`. Isso continua sendo
+  construção direta em código (não via `pipeline.toml`, que ainda não existe — a
+  Fase 4 deixou `--config pipeline.toml` aceito mas não parseado). A tarefa 11 do
+  plano, na letra ("trocar o plugin ativo apenas via `pipeline.toml`"), **segue
+  não cumprida**; o mecanismo real usado foi construção direta da classe
+  compartilhada (`MultiEntityTracker` + `hungarian`), não descoberta pelo registry
+  em runtime de produção (o registry continua sendo o caminho usado pelos testes
+  de interface deste spike, não pelo orquestrador).
 - **Lacuna de contrato encontrada**: `PluginRegistry.instantiate()` constrói todo
   plugin com **zero argumentos**. Os candidatos dão default a `view` por isso. O
   `SingleEntityTracker` da Fase 3 exige `view` posicional e portanto **não é

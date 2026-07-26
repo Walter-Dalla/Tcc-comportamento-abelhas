@@ -26,21 +26,21 @@ Demonstra três coisas que um autor de plugin precisa saber fazer:
 
 --- NOTA DE DECISÃO: de onde vem `fish_length_cm` -----------------------------
 A seção 2.4 do plano da Fase 6 propunha estender o `plugin.toml` com uma seção
-`[config]`. **Não foi feito nesta fase, deliberadamente**: `PluginManifest` é
-`extra="forbid"` e `from_toml` só lê as tabelas `[plugin]/[requires]/[ordering]` —
-adicionar `[config]` exigiria mexer no schema e no discovery da Fase 2, o mesmo
-tipo de mudança que a Fase 5 evitou (ver "débito de manifest" no PROGRESS.md).
+`[config]`. **Isso foi formalizado**: `PluginManifest` (`src/core/plugin.py`)
+agora tem um campo `config: dict[str, PluginConfigField]`, populado por
+`from_toml` a partir da tabela `[config]` (ver o `plugin.toml` ao lado). Essa
+seção é DOCUMENTAÇÃO + checagem de tipo opcional — `PluginManifest.validate_overrides()`
+está disponível para um `setup()` chamar por escolha própria — não é allowlist
+nem gate automático: nada em `Pipeline.run`/`run_cpu_analysis` a lê ou aplica.
 
-Em vez disso o plugin usa o mecanismo que JÁ existe no contrato:
+O mecanismo de LEITURA em si continua o mesmo, sem mudança de comportamento:
 `Plugin.setup(PipelineContext)` dá acesso a `request.overrides`, um `dict[str, Any]`
 livre carregado pelo `RunRequest`. `run_cpu_analysis` (orquestração da Fase 3)
 também chama `setup()` corretamente, então `overrides` chega até aqui sempre que
 um caller o passar — mas nem a CLI nem a GUI expõem isso hoje. Fallback para a
 variável de ambiente `ANIMALTRACK_FISH_LENGTH_CM` continua valendo como caminho
-secundário para esses callers.
-
-Formalizar `[config]` no manifest continua sendo a opção recomendada a prazo —
-decisão pendente do dono do contrato de plugin, registrada no handoff.
+secundário para esses callers, e `[config]` declara `required = false` aqui
+justamente para não sugerir que overrides é o único canal de entrada.
 """
 
 from __future__ import annotations
