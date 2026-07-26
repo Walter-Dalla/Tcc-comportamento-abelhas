@@ -11,6 +11,10 @@ persistente, então um tracker multi-animal (Kalman+Hungarian) futuro é drop-in
 sem mudar schema/interface — não é desenhado agora (Fase 6).
 
 Um `SingleEntityTracker` é instanciado por view (`top`, `side`) pelo orquestrador.
+
+`view` tem DEFAULT porque `PluginRegistry.instantiate()` constrói todo plugin com
+zero argumentos (`plugin_cls()`); sem default este tracker não era carregável pelo
+registry (achado na Fase 6, mesma convenção adotada pelos candidatos multi-animal).
 """
 
 from __future__ import annotations
@@ -26,7 +30,7 @@ from src.core.stages import Tracker
 class SingleEntityTracker(Tracker):
     ENTITY_ID: ClassVar[int] = 0
 
-    def __init__(self, view: Literal["top", "side"]) -> None:
+    def __init__(self, view: Literal["top", "side"] = "top") -> None:
         self._view: Literal["top", "side"] = view
         self._points: dict[int, Point2D] = {}
 
