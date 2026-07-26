@@ -31,6 +31,7 @@ estão completas, compõe o `BoxOrientationConfig` e persiste.
 from __future__ import annotations
 
 import logging
+import math
 import tkinter as tk
 from collections.abc import Callable, Sequence
 from tkinter import ttk
@@ -137,11 +138,30 @@ _FACE_DRAW_ORDER = (
     BoxFace.RIGHT,
     BoxFace.FRONT,
 )
-_PATCH_SCALE = 0.55
+_PATCH_SCALE = 0.45
 _PATCH_FILL = "#9aa0a6"
 _PATCH_FILL_SELECTED = "#1a73e8"
 
 _THUMB_MAX = 320
+
+
+_CUBE_CENTER = (
+    sum(x for x, _ in _VERTEX_XY.values()) / len(_VERTEX_XY),
+    sum(y for _, y in _VERTEX_XY.values()) / len(_VERTEX_XY),
+)
+
+
+def _offset_from_center(x: float, y: float, distance: float) -> tuple[float, float]:
+    """Desloca um rótulo radialmente a partir do centro do cubo.
+
+    Distância positiva = para fora (rótulos de vértice), negativa = para dentro
+    (nomes de face). Na projeção isométrica o centro de uma face coincide em tela
+    com um vértice da face oposta (ex.: centro de "Fundo" cai sobre TFR); afastar
+    os dois em direções opostas evita a sobreposição de texto.
+    """
+    dx, dy = x - _CUBE_CENTER[0], y - _CUBE_CENTER[1]
+    norm = math.hypot(dx, dy) or 1.0
+    return x + dx / norm * distance, y + dy / norm * distance
 
 
 def face_tag(face: BoxFace) -> str:
@@ -258,16 +278,14 @@ class OrientationScreen(ScreenBase):
         canvas = self.wireframe_canvas
         # 1) adesivos clicáveis por face (ordem do pintor: trás -> frente)
         for face in _FACE_DRAW_ORDER:
-            tag = face_tag(face)
             canvas.create_polygon(
                 _patch_coords(face),
                 fill=_PATCH_FILL,
                 stipple="gray25",
-                outline="",
+                outline="gray50",
                 activefill=_PATCH_FILL_SELECTED,
-                tags=(tag, "face"),
+                tags=(face_tag(face), "face"),
             )
-            canvas.tag_bind(tag, "<Button-1>", self._make_face_callback(face))
 
         # 2) as 12 arestas do wireframe, por cima dos adesivos
         edges = [
@@ -290,7 +308,27 @@ class OrientationScreen(ScreenBase):
         # 3) rótulos dos 8 vértices + legenda
         for vertex, (x, y) in _VERTEX_XY.items():
             canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="black")
-            canvas.create_text(x, y - 12, text=_VERTEX_ABBR[vertex], font=("TkDefaultFont", 8))
+            label_x, label_y = _offset_from_center(x, y, 14)
+            canvas.create_text(
+                label_x, label_y, text=_VERTEX_ABBR[vertex], font=("TkDefaultFont", 8)
+            )
+
+        # 4) nome PT da face sobre cada adesivo + binding de clique (a tag cobre
+        #    polígono E texto, então clicar no rótulo também escolhe a face).
+        for face in _FACE_DRAW_ORDER:
+            tag = face_tag(face)
+            coords = _patch_coords(face)
+            text_x, text_y = _offset_from_center(
+                sum(coords[0::2]) / 4, sum(coords[1::2]) / 4, -9
+            )
+            canvas.create_text(
+                text_x,
+                text_y,
+                text=FACE_LABELS_PT[face],
+                font=("TkDefaultFont", 8),
+                tags=(tag, "face"),
+            )
+            canvas.tag_bind(tag, "<Button-1>", self._make_face_callback(face))
         canvas.create_text(
             200, 310,
             text="T = topo/B = base, F = frente/B = trás, L = esquerda/R = direita",
@@ -389,13 +427,18 @@ class OrientationScreen(ScreenBase):
         self._error_label.config(text=_FACE_CHANGED_WARNING if (changed and had_selection) else "")
 
     def _highlight_face(self, face: BoxFace | None) -> None:
+        canvas = self.wireframe_canvas
         for candidate in _FACE_DRAW_ORDER:
             selected = candidate is face
-            self.wireframe_canvas.itemconfig(
-                face_tag(candidate),
-                fill=_PATCH_FILL_SELECTED if selected else _PATCH_FILL,
-                stipple="" if selected else "gray25",
-            )
+            for item in canvas.find_withtag(face_tag(candidate)):
+                # só o polígono muda de cor; o rótulo de texto da face continua legível
+                if canvas.type(item) != "polygon":
+                    continue
+                canvas.itemconfig(
+                    item,
+                    fill=_PATCH_FILL_SELECTED if selected else _PATCH_FILL,
+                    stipple="" if selected else "gray25",
+                )
 
     def set_vertex(self, index: int, vertex: BoxVertex) -> None:
         self._vertices[index] = vertex
